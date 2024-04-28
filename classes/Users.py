@@ -1,5 +1,5 @@
 class Dispatcher:
-    def __init__(self, d_pib, d_email, d_password, phone_number):
+    def __init__(self, d_pib, d_email, d_password, d_phone_number):
         self.d_pib = d_pib
         self.d_email = d_email
         self.d_password = d_password
@@ -31,17 +31,17 @@ class Dispatcher:
 
 
 class Client:
-    def __init__(self, c_pib, c_email, c_password, phone_number):
+    def __init__(self, c_pib, c_email, c_password, с_phone_number):
         self.c_pib = c_pib
         self.c_email = c_email
         self.c_password = c_password
-        self.phone_number = phone_number
+        self.с_phone_number = с_phone_number
 
     def set_name(self, c_pib):
         self.c_pib = c_pib
 
-    def set_phone_number(self, phone_number):
-        self.phone_number = phone_number
+    def set_с_phone_number(self, с_phone_number):
+        self.с_phone_number = с_phone_number
 
     def set_c_email(self, c_email):
         self.c_email = c_email
@@ -52,8 +52,8 @@ class Client:
     def get_c_pib(self):
         return self.c_pib
 
-    def get_phone_num(self):
-        return self.phone_number
+    def get_с_phone_num(self):
+        return self.с_phone_number
 
     def get_c_email(self):
         return self.c_email
