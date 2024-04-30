@@ -1,5 +1,5 @@
 class Map:
-    def __init__(self,dep_st, arr_st):
+    def __init__(self, dep_st, arr_st):
         self.dep_st = dep_st
         self.arr_st = arr_st
 
