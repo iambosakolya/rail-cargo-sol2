@@ -8,7 +8,6 @@ from client import client_window
 from dispatcher import dispatcher_window
 from classes.Users import Dispatcher, Client
 
-
 def register():
     user_type = user_type_combo.get()
     if user_type == "Dispatcher":
@@ -49,18 +48,18 @@ def login():
         cursor.execute("SELECT * FROM Dispatcher WHERE d_email=?", (email,))
         user = cursor.fetchone()
         if user and password == user[3]:
-            messagebox.showinfo("Login", "Dispatcher Login Successful!")
+            messagebox.showinfo("Login", "Dispatcher login successful!")
             dispatcher_window()
         else:
-            messagebox.showerror("Login Error", "Invalid email or password")
+            messagebox.showerror("Login error", "Invalid email or password")
     elif user_type == "Client":
         cursor.execute("SELECT * FROM Client WHERE c_email=?", (email,))
         user = cursor.fetchone()
         if user and password == user[3]:
-            messagebox.showinfo("Login", "Client Login Successful!")
+            messagebox.showinfo("Login", "Client login successful!")
             client_window()
         else:
-            messagebox.showerror("Login Error", "Invalid email or password")
+            messagebox.showerror("Login error", "Invalid email or password")
 
 app = CTk()
 app.title("Rail cargo solutions")
