@@ -1,10 +1,10 @@
 import customtkinter
+from CTkToolTip import *
 from customtkinter import *
+from database import cursor, conn
 from classes.Contract import Contract
 from classes.CargoType import CargoType
-from database import cursor, conn
-from tkinter import messagebox
-
+from CTkMessagebox import CTkMessagebox
 
 def create(dep_st, arr_st, price, pib_c):
     new_contract = Contract(None, dep_st, arr_st, price, pib_c, None, None, None)
@@ -19,6 +19,25 @@ def create(dep_st, arr_st, price, pib_c):
     conn.close()
 
 #def save_contract():
+
+def insert_type(name, description, dimensions):
+    try:
+        cursor.execute("INSERT INTO CargoType (name, description, dimensions) VALUES (?, ?, ?)", (name, description, dimensions))
+        conn.commit()
+        CTkMessagebox(message="Info saved!",
+                      icon="check", option_1="Ok")
+    except sqlite3.Error as e:
+        conn.rollback()
+        CTkMessagebox(title="Error", message="Type info is not saved", icon="cancel")
+
+def insert_cargo(cargo_type_id, quantity, weight):
+    cursor.execute("SELECT COUNT(*) FROM CargoType WHERE cargo_type_id = ?", (cargo_type_id,))
+    count = cursor.fetchone()[0]
+    if count == 0:
+        CTkMessagebox(title="Error", message="cargo_type_id does not exist in the CargoType table", icon="cancel")
+        return
+    cursor.execute("INSERT INTO Cargo (cargo_type_id, quantity, weight) VALUES (?, ?, ?)", (cargo_type_id, quantity, weight))
+    conn.commit()
 
 def create_contract():
     global screen_frame
@@ -48,8 +67,13 @@ def create_contract():
         screen_frame.pack_propagate(0)
         screen_frame.pack(expand=True, fill="both")
 
-        if window_number == 1:
+        def cargo_type_check(cargo_instance):
+            if cargo_instance.isCargoType():
+                CTkMessagebox(message="Cargo type is available",icon="check", option_1="Thanks")
+            else:
+                CTkMessagebox(title="Error", message="This cargo type is not available!", icon="cancel")
 
+        if window_number == 1:
             # cargo`s name
             type_label = CTkLabel(master=screen_frame, text="Choose your cargo type:",
                                   text_color="#000000", anchor="w",
@@ -57,64 +81,113 @@ def create_contract():
                                   font=("Arial Rounded MT Bold", 15))
             type_label.place(relx=0, rely=0.1, anchor="w", x=30, y=5)
 
-            cargo_types_input = input("Enter cargo types separated by commas: ")
-            cargo_types_list = [t.strip() for t in cargo_types_input.split(",")]
 
-            type_combobox = CTkComboBox(master=screen_frame, values=cargo_types_list, width=250)
+            type_combobox = CTkComboBox(master=screen_frame, values=['   ', 'Freight', 'Coal', 'Grains', 'Steel', 'Lumber',
+                                                                     'Oil', 'Chemicals', 'Machinery',
+                                                                     'Automobiles', 'Containers', 'Livestock',
+                                                                     'Cement', 'Fertilizer', 'Papers'], width=250)
+
             type_combobox.place(relx=0, rely=0.1, anchor="w", x=30, y=45)
 
-            # ADD BUTTON - separate window
+            add_label = CTkLabel(master=screen_frame, text="Or enter new type:",
+                                 text_color="#000000", anchor="w",
+                                 justify="left",
+                                 font=("Arial Rounded MT Bold", 15))
+            add_label.place(relx=0, rely=0.1, anchor="w", x=420, y=5)
+
+            type_entry = CTkEntry(master=screen_frame, width=140)
+            type_entry.place(relx=0, rely=0.1, anchor="w", x=420, y=45)
+
+            # ADD BUTTON - adding new type
+            def new_type():
+                new_cargo_type = type_entry.get().strip()
+                if new_cargo_type == "":
+                    return
+                if not new_cargo_type[0].isupper():
+                    tooltip_add.configure(message="Please enter the new cargo type with a capital letter!")
+                    return
+                existing_cargo_types = type_combobox.cget('values')
+                new_cargo_type = type_entry.get()
+                existing_cargo_types.append(new_cargo_type)
+                type_combobox.configure(values=existing_cargo_types)
+
             add_btn1 = CTkButton(master=screen_frame, text="Add",
-                                fg_color="#000000", hover_color="#4F2346",
-                                font=("Arial Rounded MT Bold", 13),
-                                width=40, text_color="#ffffff")
-            add_btn1.place(relx=0, rely=0.1, anchor="w", x=300, y=45)
-            # ADD BUTTON - separate window
+                                 fg_color="#000000", hover_color="#4F2346",
+                                 font=("Arial Rounded MT Bold", 13),
+                                 width=40, text_color="#ffffff",
+                                 command=new_type)
+            add_btn1.place(relx=0, rely=0.1, anchor="w", x=350, y=45)
+
+            tooltip_add = CTkToolTip(add_btn1, message="Please enter the new cargo type "
+                                                       "\nwith a capital letter and in plural!")
+            # ADD BUTTON - adding new type
+
+
+            # adding data to table "cargo types"
+            def save_cargo():
+                # save cargo type data
+                name = type_combobox.get().strip()
+                description = desc_entry.get()
+                dimensions = dim_entry.get()
+                insert_type(name, description, dimensions)
+
+                # save cargo data
+                selected_type = type_combobox.get()
+                quantity = quantity_input.get()
+                weight = weight_input.get()
+                cursor.execute("SELECT cargo_type_id FROM CargoType WHERE name = ?", (selected_type,))
+                result = cursor.fetchone()
+
+                if result is None:
+                    CTkMessagebox(title="Error", message="Selected cargo type not found", icon="cancel")
+                    return
+
+                cargo_type_id = result[0]
+                insert_cargo(cargo_type_id, quantity, weight)
+
+            save = CTkButton(master=screen_frame, text="Save type",
+                                  fg_color="#000000", hover_color="#4F2346",
+                                  font=("Arial Rounded MT Bold", 13), width=90,
+                                  text_color="#ffffff" ,command=save_cargo)
+            save.place(relx=0, rely=0.1, anchor="w", x=200, y=300)
+            # adding data to table "cargo types"
 
             # cargo`s dimension
-            type_label1 = CTkLabel(master=screen_frame, text="Choose allowed dimensions:",
+            type_label1 = CTkLabel(master=screen_frame, text="Enter dimensions:",
                                    text_color="#000000", anchor="w",
                                    justify="left",
                                    font=("Arial Rounded MT Bold", 15))
             type_label1.place(relx=0, rely=0.1, anchor="w", x=30, y=95)
 
-            dimensions_input = input("Enter dimensions separated by commas: ")
-            dim_list = [d.strip() for d in dimensions_input.split(",")]
-
-            dim_combobox = CTkComboBox(master=screen_frame, values=dim_list, width=250)
-            dim_combobox.place(relx=0, rely=0.1, anchor="w", x=30, y=135)
-
-            # ADD BUTTON - separate window
-            add_btn2 = CTkButton(master=screen_frame, text="Add",
-                                fg_color="#000000", hover_color="#4F2346",
-                                font=("Arial Rounded MT Bold", 13),
-                                width=40, text_color="#ffffff")
-            add_btn2.place(relx=0, rely=0.1, anchor="w", x=300, y=135)
-            # ADD BUTTON - separate window
+            dim_entry = CTkEntry(master=screen_frame,
+                                      width=150, height=30,
+                                      fg_color="#EEEEEE",
+                                      border_color="#601E88",
+                                      border_width=2,
+                                      text_color="#000000")
+            dim_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=135)
 
             # cargo`s description
-            description_input = input("Enter description: ")
             type_label2 = CTkLabel(master=screen_frame, text="Add description (if necessary):",
                                    text_color="#000000", anchor="w",
                                    justify="left",
                                    font=("Arial Rounded MT Bold", 15))
             type_label2.place(relx=0, rely=0.1, anchor="w", x=30, y=185)
 
-            type_entry = CTkEntry(master=screen_frame,
+            desc_entry = CTkEntry(master=screen_frame,
                                   width=350, height=50,
                                   fg_color="#EEEEEE",
                                   border_color="#601E88",
                                   border_width=2,
                                   text_color="#000000")
-            type_entry.insert(0, description_input)
-            type_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=225)
+            desc_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=225)
 
             # cargo`s weight
             weight_label = CTkLabel(master=screen_frame, text="Enter weight:(kg)",
                                     text_color="#000000", anchor="w",
                                     justify="left",
                                     font=("Arial Rounded MT Bold", 15))
-            weight_label.place(relx=0, rely=0.1, anchor="w", x=420, y=5)
+            weight_label.place(relx=0, rely=0.1, anchor="w", x=420, y=185)
 
             weight_input = CTkEntry(master=screen_frame,
                                     width=150, height=30,
@@ -122,14 +195,14 @@ def create_contract():
                                     border_color="#601E88",
                                     border_width=2,
                                     text_color="#000000")
-            weight_input.place(relx=0, rely=0.1, anchor="w", x=420, y=45)
+            weight_input.place(relx=0, rely=0.1, anchor="w", x=420, y=225)
 
             # cargo`s quantity
             quantity_label = CTkLabel(master=screen_frame, text="Enter quantity:",
                                       text_color="#000000", anchor="w",
                                       justify="left",
                                       font=("Arial Rounded MT Bold", 15))
-            quantity_label.place(relx=0, rely=0.1, anchor="w", x=420, y=95)
+            quantity_label.place(relx=0, rely=0.1, anchor="w", x=420, y=265)
 
             quantity_input = CTkEntry(master=screen_frame,
                                       width=150, height=30,
@@ -137,12 +210,15 @@ def create_contract():
                                       border_color="#601E88",
                                       border_width=2,
                                       text_color="#000000")
-            quantity_input.place(relx=0, rely=0.1, anchor="w", x=420, y=135)
+            quantity_input.place(relx=0, rely=0.1, anchor="w", x=420, y=295)
 
             # buttons
             check_btn = CTkButton(master=screen_frame, text="Check availability",
                                   fg_color="#000000", hover_color="#4F2346",
-                                  font=("Arial Rounded MT Bold", 13), text_color="#ffffff")
+                                  font=("Arial Rounded MT Bold", 13), text_color="#ffffff",
+                                  command=lambda: cargo_type_check(CargoType(type_combobox.get(),
+                                                                             dim_entry.get(), weight_input.get(),
+                                                                             quantity_input.get(), desc_entry.get())))
             check_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=300)
 
             next_btn = CTkButton(master=screen_frame, text="Next step",
@@ -150,10 +226,6 @@ def create_contract():
                                  font=("Arial Rounded MT Bold", 13), text_color="#ffffff",
                                  command=next_step)
             next_btn.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
-
-            cargo_type_obj = CargoType(cargo_types_list, dim_list,
-                                       weight_input.get(), quantity_input.get(), description_input)
-
 
 
         elif window_number == 2:

@@ -1,3 +1,4 @@
+
 class Contract:
     def __init__(self, contract_id, dep_st, arr_st, price,
                  pib_c, map_obj, tariff_obj, calc_obj):

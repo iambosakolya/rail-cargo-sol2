@@ -1,6 +1,7 @@
 import sqlite3
 from classes.Users import Dispatcher, Client
 from classes.Contract import Contract
+from classes.CargoType import CargoType
 
 conn = sqlite3.connect('data.db')
 cursor = conn.cursor()
