@@ -1,8 +1,8 @@
+
 class Tariff:
-    def __init__(self, distance, arr_st, cargo_type):
+    def __init__(self, distance, weight):
         self.distance = distance
-        self.arr_st = arr_st
-        self.cargo_type = cargo_type
+        self.weight = weight
 
     def set_distance(self, distance):
         self.distance = distance
@@ -10,8 +10,14 @@ class Tariff:
     def get_distance(self):
         return self.distance
 
-    def set_type(self, cargo_type):
-        self.cargo_type = cargo_type
+    def set_weight(self, weight):
+        self.weight = weight
 
-    def get_cargo_type(self):
-        return self.cargo_type
+    def get_weight(self):
+        return self.weight
+
+    def get_tariff(self):
+        price_per_km = 2  # $1 per km
+        base_price = 50  # ₴50 base price
+        total_price = base_price + (self.distance * price_per_km)
+        return total_price

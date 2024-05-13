@@ -8,9 +8,15 @@ class ContractInfo:
     def get_contract_id(self):
         return self.contract_id
 
-
 class ContractList:
-    contracts = []
-
     def __init__(self):
-        self.contract_info = ContractInfo(None)
+        self.contracts = []
+
+    def add_contract(self, contract_info):
+        self.contracts.append(contract_info)
+
+    def remove_contract(self, contract_info):
+        self.contracts.remove(contract_info)
+
+    def get_contracts(self):
+        return self.contracts

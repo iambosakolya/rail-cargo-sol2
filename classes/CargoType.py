@@ -33,8 +33,17 @@ class CargoType:
         return self.cargo_types
 
 
+    def set_dimensions(self, dimensions):
+        self.dimensions = dimension
+
     def get_dimensions(self):
         return self.dimensions
+
+    def set_weight(self, weight):
+        self.weight = weight
+
+    def get_weight(self):
+        return self.weight
 
     def set_dimensions(self, dimensions):
         self.dimensions = dimensions

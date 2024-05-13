@@ -1,15 +1,15 @@
-
 class Contract:
     def __init__(self, contract_id, dep_st, arr_st, price,
-                 pib_c, map_obj, tariff_obj, calc_obj):
+                 pib_c, c_phone_number, cargo_instance, map, calc_instance):
         self.contract_id = contract_id
         self.dep_st = dep_st
         self.arr_st = arr_st
         self.price = price
         self.pib_c = pib_c
-        self.map = map_obj
-        self.tariff = tariff_obj
-        self.calc = calc_obj
+        self.c_phone_number = c_phone_number
+        self.map = map
+        self.calc_instance = calc_instance
+        self.cargo_instance = cargo_instance
 
     def set_contract_id(self, contract_id):
         self.contract_id = contract_id

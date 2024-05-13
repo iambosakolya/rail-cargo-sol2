@@ -1,0 +1,49 @@
+{
+  "unavailable_types": [
+    {
+      "name": "Foods"
+    },
+    {
+      "name": "Livestock"
+    },
+    {
+      "name": "Minerals"
+    },
+    {
+      "name": "Explosives"
+    },
+    {
+      "name": "Radioactives"
+    },
+    {
+      "name": "Toxics"
+    },
+    {
+      "name": "Perishables"
+    },
+    {
+      "name": "Firearms"
+    },
+    {
+      "name": "Ammunition"
+    },
+    {
+      "name": "Chemicals"
+    },
+    {
+      "name": "Narcotics"
+    },
+    {
+      "name": "Poisons"
+    },
+    {
+      "name": "Waste materials"
+    },
+    {
+      "name": "Liquids"
+    },
+    {
+      "name": "Gases"
+    }
+  ]
+}
