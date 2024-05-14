@@ -28,9 +28,9 @@ entry_style = {
     "border_width": 1,
     "text_color": "#000000"}
 
-def insert_type(name, description, dimensions):
+def insert_type(cargo_name, description, dimensions):
     try:
-        cursor.execute("INSERT INTO CargoType (name, description, dimensions) VALUES (?, ?, ?)", (name, description, dimensions))
+        cursor.execute("INSERT INTO CargoType (cargo_name, description, dimensions) VALUES (?, ?, ?)", (cargo_name, description, dimensions))
         conn.commit()
         CTkMessagebox(message="Info saved!",
                       icon="check", option_1="Ok")
@@ -173,16 +173,16 @@ def create_contract():
                     return
 
                 # save cargo type data
-                name = type_combobox.get().strip()
+                cargo_name = type_combobox.get().strip()
                 description = desc_entry.get()
                 dimensions = dim_entry.get()
-                insert_type(name, description, dimensions)
+                insert_type(cargo_name, description, dimensions)
 
                 # save cargo data
                 selected_type = type_combobox.get()
                 quantity = quantity_input.get()
                 weight = weight_input.get()
-                cursor.execute("SELECT cargo_type_id FROM CargoType WHERE name = ?", (selected_type,))
+                cursor.execute("SELECT cargo_type_id FROM CargoType WHERE cargo_name = ?", (selected_type,))
                 result = cursor.fetchone()
 
                 if result is None:
@@ -191,18 +191,6 @@ def create_contract():
 
                 cargo_type_id = result[0]
                 insert_cargo(cargo_type_id, quantity, weight)
-
-                # adding data to table contract
-                save_contract_data()
-            def save_contract_data():
-                cargo_name = type_combobox.get().strip()
-                quantity = quantity_input.get()
-                weight = weight_input.get()
-
-                contract_data["cargo_name"] = cargo_name
-                contract_data["quantity"] = quantity
-                contract_data["weight"] = weight
-            # adding data to table contract
 
             # buttons
             check_btn = CTkButton(master=screen_frame, text="Check availability",  **btn_style,
@@ -250,18 +238,27 @@ def create_contract():
             def find_connection():
                 dep_station = dep_entry.get()
                 arr_station = arr_entry.get()
+
+                if dep_station and dep_station[0].islower():
+                    CTkMessagebox(message="Please enter the departure station with a capital letter!", icon="cancel")
+                    return
+                if arr_station and arr_station[0].islower():
+                    CTkMessagebox(message="Please enter the arrival station with a capital letter!", icon="cancel")
+                    return
+
                 map_instance = Map(dep_station, arr_station, 0, 0)
                 is_connection, distance, duration = map_instance.is_station()
 
                 if is_connection:
-                    CTkMessagebox(message=f"Railway connection exists! Distance: {distance} km,"
-                                          f"Duration: {duration} hours",
-                        icon="check", option_1="Ok")
-                    distance_label.configure(text=f"Distance: {distance} km")
-                    duration_label.configure(text=f"Duration: {duration} hours")
+                    message = f"Railway connection exists!\nDistance: {distance} km\nDuration: {duration} hours"
+                    CTkMessagebox(message=message, icon="check", option_1="Ok")
+                    result_text.delete("1.0", "end")
+                    result_text.insert("1.0", message)
+                    save_btn.configure(state="normal")
                 else:
-                    CTkMessagebox(title="Error", message="Railway connection doesn't exist",
-                                  icon="cancel")
+                    CTkMessagebox(title="Error", message="Railway connection doesn't exist", icon="cancel")
+                    save_btn.configure(state="disabled")
+
             def save_route():
                 dep_station = dep_entry.get()
                 arr_station = arr_entry.get()
@@ -279,68 +276,56 @@ def create_contract():
                     CTkMessagebox(title="Error", message="Cannot save route. Railway connection doesn't exist",
                                   icon="cancel")
 
-            label1 = CTkLabel(master=screen_frame, text="Enter the stations and check "
-                                                        "if the railway connection exists:",
-                              text_color="#000000", anchor="w",
-                              justify="left", font=("Arial Rounded MT Bold", 17))
+            label1 = CTkLabel(master=screen_frame,
+                              text="Enter the stations and check if the railway connection exists:",
+                              text_color="#000000", anchor="w", justify="left", font=("Arial Rounded MT Bold", 17))
             label1.place(relx=0, rely=0.1, anchor="w", x=30, y=5)
 
+            label2 = CTkLabel(master=screen_frame,
+                              text="Reminder:\nSystem works only with ukrainian cities.\nBegin with capital letter.",
+                              text_color="#CCCCCC", anchor="w", justify="left", font=("Arial Rounded MT Bold", 14))
+            label2.place(relx=0, rely=0.1, anchor="w", x=30, y=60)
+
             dep_label = CTkLabel(master=screen_frame, text="Departure station:", **label_style)
-            dep_label.place(relx=0, rely=0.1, anchor="w", x=30, y=60)
+            dep_label.place(relx=0, rely=0.1, anchor="w", x=30, y=130)
 
             dep_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
-            dep_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=90)
+            dep_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=160)
 
             arr_label = CTkLabel(master=screen_frame, text="Arrival station:", **label_style)
-            arr_label.place(relx=0, rely=0.1, anchor="w", x=30, y=130)
+            arr_label.place(relx=0, rely=0.1, anchor="w", x=30, y=190)
 
             arr_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
-            arr_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=160)
+            arr_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=220)
 
+            result_text = CTkTextbox(master=screen_frame, width=180, height=200)
+            result_text.place(relx=0, rely=0.1, anchor="w", x=370, y=170)
+
+            # buttons
             check_btn1 = CTkButton(master=screen_frame, text="Check availability", **btn_style,
-                                   command=find_connection)
-            check_btn1.place(relx=0, rely=0.1, anchor="w", x=30, y=250)
+                                   command=find_connection).place(relx=0, rely=0.1, anchor="w", x=30, y=320)
 
-            distance_label = CTkLabel(master=screen_frame, text="", **label_style)
-            distance_label.place(relx=0, rely=0.1, anchor="w", x=350, y=50)
-
-            duration_label = CTkLabel(master=screen_frame, text="", **label_style)
-            duration_label.place(relx=0, rely=0.1, anchor="w", x=350, y=100)
-
-            def save_contract_data():
-                departure_station = dep_entry.get().strip()
-                arrival_station = arr_entry.get().strip()
-                distance = distance_label.cget("text").split(":")[1].strip()
-
-                # Зберігаємо дані про контракт
-                contract_data["departure_station"] = departure_station
-                contract_data["arrival_station"] = arrival_station
-                contract_data["route_length"] = distance
-
-            save_btn = CTkButton(master=screen_frame, text="Save and proceed", width=90,
-                                 **btn_style, command=save_contract_data)
-            save_btn.place(relx=0, rely=0.1, anchor="w", x=200, y=400)
-
-            save1 = CTkButton(master=screen_frame, text="Save route", width=90,
-                              **btn_style, command=save_route)
-            save1.place(relx=0, rely=0.1, anchor="w", x=200, y=250)
+            save_btn = CTkButton(master=screen_frame, text="Save route", width=90, **btn_style,
+                                 command=save_route, state="disabled")
+            save_btn.place(relx=0, rely=0.1, anchor="w", x=200, y=320)
 
             next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style,
-                                 command=next_step)
-            next_btn.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
+                                 command=next_step).place(relx=0, rely=0.1, anchor="w", x=420, y=400)
 
         elif window_number == 3:
 
-            payment_label = CTkLabel(master=screen_frame, text="Payment",
+            payment_label = CTkLabel(master=screen_frame, text="Almost done!"
+                                                               "\nNow make the payment",
                                     text_color="#000000", anchor="w",
                                     justify="left",
-                                    font=("Arial Rounded MT Bold", 17))
-            payment_label.place(relx=0, rely=0, anchor="w", x=270, y=35)
+                                    font=("Arial Rounded MT Bold", 18))
+            payment_label.place(relx=0, rely=0.1, anchor="w", x=30, y=10)
 
             list_label = CTkLabel(master=screen_frame,
-                                  text="1 Click button 'Display' to see the price"
-                                       "\nand save the payment", **label_style)
-            list_label.place(relx=0, rely=0.1, anchor="w", x=30, y=45)
+                                  text="Click button 'Accept payment' to see the price for the tranportation"
+                                       "\nand save the payment",  text_color="#CCCCCC", anchor="w", justify="left",
+                                  font=("Arial Rounded MT Bold", 14))
+            list_label.place(relx=0, rely=0.1, anchor="w", x=30, y=80)
 
             def record_payment(calculated_tariff):
                 try:
@@ -355,16 +340,14 @@ def create_contract():
 
                     conn.commit()
                     conn.close()
-
-                    print("Payment recorded successfully.")
-
+                    CTkMessagebox(message="Payment recorded successfully!", icon="check", option_1="Thanks")
                 except sqlite3.Error as e:
-                    print("Error:", e)
+                    CTkMessagebox(message="Payment is not recorded!", icon="cancel", option_1="OK")
             def calculate_tariff():
                 global calculated_tariff
                 try:
                     cursor.execute(
-                        "SELECT ct.name, c.weight FROM Cargo c INNER JOIN CargoType ct ON c.cargo_type_id = ct.cargo_type_id ORDER BY c.rowid DESC LIMIT 1")
+                        "SELECT ct.cargo_name, c.weight FROM Cargo c INNER JOIN CargoType ct ON c.cargo_type_id = ct.cargo_type_id ORDER BY c.rowid DESC LIMIT 1")
                     cargo_data = cursor.fetchone()
 
                     cursor.execute("SELECT route_length, duration FROM Itinerary ORDER BY rowid DESC LIMIT 1")
@@ -408,29 +391,20 @@ def create_contract():
                 try:
                     calculate_tariff()
                 except sqlite3.Error as e:
-                    print("Error:", e)
+                    CTkMessagebox(message="Error", icon="cancel", option_1="OK")
 
-            display_button = CTkButton(master=screen_frame, text="Display and"
-                                                                 "\naccept the payment", **btn_style,
+            display_button = CTkButton(master=screen_frame, text="Accept payment", **btn_style,
                                        width=90, command=display)
-            display_button.place(relx=0, rely=0.1, anchor="w", x=30, y=320)
+            display_button.place(relx=0, rely=0.1, anchor="w", x=30, y=350)
+
 
             textbox = CTkTextbox(master=screen_frame, width=500, height=80)
-            textbox.place(relx=0, rely=0.1, anchor="w", x=30, y=135)
-
+            textbox.place(relx=0, rely=0.1, anchor="w", x=30, y=155)
             textbox1 = CTkTextbox(master=screen_frame, width=500, height=80)
-            textbox1.place(relx=0, rely=0.1, anchor="w", x=30, y=235)
+            textbox1.place(relx=0, rely=0.1, anchor="w", x=30, y=255)
 
-            def save_contract_data():
-                payment_amount = calculated_tariff
-                contract_data["payment_amount"] = payment_amount
 
-            save_btn = CTkButton(master=screen_frame, text="Save and proceed", width=90,
-                                 **btn_style,command=save_contract_data)
-            save_btn.place(relx=0, rely=0.1, anchor="w", x=200, y=350)
-
-            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style,
-                                 command=next_step)
+            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style, command=next_step)
             next_btn.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
 
         elif window_number == 4:
@@ -438,39 +412,36 @@ def create_contract():
                                text_color="#000000", anchor="w",
                                justify="left",
                                font=("Arial Rounded MT Bold", 18))
-            cl_label.place(relx=0, rely=0.1, anchor="w", x=30, y=5)
+            cl_label.place(relx=0, rely=0.1, anchor="w", x=30, y=2)
+
+            cl_label1 = CTkLabel(master=screen_frame, text="Last step!\nYou have to register the client to the system",
+                                 text_color="#CCCCCC", anchor="w", justify="left", font=("Arial Rounded MT Bold", 14))
+            cl_label1.place(relx=0, rely=0.1, anchor="w", x=30, y=50)
 
             rec_pib = CTkLabel(master=screen_frame, text="Enter pib:", **label_style)
-            rec_pib.place(relx=0, rely=0.1, anchor="w", x=30, y=35)
+            rec_pib.place(relx=0, rely=0.1, anchor="w", x=30, y=100)
 
             pib_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
-            pib_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=65)
+            pib_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=135)
 
             rec_ph = CTkLabel(master=screen_frame, text="Enter phone number:", **label_style)
-            rec_ph.place(relx=0, rely=0.1, anchor="w", x=30, y=95)
+            rec_ph.place(relx=0, rely=0.1, anchor="w", x=30, y=170)
 
             ph_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
-            ph_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=125)
+            ph_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=205)
 
             rec_email = CTkLabel(master=screen_frame, text="Enter email:", **label_style)
-            rec_email.place(relx=0, rely=0.1, anchor="w", x=30, y=155)
+            rec_email.place(relx=0, rely=0.1, anchor="w", x=30, y=240)
 
             email_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
-            email_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=185)
+            email_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=275)
 
             rec_password = CTkLabel(master=screen_frame, text="Enter password:", **label_style)
-            rec_password.place(relx=0, rely=0.1, anchor="w", x=30, y=215)
+            rec_password.place(relx=0, rely=0.1, anchor="w", x=30, y=310)
 
             password_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
-            password_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=245)
+            password_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=345)
 
-            def save_contract_data():
-                c_pib = pib_entry.get()
-                c_phone_number = ph_entry.get()
-
-                # Зберігаємо дані про контракт
-                contract_data["c_pib"] = c_pib
-                contract_data["c_phone_number"] = c_phone_number
             def create_client(cursor):
                 pib = pib_entry.get().strip()
                 phone_number = ph_entry.get().strip()
@@ -479,101 +450,74 @@ def create_contract():
 
                 try:
                     if not pib or not phone_number or not email or not password:
-                        print("Please fill in all fields.")
+                        CTkMessagebox(message="Please fill in all the fields", icon="cancel", option_1="OK")
                         return
-                    cursor.execute(
-                        "INSERT INTO Client (c_pib, c_phone_number, c_email, c_password) VALUES (?, ?, ?, ?)",
-                        (pib, phone_number, email, password)
-                    )
-                    conn.commit()
-                    print("Client created successfully.")
-                except sqlite3.Error as e:
-                    print("Error:", e)
+                    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+                        CTkMessagebox(message="Invalid email format!", icon="cancel", option_1="OK")
+                        return
+                    if len(password) < 8:
+                        CTkMessagebox(message="Password should contain at least 8 characters!", icon="cancel",
+                                      option_1="OK")
+                        return
+                    if len(phone_number) < 10 or not phone_number.isdigit():
+                        CTkMessagebox(message="Phone number should contain at least 10 digits!", icon="cancel",
+                                      option_1="OK")
+                        return
 
+                    cursor.execute("SELECT * FROM Client WHERE c_email = ? OR c_phone_number = ?",
+                                   (email, phone_number))
+                    existing_client = cursor.fetchone()
+                    if existing_client:
+                        CTkMessagebox(message="User with this email or phone number already exists!", icon="cancel",
+                                      option_1="OK")
+                    else:
+                        cursor.execute(
+                            "INSERT INTO Client (c_pib, c_phone_number, c_email, c_password) VALUES (?, ?, ?, ?)",
+                            (pib, phone_number, email, password))
+                        conn.commit()
+                        CTkMessagebox(message="Registration successful!", icon="check", option_1="Thanks")
+                except sqlite3.Error as e:
+                    CTkMessagebox(message="Error", icon="cancel", option_1="OK")
+
+            # buttons
             save_client = CTkButton(master=screen_frame, text="Register client", **btn_style,
                                     command=lambda: create_client(cursor))
-            save_client.place(relx=0, rely=0.1, anchor="w", x=30, y=300)
+            save_client.place(relx=0, rely=0.1, anchor="w", x=30, y=400)
 
-            save_btn = CTkButton(master=screen_frame, text="Save and proceed", width=90,
-                                 **btn_style, command=save_contract_data)
-            save_btn.place(relx=0, rely=0.1, anchor="w", x=200, y=350)
+            # contact
+            cursor.execute("SELECT client_id FROM Client ORDER BY client_id DESC LIMIT 1")
+            client_id = cursor.fetchone()[0]
 
-            def create(contract_data):
-                cargo_name = contract_data.get("cargo_name", "")
-                quantity = contract_data.get("quantity", "")
-                weight = contract_data.get("weight", "")
-                departure_station = contract_data.get("departure_station", "")
-                arrival_station = contract_data.get("arrival_station", "")
-                route_length = contract_data.get("route_length", "")
-                payment_amount = contract_data.get("payment_amount", "")
-                c_pib = contract_data.get("c_pib", "")
-                c_phone_number = contract_data.get("c_phone_number", "")
-                d_pib = contract_data.get("d_pib", "")
+            cursor.execute("SELECT payment_id FROM Payment ORDER BY payment_id DESC LIMIT 1")
+            payment_id = cursor.fetchone()[0]
 
+            cursor.execute("SELECT dispatcher_id FROM Dispatcher ORDER BY dispatcher_id DESC LIMIT 1")
+            dispatcher_id = cursor.fetchone()[0]
+
+            cursor.execute("SELECT cargo_id FROM Cargo ORDER BY cargo_id DESC LIMIT 1")
+            cargo_id = cursor.fetchone()[0]
+
+            cursor.execute("SELECT itinerary_id FROM Itinerary ORDER BY itinerary_id DESC LIMIT 1")
+            itinerary_id = cursor.fetchone()[0]
+
+            def create_contract():
+                current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 try:
-                    conn = sqlite3.connect('data.db')
-                    cursor = conn.cursor()
-
-                    current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-                    cursor.execute("SELECT client_id FROM Client ORDER BY client_id DESC LIMIT 1")
-                    client_id = cursor.fetchone()
-                    if client_id:
-                        client_id = client_id[0]
-                    else:
-                        raise ValueError("No clients found.")
-
-                    cursor.execute("SELECT dispatcher_id FROM Dispatcher ORDER BY dispatcher_id DESC LIMIT 1")
-                    dispatcher_id = cursor.fetchone()
-                    if dispatcher_id:
-                        dispatcher_id = dispatcher_id[0]
-                    else:
-                        raise ValueError("No dispatchers found.")
-
                     cursor.execute(
-                        "SELECT cargo_type_id FROM CargoType WHERE name = ? ORDER BY cargo_type_id DESC LIMIT 1",
-                        (cargo_name,))
-                    cargo_type_id = cursor.fetchone()
-                    if cargo_type_id:
-                        cargo_type_id = cargo_type_id[0]
-                    else:
-                        raise ValueError("No cargo types found with the provided name.")
-
-                    cursor.execute(
-                        "SELECT route_id FROM Itinerary WHERE departure_station = ? AND arrival_station = ? ORDER BY route_id DESC LIMIT 1",
-                        (departure_station, arrival_station))
-                    route_id = cursor.fetchone()
-                    if route_id:
-                        route_id = route_id[0]
-                    else:
-                        raise ValueError("No routes found with the provided departure and arrival stations.")
-
-                    cursor.execute("SELECT payment_id FROM Payment ORDER BY payment_id DESC LIMIT 1")
-                    payment_id = cursor.fetchone()
-                    if payment_id:
-                        payment_id = payment_id[0]
-                    else:
-                        raise ValueError("No payments found.")
-
-                    cursor.execute(
-                        "INSERT INTO Contract (departure_station, arrival_station, route_length, c_pib, c_phone_number, payment_amount,"
-                        "cargo_name, quantity, weight, client_id, dispatcher_id, conclusion_date, cargo_type_id, itinerary_id, payment_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                        (departure_station, arrival_station, route_length, c_pib, c_phone_number,
-                         payment_amount, cargo_name, quantity, weight, client_id, dispatcher_id,
-                         current_datetime, cargo_type_id, route_id, payment_id))
+                        "INSERT INTO Contract (conclusion_date, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id) "
+                        "VALUES (?, ?, ?, ?, ?, ?)",
+                        (current_datetime, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id)
+                    )
                     conn.commit()
-                    conn.close()
-
-                    print("Contract data recorded successfully.")
-
+                    CTkMessagebox(message="Contract saved successfully!", icon="check", option_1="Thanks")
                 except sqlite3.Error as e:
-                    print("Error:", e)
-                except ValueError as ve:
-                    print("Value Error:", ve)
+                    CTkMessagebox(message="Error", icon="cancel", option_1="OK")
 
-            save_contract = CTkButton(master=screen_frame, text="Save contract",  **btn_style,
-                                      command=lambda: create(contract_data))
-            save_contract.place(relx=0, rely=0.1, anchor="w", x=30, y=420)
+            save_contract = CTkButton(master=screen_frame, text="Save contract", **btn_style,
+                                      command=create_contract)
+            save_contract.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
+
+
 
     show_current_step()
     contract_window.mainloop()

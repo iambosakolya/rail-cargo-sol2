@@ -42,7 +42,8 @@ def create_tables():
             itinerary_id INTEGER PRIMARY KEY,
             departure_station TEXT,
             arrival_station TEXT,
-            route_length REAL
+            route_length REAL,
+            duration REAL
         )
     ''')
 
@@ -76,26 +77,17 @@ def create_tables():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS Contract (
             contract_id INTEGER PRIMARY KEY,
-            departure_station TEXT,
-            arrival_station TEXT,
-            route_length REAL,
-            c_pib TEXT,
-            c_phone_number TEXT,
-            payment_amount REAL,
-            cargo_name TEXT,
-            quantity INTEGER,
-            weight REAL,
+            conclusion_date TEXT,
             client_id INTEGER,
             dispatcher_id INTEGER,
-            conclusion_date TEXT,
-            cargo_type_id INTEGER,
+            cargo_id INTEGER,
             payment_id INTEGER,
             itinerary_id INTEGER,
             FOREIGN KEY (client_id) REFERENCES Client(client_id),
             FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
             FOREIGN KEY (dispatcher_id) REFERENCES Dispatcher(dispatcher_id),
-            FOREIGN KEY (cargo_type_id) REFERENCES CargoType(cargo_type_id),
-            FOREIGN KEY (itinerary_id) REFERENCES Itinerary(route_id)
+            FOREIGN KEY (cargo_id) REFERENCES Cargo(cargo_id),
+            FOREIGN KEY (itinerary_id) REFERENCES Itinerary(itinerary_id)
         )
     ''')
 
