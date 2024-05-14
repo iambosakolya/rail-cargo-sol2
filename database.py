@@ -39,7 +39,7 @@ def create_tables():
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS Itinerary (
-            route_id INTEGER PRIMARY KEY,
+            itinerary_id INTEGER PRIMARY KEY,
             departure_station TEXT,
             arrival_station TEXT,
             route_length REAL

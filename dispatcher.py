@@ -12,6 +12,22 @@ from classes.CargoType import CargoType
 from CTkMessagebox import CTkMessagebox
 from classes.Users import Dispatcher,Client
 
+label_style = {
+    "text_color": "#000000",
+    "anchor": "w",
+    "justify": "left",
+    "font": ("Arial Rounded MT Bold", 15)}
+btn_style = {
+    "fg_color": "#000000",
+    "hover_color": "#4F2346",
+    "text_color": "#ffffff",
+    "font": ("Arial Rounded MT Bold", 13)}
+entry_style = {
+    "fg_color": "#EEEEEE",
+    "border_color": "#601E88",
+    "border_width": 1,
+    "text_color": "#000000"}
+
 def insert_type(name, description, dimensions):
     try:
         cursor.execute("INSERT INTO CargoType (name, description, dimensions) VALUES (?, ?, ?)", (name, description, dimensions))
@@ -21,7 +37,6 @@ def insert_type(name, description, dimensions):
     except sqlite3.Error as e:
         conn.rollback()
         CTkMessagebox(title="Error", message="Type info is not saved", icon="cancel")
-
 def insert_cargo(cargo_type_id, quantity, weight):
     cursor.execute("SELECT COUNT(*) FROM CargoType WHERE cargo_type_id = ?", (cargo_type_id,))
     count = cursor.fetchone()[0]
@@ -30,18 +45,23 @@ def insert_cargo(cargo_type_id, quantity, weight):
         return
     cursor.execute("INSERT INTO Cargo (cargo_type_id, quantity, weight) VALUES (?, ?, ?)", (cargo_type_id, quantity, weight))
     conn.commit()
-
 def create_contract():
     global screen_frame
     window_number = 1
     contract_window = CTk()
     contract_window.title(f"New contract")
-    contract_window.geometry("600x500")
-    contract_window.resizable(0, 0)
 
-    x = (contract_window.winfo_screenwidth() - contract_window.winfo_reqwidth()) / 2
-    y = (contract_window.winfo_screenheight() - contract_window.winfo_reqheight()) / 2
-    contract_window.geometry("+%d+%d" % (x, y))
+    screen_width = contract_window.winfo_screenwidth()
+    screen_height = contract_window.winfo_screenheight()
+
+    app_width = 600
+    app_height = 500
+
+    x_position = (screen_width - app_width) // 2
+    y_position = (screen_height - app_height) // 2
+
+    contract_window.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
+    contract_window.resizable(0, 0)
 
     screen_frame = CTkFrame(master=contract_window, width=850, height=750, fg_color="#897E9B")
     screen_frame.pack_propagate(0)
@@ -76,38 +96,24 @@ def create_contract():
         screen_frame.pack_propagate(0)
         screen_frame.pack(expand=True, fill="both")
 
-        def cargo_type_check(cargo_instance):
-            if cargo_instance.isCargoType():
-                CTkMessagebox(message="Cargo type is available",icon="check", option_1="Thanks")
-            else:
-                CTkMessagebox(title="Error", message="This cargo type is not available!", icon="cancel")
-
         if window_number == 1:
             # cargo`s name
-            type_label = CTkLabel(master=screen_frame, text="Choose your cargo type:",
-                                  text_color="#000000", anchor="w",
-                                  justify="left",
-                                  font=("Arial Rounded MT Bold", 15))
+            type_label = CTkLabel(master=screen_frame, text="Choose your cargo type:", **label_style)
             type_label.place(relx=0, rely=0.1, anchor="w", x=30, y=5)
-
 
             type_combobox = CTkComboBox(master=screen_frame, values=['   ', 'Freight', 'Coal', 'Grains', 'Steel', 'Lumber',
                                                                      'Oil', 'Chemicals', 'Machinery',
                                                                      'Automobiles', 'Containers', 'Livestock',
                                                                      'Cement', 'Fertilizer', 'Papers'], width=250)
-
             type_combobox.place(relx=0, rely=0.1, anchor="w", x=30, y=45)
 
-            add_label = CTkLabel(master=screen_frame, text="Or enter new type:",
-                                 text_color="#000000", anchor="w",
-                                 justify="left",
-                                 font=("Arial Rounded MT Bold", 15))
+            add_label = CTkLabel(master=screen_frame, text="Or enter new type:", **label_style)
             add_label.place(relx=0, rely=0.1, anchor="w", x=420, y=5)
 
             type_entry = CTkEntry(master=screen_frame, width=140)
             type_entry.place(relx=0, rely=0.1, anchor="w", x=420, y=45)
 
-            # ADD BUTTON - adding new type
+            # adding new type
             def new_type():
                 new_cargo_type = type_entry.get().strip()
                 if new_cargo_type == "":
@@ -120,19 +126,52 @@ def create_contract():
                 existing_cargo_types.append(new_cargo_type)
                 type_combobox.configure(values=existing_cargo_types)
 
-            add_btn1 = CTkButton(master=screen_frame, text="Add",
-                                 fg_color="#000000", hover_color="#4F2346",
-                                 font=("Arial Rounded MT Bold", 13),
-                                 width=40, text_color="#ffffff",
-                                 command=new_type)
+            add_btn1 = CTkButton(master=screen_frame, text="Add", width=40, **btn_style, command=new_type)
             add_btn1.place(relx=0, rely=0.1, anchor="w", x=350, y=45)
 
-            tooltip_add = CTkToolTip(add_btn1, message="Please enter the new cargo type "
-                                                       "\nwith a capital letter and in plural!")
-            # ADD BUTTON - adding new type
+            tooltip_add = CTkToolTip(add_btn1, message="Please enter cargo type with a capital letter and in plural!"
+                                                       "\n                                                   "
+                                                       "\nNot allowed: \nMinerals, \nExplosives, \nRadioactives,"
+                                                       "\nToxics, \nPerishables, \nFirearms,\nChemicals, \nAmmunition, \nNarcotics"
+                                                       "\nPoisons, \nWaste materials, \nLiquids, \nGases")
+            # adding new type
+
+            cargo_type_checked = False
+            def cargo_type_check(cargo_instance):
+                global cargo_type_checked
+                if cargo_instance.isCargoType():
+                    cargo_type_checked = True
+                    CTkMessagebox(message="Cargo type is available", icon="check", option_1="Thanks")
+                    save.configure(state="normal")
+                else:
+                    cargo_type_checked = False
+                    CTkMessagebox(title="Error", message="This cargo type is not available!", icon="cancel")
+                    save.configure(state="disabled")
 
             # adding data to table "cargo types"
             def save_cargo():
+                global cargo_type_checked
+
+                if not cargo_type_checked:
+                    CTkMessagebox(title="Error", message="Please check cargo type availability first", icon="cancel")
+                    return
+
+                if not type_combobox.get().strip() or not dim_entry.get() or not weight_input.get() or not quantity_input.get():
+                    CTkMessagebox(title="Error", message="Please fill in all fields", icon="cancel")
+                    return
+
+                if not weight_input.get().isdigit():
+                    CTkMessagebox(title="Error", message="Weight should contain only digits", icon="cancel")
+                    return
+
+                if not quantity_input.get().isdigit():
+                    CTkMessagebox(title="Error", message="Quantity should contain only digits", icon="cancel")
+                    return
+
+                if not dim_entry.get().replace('*', '').isdigit():
+                    CTkMessagebox(title="Error", message="Dimensions should contain only digits or '*'",  icon="cancel")
+                    return
+
                 # save cargo type data
                 name = type_combobox.get().strip()
                 description = desc_entry.get()
@@ -153,113 +192,70 @@ def create_contract():
                 cargo_type_id = result[0]
                 insert_cargo(cargo_type_id, quantity, weight)
 
-            save = CTkButton(master=screen_frame, text="Save type",
-                                  fg_color="#000000", hover_color="#4F2346",
-                                  font=("Arial Rounded MT Bold", 13), width=90,
-                                  text_color="#ffffff" ,command=save_cargo)
-            save.place(relx=0, rely=0.1, anchor="w", x=200, y=300)
-            # adding data to table "cargo types"
-
-            # cargo`s dimension
-            type_label1 = CTkLabel(master=screen_frame, text="Enter dimensions:",
-                                   text_color="#000000", anchor="w",
-                                   justify="left",
-                                   font=("Arial Rounded MT Bold", 15))
-            type_label1.place(relx=0, rely=0.1, anchor="w", x=30, y=95)
-
-            dim_entry = CTkEntry(master=screen_frame,
-                                      width=150, height=30,
-                                      fg_color="#EEEEEE",
-                                      border_color="#601E88",
-                                      border_width=2,
-                                      text_color="#000000")
-            dim_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=135)
-
-            # cargo`s description
-            type_label2 = CTkLabel(master=screen_frame, text="Add description (if necessary):",
-                                   text_color="#000000", anchor="w",
-                                   justify="left",
-                                   font=("Arial Rounded MT Bold", 15))
-            type_label2.place(relx=0, rely=0.1, anchor="w", x=30, y=185)
-
-            desc_entry = CTkEntry(master=screen_frame,
-                                  width=350, height=50,
-                                  fg_color="#EEEEEE",
-                                  border_color="#601E88",
-                                  border_width=2,
-                                  text_color="#000000")
-            desc_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=225)
-
-            # cargo`s weight
-            weight_label = CTkLabel(master=screen_frame, text="Enter weight:(kg)",
-                                    text_color="#000000", anchor="w",
-                                    justify="left",
-                                    font=("Arial Rounded MT Bold", 15))
-            weight_label.place(relx=0, rely=0.1, anchor="w", x=420, y=185)
-
-            weight_input = CTkEntry(master=screen_frame,
-                                    width=150, height=30,
-                                    fg_color="#EEEEEE",
-                                    border_color="#601E88",
-                                    border_width=2,
-                                    text_color="#000000")
-            weight_input.place(relx=0, rely=0.1, anchor="w", x=420, y=225)
-
-            # cargo`s quantity
-            quantity_label = CTkLabel(master=screen_frame, text="Enter quantity:",
-                                      text_color="#000000", anchor="w",
-                                      justify="left",
-                                      font=("Arial Rounded MT Bold", 15))
-            quantity_label.place(relx=0, rely=0.1, anchor="w", x=420, y=265)
-
-            quantity_input = CTkEntry(master=screen_frame,
-                                      width=150, height=30,
-                                      fg_color="#EEEEEE",
-                                      border_color="#601E88",
-                                      border_width=2,
-                                      text_color="#000000")
-            quantity_input.place(relx=0, rely=0.1, anchor="w", x=420, y=295)
-
-            # buttons
-            check_btn = CTkButton(master=screen_frame, text="Check availability",
-                                  fg_color="#000000", hover_color="#4F2346",
-                                  font=("Arial Rounded MT Bold", 13), text_color="#ffffff",
-                                  command=lambda: cargo_type_check(CargoType(type_combobox.get(),
-                                                                             dim_entry.get(), weight_input.get(),
-                                                                             quantity_input.get(), desc_entry.get())))
-            check_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=300)
-
+                # adding data to table contract
+                save_contract_data()
             def save_contract_data():
                 cargo_name = type_combobox.get().strip()
                 quantity = quantity_input.get()
                 weight = weight_input.get()
 
-                # Зберігаємо дані про контракт
                 contract_data["cargo_name"] = cargo_name
                 contract_data["quantity"] = quantity
                 contract_data["weight"] = weight
+            # adding data to table contract
 
-            save_btn = CTkButton(master=screen_frame, text="Save and proceed",
-                                 fg_color="#000000", hover_color="#4F2346",
-                                 font=("Arial Rounded MT Bold", 13), width=90,
-                                 text_color="#ffffff", command=save_contract_data)
-            save_btn.place(relx=0, rely=0.1, anchor="w", x=200, y=400)
+            # buttons
+            check_btn = CTkButton(master=screen_frame, text="Check availability",  **btn_style,
+                            command=lambda: cargo_type_check(CargoType(type_combobox.get(), dim_entry.get(), weight_input.get(),
+                                                                            quantity_input.get(), desc_entry.get())))
+            check_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=300)
 
-            next_btn = CTkButton(master=screen_frame, text="Next step",
-                                 fg_color="#000000", hover_color="#4F2346",
-                                 font=("Arial Rounded MT Bold", 13), text_color="#ffffff",
-                                 command=next_step)
+            save = CTkButton(master=screen_frame, text="Save type", **btn_style, width=90, command=save_cargo)
+            save.place(relx=0, rely=0.1, anchor="w", x=200, y=300)
+            save.configure(state="disabled")
+
+            # cargo`s dimension
+            type_label1 = CTkLabel(master=screen_frame, text="Enter dimensions:", **label_style)
+            type_label1.place(relx=0, rely=0.1, anchor="w", x=30, y=95)
+
+            dim_entry = CTkEntry(master=screen_frame,width=150, height=30, **entry_style)
+            dim_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=135)
+
+            # cargo`s description
+            type_label2 = CTkLabel(master=screen_frame, text="Add description (if necessary):", **label_style)
+            type_label2.place(relx=0, rely=0.1, anchor="w", x=30, y=185)
+
+            desc_entry = CTkEntry(master=screen_frame, width=350, height=50, **entry_style)
+            desc_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=225)
+
+            # cargo`s weight
+            weight_label = CTkLabel(master=screen_frame, text="Enter weight:(tons)",
+                                    **label_style)
+            weight_label.place(relx=0, rely=0.1, anchor="w", x=420, y=185)
+
+            weight_input = CTkEntry(master=screen_frame, width=150, height=30,**entry_style)
+            weight_input.place(relx=0, rely=0.1, anchor="w", x=420, y=225)
+
+            # cargo`s quantity
+            quantity_label = CTkLabel(master=screen_frame, text="Enter quantity:", **label_style)
+            quantity_label.place(relx=0, rely=0.1, anchor="w", x=420, y=265)
+
+            quantity_input = CTkEntry(master=screen_frame, width=150, height=30, **entry_style)
+            quantity_input.place(relx=0, rely=0.1, anchor="w", x=420, y=295)
+
+            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style, command=next_step)
             next_btn.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
 
         elif window_number == 2:
-            def st_connect():
+            def find_connection():
                 dep_station = dep_entry.get()
                 arr_station = arr_entry.get()
                 map_instance = Map(dep_station, arr_station, 0, 0)
                 is_connection, distance, duration = map_instance.is_station()
 
                 if is_connection:
-                    CTkMessagebox(message=f"Railway connection exists! Distance: {distance} km, Duration: {duration} hours",
+                    CTkMessagebox(message=f"Railway connection exists! Distance: {distance} km,"
+                                          f"Duration: {duration} hours",
                         icon="check", option_1="Ok")
                     distance_label.configure(text=f"Distance: {distance} km")
                     duration_label.configure(text=f"Duration: {duration} hours")
@@ -283,77 +279,53 @@ def create_contract():
                     CTkMessagebox(title="Error", message="Cannot save route. Railway connection doesn't exist",
                                   icon="cancel")
 
-            label1 = CTkLabel(master=screen_frame, text="Enter the stations and check if the railway exists:",
+            label1 = CTkLabel(master=screen_frame, text="Enter the stations and check "
+                                                        "if the railway connection exists:",
                               text_color="#000000", anchor="w",
-                              justify="left",
-                              font=("Arial Rounded MT Bold", 17))
+                              justify="left", font=("Arial Rounded MT Bold", 17))
             label1.place(relx=0, rely=0.1, anchor="w", x=30, y=5)
 
-            dep_label = CTkLabel(master=screen_frame, text="Departure station:",
-                                 text_color="#000000", anchor="w",
-                                 justify="left",
-                                 font=("Arial Rounded MT Bold", 15))
-            dep_label.place(relx=0, rely=0.1, anchor="w", x=30, y=45)
+            dep_label = CTkLabel(master=screen_frame, text="Departure station:", **label_style)
+            dep_label.place(relx=0, rely=0.1, anchor="w", x=30, y=60)
 
-            dep_entry = CTkEntry(master=screen_frame, width=300,
-                                 fg_color="#EEEEEE",
-                                 border_color="#601E88",
-                                 border_width=1,
-                                 text_color="#000000")
-            dep_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=85)
+            dep_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
+            dep_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=90)
 
-            arr_label = CTkLabel(master=screen_frame, text="Arrival station:",
-                                 text_color="#000000", anchor="w",
-                                 justify="left",
-                                 font=("Arial Rounded MT Bold", 15))
-            arr_label.place(relx=0, rely=0.1, anchor="w", x=30, y=125)
+            arr_label = CTkLabel(master=screen_frame, text="Arrival station:", **label_style)
+            arr_label.place(relx=0, rely=0.1, anchor="w", x=30, y=130)
 
-            arr_entry = CTkEntry(master=screen_frame, width=300,
-                                 fg_color="#EEEEEE",
-                                 border_color="#601E88",
-                                 border_width=1,
-                                 text_color="#000000")
-            arr_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=165)
+            arr_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
+            arr_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=160)
 
-            check_btn1 = CTkButton(master=screen_frame, text="Check availability",
-                                   fg_color="#000000", hover_color="#4F2346",
-                                   font=("Arial Rounded MT Bold", 13), text_color="#ffffff",
-                                   command=st_connect)
-            check_btn1.place(relx=0, rely=0.1, anchor="w", x=30, y=300)
+            check_btn1 = CTkButton(master=screen_frame, text="Check availability", **btn_style,
+                                   command=find_connection)
+            check_btn1.place(relx=0, rely=0.1, anchor="w", x=30, y=250)
 
-            distance_label = CTkLabel(master=screen_frame, text="", anchor="w",
-                                      justify="left",font=("Arial Rounded MT Bold", 15))
-            distance_label.place(relx=0, rely=0.1, anchor="w", x=30, y=350)
+            distance_label = CTkLabel(master=screen_frame, text="", **label_style)
+            distance_label.place(relx=0, rely=0.1, anchor="w", x=350, y=50)
 
-            duration_label = CTkLabel(master=screen_frame, text="", anchor="w",
-                                      justify="left",font=("Arial Rounded MT Bold", 15))
-            duration_label.place(relx=0, rely=0.1, anchor="w", x=30, y=390)
+            duration_label = CTkLabel(master=screen_frame, text="", **label_style)
+            duration_label.place(relx=0, rely=0.1, anchor="w", x=350, y=100)
 
             def save_contract_data():
                 departure_station = dep_entry.get().strip()
                 arrival_station = arr_entry.get().strip()
-                distance = distance_label.cget("text").split(":")[1].strip()  # Отримання тексту з distance_label
+                distance = distance_label.cget("text").split(":")[1].strip()
 
                 # Зберігаємо дані про контракт
                 contract_data["departure_station"] = departure_station
                 contract_data["arrival_station"] = arrival_station
                 contract_data["route_length"] = distance
 
-            save_btn = CTkButton(master=screen_frame, text="Save and proceed",
-                                 fg_color="#000000", hover_color="#4F2346",
-                                 font=("Arial Rounded MT Bold", 13), width=90,
-                                 text_color="#ffffff", command=save_contract_data)
+            save_btn = CTkButton(master=screen_frame, text="Save and proceed", width=90,
+                                 **btn_style, command=save_contract_data)
             save_btn.place(relx=0, rely=0.1, anchor="w", x=200, y=400)
 
-            save1 = CTkButton(master=screen_frame, text="Save route",
-                              fg_color="#000000", hover_color="#4F2346",
-                              font=("Arial Rounded MT Bold", 13), width=90,
-                              text_color="#ffffff", command=save_route)
-            save1.place(relx=0, rely=0.1, anchor="w", x=200, y=300)
+            save1 = CTkButton(master=screen_frame, text="Save route", width=90,
+                              **btn_style, command=save_route)
+            save1.place(relx=0, rely=0.1, anchor="w", x=200, y=250)
 
-            next_btn = CTkButton(master=screen_frame, text="Next step",
-                                 fg_color="#000000", hover_color="#4F2346",
-                                 font=("Arial Rounded MT Bold", 13), text_color="#ffffff",
+            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style,
                                  command=next_step)
             next_btn.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
 
@@ -367,10 +339,7 @@ def create_contract():
 
             list_label = CTkLabel(master=screen_frame,
                                   text="1 Click button 'Display' to see the price"
-                                       "\nand save the payment",
-                                  text_color="#000000", anchor="w",
-                                  justify="left",
-                                  font=("Arial Rounded MT Bold", 15))
+                                       "\nand save the payment", **label_style)
             list_label.place(relx=0, rely=0.1, anchor="w", x=30, y=45)
 
             def record_payment(calculated_tariff):
@@ -391,7 +360,6 @@ def create_contract():
 
                 except sqlite3.Error as e:
                     print("Error:", e)
-
             def calculate_tariff():
                 global calculated_tariff
                 try:
@@ -423,7 +391,6 @@ def create_contract():
 
                 except sqlite3.Error as e:
                     print("Error:", e)
-
             def display_data(cargo_data, route_data):
                 if cargo_data and route_data:
                     cargo_type, weight = cargo_data
@@ -437,17 +404,15 @@ def create_contract():
                     table_data += row_data
                     textbox.insert("end", table_data)
                     textbox.configure(state="disabled")
-
             def display():
                 try:
                     calculate_tariff()
                 except sqlite3.Error as e:
                     print("Error:", e)
 
-            display_button = CTkButton(master=screen_frame, text="Display",
-                                       fg_color="#000000", hover_color="#4F2346",
-                                       font=("Arial Rounded MT Bold", 13), width=90,
-                                       text_color="#ffffff", command=display)
+            display_button = CTkButton(master=screen_frame, text="Display and"
+                                                                 "\naccept the payment", **btn_style,
+                                       width=90, command=display)
             display_button.place(relx=0, rely=0.1, anchor="w", x=30, y=320)
 
             textbox = CTkTextbox(master=screen_frame, width=500, height=80)
@@ -456,25 +421,15 @@ def create_contract():
             textbox1 = CTkTextbox(master=screen_frame, width=500, height=80)
             textbox1.place(relx=0, rely=0.1, anchor="w", x=30, y=235)
 
-            display_button = CTkButton(master=screen_frame, text="Accept the payment",
-                                       fg_color="#000000", hover_color="#4F2346",
-                                       font=("Arial Rounded MT Bold", 13), width=90,
-                                       text_color="#ffffff")
-            display_button.place(relx=0, rely=0.1, anchor="w", x=150, y=320)
-
             def save_contract_data():
                 payment_amount = calculated_tariff
                 contract_data["payment_amount"] = payment_amount
 
-            save_btn = CTkButton(master=screen_frame, text="Save and proceed",
-                                 fg_color="#000000", hover_color="#4F2346",
-                                 font=("Arial Rounded MT Bold", 13), width=90,
-                                 text_color="#ffffff", command=save_contract_data)
+            save_btn = CTkButton(master=screen_frame, text="Save and proceed", width=90,
+                                 **btn_style,command=save_contract_data)
             save_btn.place(relx=0, rely=0.1, anchor="w", x=200, y=350)
 
-            next_btn = CTkButton(master=screen_frame, text="Next step",
-                                 fg_color="#000000", hover_color="#4F2346",
-                                 font=("Arial Rounded MT Bold", 13), text_color="#ffffff",
+            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style,
                                  command=next_step)
             next_btn.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
 
@@ -485,56 +440,28 @@ def create_contract():
                                font=("Arial Rounded MT Bold", 18))
             cl_label.place(relx=0, rely=0.1, anchor="w", x=30, y=5)
 
-            rec_pib = CTkLabel(master=screen_frame, text="Enter pib:",
-                              text_color="#000000", anchor="w",
-                              justify="left",
-                              font=("Arial Rounded MT Bold", 15))
+            rec_pib = CTkLabel(master=screen_frame, text="Enter pib:", **label_style)
             rec_pib.place(relx=0, rely=0.1, anchor="w", x=30, y=35)
 
-            pib_entry = CTkEntry(master=screen_frame, width=300,
-                                 fg_color="#EEEEEE",
-                                 border_color="#601E88",
-                                 border_width=1,
-                                 text_color="#000000")
+            pib_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
             pib_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=65)
 
-            rec_ph = CTkLabel(master=screen_frame, text="Enter phone number:",
-                               text_color="#000000", anchor="w",
-                               justify="left",
-                               font=("Arial Rounded MT Bold", 15))
+            rec_ph = CTkLabel(master=screen_frame, text="Enter phone number:", **label_style)
             rec_ph.place(relx=0, rely=0.1, anchor="w", x=30, y=95)
 
-            ph_entry = CTkEntry(master=screen_frame, width=300,
-                                 fg_color="#EEEEEE",
-                                 border_color="#601E88",
-                                 border_width=1,
-                                 text_color="#000000")
+            ph_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
             ph_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=125)
 
-            rec_email = CTkLabel(master=screen_frame, text="Enter email:",
-                              text_color="#000000", anchor="w",
-                              justify="left",
-                              font=("Arial Rounded MT Bold", 15))
+            rec_email = CTkLabel(master=screen_frame, text="Enter email:", **label_style)
             rec_email.place(relx=0, rely=0.1, anchor="w", x=30, y=155)
 
-            email_entry = CTkEntry(master=screen_frame, width=300,
-                                fg_color="#EEEEEE",
-                                border_color="#601E88",
-                                border_width=1,
-                                text_color="#000000")
+            email_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
             email_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=185)
 
-            rec_password = CTkLabel(master=screen_frame, text="Enter password:",
-                              text_color="#000000", anchor="w",
-                              justify="left",
-                              font=("Arial Rounded MT Bold", 15))
+            rec_password = CTkLabel(master=screen_frame, text="Enter password:", **label_style)
             rec_password.place(relx=0, rely=0.1, anchor="w", x=30, y=215)
 
-            password_entry = CTkEntry(master=screen_frame, width=300,
-                                fg_color="#EEEEEE",
-                                border_color="#601E88",
-                                border_width=1,
-                                text_color="#000000")
+            password_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
             password_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=245)
 
             def save_contract_data():
@@ -563,16 +490,12 @@ def create_contract():
                 except sqlite3.Error as e:
                     print("Error:", e)
 
-            save_client = CTkButton(master=screen_frame, text="Register client",
-                                    fg_color="#000000", hover_color="#4F2346",
-                                    font=("Arial Rounded MT Bold", 13), text_color="#ffffff",
+            save_client = CTkButton(master=screen_frame, text="Register client", **btn_style,
                                     command=lambda: create_client(cursor))
             save_client.place(relx=0, rely=0.1, anchor="w", x=30, y=300)
 
-            save_btn = CTkButton(master=screen_frame, text="Save and proceed",
-                                 fg_color="#000000", hover_color="#4F2346",
-                                 font=("Arial Rounded MT Bold", 13), width=90,
-                                 text_color="#ffffff", command=save_contract_data)
+            save_btn = CTkButton(master=screen_frame, text="Save and proceed", width=90,
+                                 **btn_style, command=save_contract_data)
             save_btn.place(relx=0, rely=0.1, anchor="w", x=200, y=350)
 
             def create(contract_data):
@@ -648,19 +571,26 @@ def create_contract():
                 except ValueError as ve:
                     print("Value Error:", ve)
 
-            save_contract = CTkButton(master=screen_frame, text="Save contract",
-                                      fg_color="#000000", hover_color="#4F2346",
-                                      font=("Arial Rounded MT Bold", 13), text_color="#ffffff",
+            save_contract = CTkButton(master=screen_frame, text="Save contract",  **btn_style,
                                       command=lambda: create(contract_data))
             save_contract.place(relx=0, rely=0.1, anchor="w", x=30, y=420)
 
     show_current_step()
     contract_window.mainloop()
-
 def dispatcher_window():
     app = CTk()
     app.title("Dispatcher window")
-    app.geometry("750x650")
+
+    screen_width = app.winfo_screenwidth()
+    screen_height = app.winfo_screenheight()
+
+    app_width = 750
+    app_height = 650
+
+    x_position = (screen_width - app_width) // 2
+    y_position = (screen_height - app_height) // 2
+
+    app.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
     app.resizable(0, 0)
 
     right_frame = CTkFrame(master=app, width=550, height=650, fg_color="#897E9B")
@@ -668,7 +598,6 @@ def dispatcher_window():
     right_frame.pack(expand=True, side="right")
 
     CTkLabel(master=right_frame, text="").pack(expand=True, side="right")
-
     left_frame = CTkFrame(master=app, width=200, height=650, fg_color="#FFFFFF")
     left_frame.pack_propagate(0)
     left_frame.pack(expand=True, side="left")
@@ -678,25 +607,17 @@ def dispatcher_window():
              justify="center",
              font=("Arial Rounded MT Bold", 25)).place(relx=0, rely=0, anchor="w", x=90, y=30)
 
-    c_btn = CTkButton(master=left_frame, text="New contract",
-             fg_color="#000000", hover_color="#4F2346",
-             font=("Arial Rounded MT Bold", 13), text_color="#ffffff",
+    c_btn = CTkButton(master=left_frame, text="New contract", **btn_style,
              command=lambda: create_contract())
     c_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
-    up_btn = CTkButton(master=left_frame, text="Update contract",
-                      fg_color="#000000", hover_color="#4F2346",
-                      font=("Arial Rounded MT Bold", 13), text_color="#ffffff")
+    up_btn = CTkButton(master=left_frame, text="Delete contract", **btn_style)
     up_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
-    del_btn = CTkButton(master=left_frame, text="Delete contract",
-                       fg_color="#000000", hover_color="#4F2346",
-                       font=("Arial Rounded MT Bold", 13), text_color="#ffffff")
+    del_btn = CTkButton(master=left_frame, text="Update contract", **btn_style)
     del_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
-    add_btn = CTkButton(master=left_frame, text="Add new....",
-                        fg_color="#000000", hover_color="#4F2346",
-                        font=("Arial Rounded MT Bold", 13), text_color="#ffffff")
+    add_btn = CTkButton(master=left_frame, text="Add new....", **btn_style)
     add_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
     app.mainloop()
