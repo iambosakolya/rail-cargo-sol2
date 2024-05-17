@@ -1,4 +1,7 @@
+import re
 import sqlite3
+import win32ui
+import win32print
 import customtkinter
 from CTkToolTip import *
 from customtkinter import *
@@ -28,23 +31,6 @@ entry_style = {
     "border_width": 1,
     "text_color": "#000000"}
 
-def insert_type(cargo_name, description, dimensions):
-    try:
-        cursor.execute("INSERT INTO CargoType (cargo_name, description, dimensions) VALUES (?, ?, ?)", (cargo_name, description, dimensions))
-        conn.commit()
-        CTkMessagebox(message="Info saved!",
-                      icon="check", option_1="Ok")
-    except sqlite3.Error as e:
-        conn.rollback()
-        CTkMessagebox(title="Error", message="Type info is not saved", icon="cancel")
-def insert_cargo(cargo_type_id, quantity, weight):
-    cursor.execute("SELECT COUNT(*) FROM CargoType WHERE cargo_type_id = ?", (cargo_type_id,))
-    count = cursor.fetchone()[0]
-    if count == 0:
-        CTkMessagebox(title="Error", message="cargo_type_id does not exist in the CargoType table", icon="cancel")
-        return
-    cursor.execute("INSERT INTO Cargo (cargo_type_id, quantity, weight) VALUES (?, ?, ?)", (cargo_type_id, quantity, weight))
-    conn.commit()
 def create_contract():
     global screen_frame
     window_number = 1
@@ -112,6 +98,28 @@ def create_contract():
 
             type_entry = CTkEntry(master=screen_frame, width=140)
             type_entry.place(relx=0, rely=0.1, anchor="w", x=420, y=45)
+
+            def insert_type(cargo_name, description, dimensions):
+                try:
+                    cursor.execute("INSERT INTO CargoType (cargo_name, description, dimensions) VALUES (?, ?, ?)",
+                                   (cargo_name, description, dimensions))
+                    conn.commit()
+                    CTkMessagebox(message="Info saved!",
+                                  icon="check", option_1="Ok")
+                except sqlite3.Error as e:
+                    conn.rollback()
+                    CTkMessagebox(title="Error", message="Type info is not saved", icon="cancel")
+
+            def insert_cargo(cargo_type_id, quantity, weight):
+                cursor.execute("SELECT COUNT(*) FROM CargoType WHERE cargo_type_id = ?", (cargo_type_id,))
+                count = cursor.fetchone()[0]
+                if count == 0:
+                    CTkMessagebox(title="Error", message="cargo_type_id does not exist in the CargoType table",
+                                  icon="cancel")
+                    return
+                cursor.execute("INSERT INTO Cargo (cargo_type_id, quantity, weight) VALUES (?, ?, ?)",
+                               (cargo_type_id, quantity, weight))
+                conn.commit()
 
             # adding new type
             def new_type():
@@ -201,6 +209,10 @@ def create_contract():
             save = CTkButton(master=screen_frame, text="Save type", **btn_style, width=90, command=save_cargo)
             save.place(relx=0, rely=0.1, anchor="w", x=200, y=300)
             save.configure(state="disabled")
+
+            reminder0 = CTkLabel(master=screen_frame, text="Dont forget to save the type!:",
+                                text_color="#CCCCCC", anchor="w", justify="left", font=("Arial Rounded MT Bold", 14))
+            reminder0.place(relx=0, rely=0.1, anchor="w", x=200, y=350)
 
             # cargo`s dimension
             type_label1 = CTkLabel(master=screen_frame, text="Enter dimensions:", **label_style)
@@ -309,6 +321,10 @@ def create_contract():
                                  command=save_route, state="disabled")
             save_btn.place(relx=0, rely=0.1, anchor="w", x=200, y=320)
 
+            reminder = CTkLabel(master=screen_frame, text="Dont forget to save the route!:",
+                                text_color="#CCCCCC", anchor="w", justify="left", font=("Arial Rounded MT Bold", 14))
+            reminder.place(relx=0, rely=0.1, anchor="w", x=200, y=350)
+
             next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style,
                                  command=next_step).place(relx=0, rely=0.1, anchor="w", x=420, y=400)
 
@@ -397,7 +413,6 @@ def create_contract():
                                        width=90, command=display)
             display_button.place(relx=0, rely=0.1, anchor="w", x=30, y=350)
 
-
             textbox = CTkTextbox(master=screen_frame, width=500, height=80)
             textbox.place(relx=0, rely=0.1, anchor="w", x=30, y=155)
             textbox1 = CTkTextbox(master=screen_frame, width=500, height=80)
@@ -414,7 +429,8 @@ def create_contract():
                                font=("Arial Rounded MT Bold", 18))
             cl_label.place(relx=0, rely=0.1, anchor="w", x=30, y=2)
 
-            cl_label1 = CTkLabel(master=screen_frame, text="Last step!\nYou have to register the client to the system",
+            cl_label1 = CTkLabel(master=screen_frame, text="Last step!\nYou have to register the client to the system"
+                                                           "\nAfter 'Next step' the contract will be saved",
                                  text_color="#CCCCCC", anchor="w", justify="left", font=("Arial Rounded MT Bold", 14))
             cl_label1.place(relx=0, rely=0.1, anchor="w", x=30, y=50)
 
@@ -468,13 +484,14 @@ def create_contract():
                                    (email, phone_number))
                     existing_client = cursor.fetchone()
                     if existing_client:
-                        CTkMessagebox(message="User with this email or phone number already exists!", icon="cancel",
-                                      option_1="OK")
+                        client_id = existing_client[0]
+                        CTkMessagebox(message="This user already exists! ", icon="cancel", option_1="OK")
                     else:
                         cursor.execute(
                             "INSERT INTO Client (c_pib, c_phone_number, c_email, c_password) VALUES (?, ?, ?, ?)",
                             (pib, phone_number, email, password))
                         conn.commit()
+                        client_id = cursor.lastrowid
                         CTkMessagebox(message="Registration successful!", icon="check", option_1="Thanks")
                 except sqlite3.Error as e:
                     CTkMessagebox(message="Error", icon="cancel", option_1="OK")
@@ -484,15 +501,16 @@ def create_contract():
                                     command=lambda: create_client(cursor))
             save_client.place(relx=0, rely=0.1, anchor="w", x=30, y=400)
 
-            # contact
+            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style,
+                                 command=next_step).place(relx=0, rely=0.1, anchor="w", x=420, y=400)
+
+        elif window_number == 5:
+            #contract
             cursor.execute("SELECT client_id FROM Client ORDER BY client_id DESC LIMIT 1")
             client_id = cursor.fetchone()[0]
 
             cursor.execute("SELECT payment_id FROM Payment ORDER BY payment_id DESC LIMIT 1")
             payment_id = cursor.fetchone()[0]
-
-            cursor.execute("SELECT dispatcher_id FROM Dispatcher ORDER BY dispatcher_id DESC LIMIT 1")
-            dispatcher_id = cursor.fetchone()[0]
 
             cursor.execute("SELECT cargo_id FROM Cargo ORDER BY cargo_id DESC LIMIT 1")
             cargo_id = cursor.fetchone()[0]
@@ -500,25 +518,131 @@ def create_contract():
             cursor.execute("SELECT itinerary_id FROM Itinerary ORDER BY itinerary_id DESC LIMIT 1")
             itinerary_id = cursor.fetchone()[0]
 
-            def create_contract():
+            def create_contract(cursor, dispatcher_id, client_id):
                 current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 try:
                     cursor.execute(
                         "INSERT INTO Contract (conclusion_date, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id) "
                         "VALUES (?, ?, ?, ?, ?, ?)",
-                        (current_datetime, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id)
-                    )
+                        (current_datetime, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id))
                     conn.commit()
                     CTkMessagebox(message="Contract saved successfully!", icon="check", option_1="Thanks")
                 except sqlite3.Error as e:
                     CTkMessagebox(message="Error", icon="cancel", option_1="OK")
 
-            save_contract = CTkButton(master=screen_frame, text="Save contract", **btn_style,
-                                      command=create_contract)
-            save_contract.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
+            def enter_pib():
+                def save_dispatcher_id():
+                    dispatcher_pib = pib_entry.get()
+                    client_phone = pib_cl.get()  # Отримуємо номер телефону клієнта
+                    cursor.execute("SELECT dispatcher_id FROM Dispatcher WHERE d_pib = ?", (dispatcher_pib,))
+                    dispatcher_data = cursor.fetchone()
+                    if dispatcher_data:
+                        dispatcher_id = dispatcher_data[0]
+                        # Додайте запит для отримання айді клієнта за номером телефону
+                        cursor.execute("SELECT client_id FROM Client WHERE c_phone_number = ?", (client_phone,))
+                        client_data = cursor.fetchone()
+                        if client_data:
+                            client_id = client_data[0]
+                            create_contract(cursor, dispatcher_id,
+                                            client_id)  # Передайте айді клієнта в функцію create_contract
+                            dialog_window.destroy()
+                        else:
+                            CTkMessagebox(message="Client with provided phone number not found!", icon="cancel",
+                                          option_1="OK")
+                    else:
+                        CTkMessagebox(message="Dispatcher with provided PIB not found!", icon="cancel", option_1="OK")
 
+                dialog_window = customtkinter.CTk()
+                dialog_window.geometry("300x250")
+                dialog_window.title("Attention")
 
+                pib_label = customtkinter.CTkLabel(dialog_window, text="Confirm your PIB one more time:")
+                pib_label.pack()
 
+                pib_entry = customtkinter.CTkEntry(dialog_window)
+                pib_entry.pack()
+
+                pib_cl = customtkinter.CTkLabel(dialog_window, text="Phone number of the client:")
+                pib_cl.pack()
+
+                pib_cl = customtkinter.CTkEntry(dialog_window)
+                pib_cl.pack()
+
+                confirm_button = customtkinter.CTkButton(dialog_window, text="Confirm", command=save_dispatcher_id)
+                confirm_button.pack()
+                dialog_window.mainloop()
+
+            enter_pib()
+
+            # def print_contract_data(contract_data):
+            #     printer_name = win32print.GetDefaultPrinter()
+            #
+            #     hprinter = win32print.OpenPrinter(printer_name)
+            #     hprinter_start_doc = win32print.StartDocPrinter(hprinter, 1, ("Contract", None, "RAW"))
+            #     hprinter_start_page = win32print.StartPagePrinter(hprinter)
+            #
+            #     dc = win32ui.CreateDC()
+            #     dc.CreatePrinterDC(printer_name)
+            #     dc.StartDoc("Contract")
+            #     dc.StartPage()
+            #
+            #     # Print contract data
+            #     for category, data in contract_data.items():
+            #         dc.TextOut(10, 10, f"{category}: {data}")
+            #
+            #     dc.EndPage()
+            #     dc.EndDoc()
+            #
+            #     win32print.EndPagePrinter(hprinter)
+            #     win32print.EndDocPrinter(hprinter)
+            #     win32print.ClosePrinter(hprinter)
+            # def gather_data(cursor):
+            #     try:
+            #         # Fetch data from Client table
+            #         cursor.execute("SELECT * FROM Client WHERE client_id = (SELECT MAX(client_id) FROM Client)")
+            #         client_data = cursor.fetchone()
+            #
+            #         # Fetch data from Payment table
+            #         cursor.execute("SELECT * FROM Payment WHERE payment_id = (SELECT MAX(payment_id) FROM Payment)")
+            #         payment_data = cursor.fetchone()
+            #
+            #         # Fetch data from Dispatcher table
+            #         cursor.execute(
+            #             "SELECT * FROM Dispatcher WHERE dispatcher_id = (SELECT MAX(dispatcher_id) FROM Dispatcher)")
+            #         dispatcher_data = cursor.fetchone()
+            #
+            #         # Fetch data from Cargo table
+            #         cursor.execute("SELECT * FROM Cargo WHERE cargo_id = (SELECT MAX(cargo_id) FROM Cargo)")
+            #         cargo_data = cursor.fetchone()
+            #
+            #         # Fetch data from Itinerary table
+            #         cursor.execute(
+            #             "SELECT * FROM Itinerary WHERE itinerary_id = (SELECT MAX(itinerary_id) FROM Itinerary)")
+            #         itinerary_data = cursor.fetchone()
+            #
+            #         # Fetch data from CargoType table for cargo_type_id from Cargo table
+            #         cursor.execute("SELECT * FROM CargoType WHERE cargo_type_id = ?", (cargo_data[1],))
+            #         cargo_type_data = cursor.fetchone()
+            #
+            #         # Organize gathered data into printable format
+            #         contract_data = {
+            #             "Client Data": client_data,
+            #             "Payment Data": payment_data,
+            #             "Dispatcher Data": dispatcher_data,
+            #             "Cargo Data": cargo_data,
+            #             "Itinerary Data": itinerary_data,
+            #             "Cargo Type Data": cargo_type_data
+            #         }
+            #
+            #         # Print contract data
+            #         print_contract_data(contract_data)
+            #     except sqlite3.Error as e:
+            #         CTkMessagebox(message="Error", icon="check", option_1="OK")
+            #
+            #
+            # print_contract = CTkButton(master=screen_frame, text="Print contract", **btn_style,
+            #                            command=gather_data(cursor))
+            # print_contract.place(relx=0, rely=0.1, anchor="w", x=420, y=100)
     show_current_step()
     contract_window.mainloop()
 def dispatcher_window():

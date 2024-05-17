@@ -28,15 +28,6 @@ def create_tables():
         )
     ''')
 
-    # cursor.execute('''
-    #     CREATE TABLE IF NOT EXISTS Train (
-    #         train_id INTEGER PRIMARY KEY,
-    #         num_of_wagons INTEGER,
-    #         condition TEXT,
-    #         year_of_manufacture INTEGER
-    #     )
-    # ''')
-
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS Itinerary (
             itinerary_id INTEGER PRIMARY KEY,

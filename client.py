@@ -1,6 +1,21 @@
 import customtkinter
 from customtkinter import *
 
+label_style = {
+    "text_color": "#000000",
+    "anchor": "w",
+    "justify": "left",
+    "font": ("Arial Rounded MT Bold", 15)}
+btn_style = {
+    "fg_color": "#000000",
+    "hover_color": "#4F2346",
+    "text_color": "#ffffff",
+    "font": ("Arial Rounded MT Bold", 13)}
+entry_style = {
+    "fg_color": "#EEEEEE",
+    "border_color": "#601E88",
+    "border_width": 1,
+    "text_color": "#000000"}
 
 def client_window():
     app = CTk()
@@ -23,5 +38,16 @@ def client_window():
              justify="center",
              font=("Arial Rounded MT Bold", 25)).place(relx=0, rely=0.1, anchor="w", x=150, y=30)
 
+    c_btn = CTkButton(master=left_frame, text="Change my info", **btn_style)
+    c_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+
+    up_btn = CTkButton(master=left_frame, text="My contracts", **btn_style)
+    up_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+
+    del_btn = CTkButton(master=left_frame, text="Update contract", **btn_style)
+    del_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+
+    add_btn = CTkButton(master=left_frame, text="Delete my account", **btn_style)
+    add_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
     app.mainloop()

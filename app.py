@@ -10,25 +10,43 @@ from dispatcher import dispatcher_window
 conn = sqlite3.connect('data.db')
 cursor = conn.cursor()
 
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Client (
-        client_id INTEGER PRIMARY KEY,
-        c_pib TEXT,
-        c_phone_number TEXT,
-        c_email TEXT,
-        c_password TEXT
-    )
-''')
+# def clear_tables(cursor):
+#     try:
+#         # Очистка таблиць
+#         cursor.execute("DELETE FROM Client")
+#         cursor.execute("DELETE FROM Dispatcher")
+#         cursor.execute("DELETE FROM Itinerary")
+#         cursor.execute("DELETE FROM Payment")
+#         cursor.execute("DELETE FROM CargoType")
+#         cursor.execute("DELETE FROM Cargo")
+#         cursor.execute("DELETE FROM Contract")
+#         conn.commit()
+#         print("All tables cleared successfully.")
+#     except sqlite3.Error as e:
+#         print("An error occurred:", e)
 
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Dispatcher (
-        dispatcher_id INTEGER PRIMARY KEY,
-        d_pib TEXT,
-        d_email TEXT,
-        d_password TEXT,
-        d_phone_number TEXT
-    )
-''')
+# Виклик функції для очистки таблиць
+clear_tables(cursor)
+
+# cursor.execute('''
+#     CREATE TABLE IF NOT EXISTS Client (
+#         client_id INTEGER PRIMARY KEY,
+#         c_pib TEXT,
+#         c_phone_number TEXT,
+#         c_email TEXT,
+#         c_password TEXT
+#     )
+# ''')
+#
+# cursor.execute('''
+#     CREATE TABLE IF NOT EXISTS Dispatcher (
+#         dispatcher_id INTEGER PRIMARY KEY,
+#         d_pib TEXT,
+#         d_email TEXT,
+#         d_password TEXT,
+#         d_phone_number TEXT
+#     )
+# ''')
 
 # cursor.execute('''
 #     CREATE TABLE IF NOT EXISTS Train (
@@ -39,59 +57,59 @@ cursor.execute('''
 #     )
 # ''')
 
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Itinerary (
-        itinerary_id INTEGER PRIMARY KEY,
-        departure_station TEXT,
-        arrival_station TEXT,
-        route_length REAL,
-        duration REAL
-    )
-''')
-
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Payment (
-        payment_id INTEGER PRIMARY KEY,
-        payment_amount REAL,
-        payment_datetime TEXT
-    )
-''')
-
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS CargoType (
-        cargo_type_id INTEGER PRIMARY KEY,
-        cargo_name TEXT,
-        description TEXT,
-        dimensions TEXT
-    )
-''')
-
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Cargo (
-        cargo_id INTEGER PRIMARY KEY,
-        cargo_type_id INTEGER,
-        quantity INTEGER,
-        weight REAL,
-        FOREIGN KEY (cargo_type_id) REFERENCES CargoType(cargo_type_id)
-    )
-''')
-
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Contract (
-        contract_id INTEGER PRIMARY KEY,
-        conclusion_date TEXT,
-        client_id INTEGER,
-        dispatcher_id INTEGER,
-        cargo_id INTEGER,
-        payment_id INTEGER,
-        itinerary_id INTEGER,
-        FOREIGN KEY (client_id) REFERENCES Client(client_id),
-        FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
-        FOREIGN KEY (dispatcher_id) REFERENCES Dispatcher(dispatcher_id),
-        FOREIGN KEY (cargo_id) REFERENCES Cargo(cargo_id),
-        FOREIGN KEY (itinerary_id) REFERENCES Itinerary(itinerary_id)
-        )
-    ''')
+# cursor.execute('''
+#     CREATE TABLE IF NOT EXISTS Itinerary (
+#         itinerary_id INTEGER PRIMARY KEY,
+#         departure_station TEXT,
+#         arrival_station TEXT,
+#         route_length REAL,
+#         duration REAL
+#     )
+# ''')
+#
+# cursor.execute('''
+#     CREATE TABLE IF NOT EXISTS Payment (
+#         payment_id INTEGER PRIMARY KEY,
+#         payment_amount REAL,
+#         payment_datetime TEXT
+#     )
+# ''')
+#
+# cursor.execute('''
+#     CREATE TABLE IF NOT EXISTS CargoType (
+#         cargo_type_id INTEGER PRIMARY KEY,
+#         cargo_name TEXT,
+#         description TEXT,
+#         dimensions TEXT
+#     )
+# ''')
+#
+# cursor.execute('''
+#     CREATE TABLE IF NOT EXISTS Cargo (
+#         cargo_id INTEGER PRIMARY KEY,
+#         cargo_type_id INTEGER,
+#         quantity INTEGER,
+#         weight REAL,
+#         FOREIGN KEY (cargo_type_id) REFERENCES CargoType(cargo_type_id)
+#     )
+# ''')
+#
+# cursor.execute('''
+#     CREATE TABLE IF NOT EXISTS Contract (
+#         contract_id INTEGER PRIMARY KEY,
+#         conclusion_date TEXT,
+#         client_id INTEGER,
+#         dispatcher_id INTEGER,
+#         cargo_id INTEGER,
+#         payment_id INTEGER,
+#         itinerary_id INTEGER,
+#         FOREIGN KEY (client_id) REFERENCES Client(client_id),
+#         FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
+#         FOREIGN KEY (dispatcher_id) REFERENCES Dispatcher(dispatcher_id),
+#         FOREIGN KEY (cargo_id) REFERENCES Cargo(cargo_id),
+#         FOREIGN KEY (itinerary_id) REFERENCES Itinerary(itinerary_id)
+#         )
+#     ''')
 
 def register():
     user_type = user_type_combo.get()
