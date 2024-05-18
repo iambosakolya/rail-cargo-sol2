@@ -10,14 +10,14 @@ from dispatcher import dispatcher_window
 conn = sqlite3.connect('data.db')
 cursor = conn.cursor()
 
-# cursor.execute('DROP TABLE IF EXISTS Contract')
-# cursor.execute('DROP TABLE IF EXISTS Cargo')
-# cursor.execute('DROP TABLE IF EXISTS CargoType')
-# cursor.execute('DROP TABLE IF EXISTS Payment')
-# cursor.execute('DROP TABLE IF EXISTS Itinerary')
-# cursor.execute('DROP TABLE IF EXISTS Dispatcher')
-# cursor.execute('DROP TABLE IF EXISTS Client')
-
+cursor.execute('DROP TABLE IF EXISTS Contract')
+cursor.execute('DROP TABLE IF EXISTS Cargo')
+cursor.execute('DROP TABLE IF EXISTS CargoType')
+cursor.execute('DROP TABLE IF EXISTS Payment')
+cursor.execute('DROP TABLE IF EXISTS Itinerary')
+cursor.execute('DROP TABLE IF EXISTS Dispatcher')
+cursor.execute('DROP TABLE IF EXISTS Client')
+cursor.execute('DROP TABLE IF EXISTS Contracts')
 
 # def clear_tables(cursor):
 #     try:

@@ -7,6 +7,49 @@ from classes.Users import Dispatcher, Client
 conn = sqlite3.connect('data.db')
 cursor = conn.cursor()
 
+# # Insert example data into Client table
+# cursor.execute('''
+#     INSERT INTO Client (c_pib, c_phone_number, c_email, c_password)
+#     VALUES (?, ?, ?, ?)
+# ''', ("Kwe", "0952163862", "we@gmail.com", "password123"))
+#
+# # Insert example data into Dispatcher table
+# cursor.execute('''
+#     INSERT INTO Dispatcher (d_pib, d_email, d_password, d_phone_number)
+#     VALUES (?, ?, ?, ?)
+# ''', ("Dispatcher Name", "dispatcher@example.com", "password123", "0123456789"))
+#
+# # Insert example data into Itinerary table
+# cursor.execute('''
+#     INSERT INTO Itinerary (departure_station, arrival_station, route_length, duration)
+#     VALUES (?, ?, ?, ?)
+# ''', ("Station A", "Station B", 120.5, 3.5))
+#
+# # Insert example data into Payment table
+# cursor.execute('''
+#     INSERT INTO Payment (payment_amount, payment_datetime)
+#     VALUES (?, ?)
+# ''', (1556.0, "2024-05-18 16:47:08"))
+#
+# # Insert example data into CargoType table
+# cursor.execute('''
+#     INSERT INTO CargoType (cargo_name, description, dimensions)
+#     VALUES (?, ?, ?)
+# ''', ("Type A", "Description A", "10x10x10"))
+#
+# # Insert example data into Cargo table
+# cursor.execute('''
+#     INSERT INTO Cargo (cargo_type_id, quantity, weight)
+#     VALUES (?, ?, ?)
+# ''', (1, 100, 200.5))
+#
+# # Insert example data into Contract table
+# cursor.execute('''
+#     INSERT INTO Contract (conclusion_date, client_id, dispatcher_id, cargo_id, payment_id, itinerary_id)
+#     VALUES (?, ?, ?, ?, ?, ?)
+# ''', ("2024-05-18 19:09:48", 1, 1, 1, 1, 1))
+
+
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Client (
         client_id INTEGER PRIMARY KEY,
@@ -66,7 +109,7 @@ cursor.execute('''
 
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Contract (
-        contract_id INTEGER PRIMARY KEY,
+        contract_id INTEGER PRIMARY KEY AUTOINCREMENT,
         conclusion_date TEXT,
         client_id INTEGER,
         dispatcher_id INTEGER,
@@ -81,20 +124,19 @@ cursor.execute('''
         )
     ''')
 
-# def get_db_connection(db_path='data.db'):
-#     conn = sqlite3.connect(db_path)
-#     return conn
-#
-# def initialize_database():
-#     with get_db_connection() as conn:
-#         cursor = conn.cursor()
-#         cursor.execute('''
-#             CREATE TABLE IF NOT EXISTS contracts (
-#                 contract_id TEXT PRIMARY KEY
-#             )
-#         ''')
-#         conn.commit()
-#     initialize_database()
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Contracts (
+        contract_id TEXT PRIMARY KEY
+    )
+''')
+
+conn.commit()
+
+def get_db_connection(db_path='data.db'):
+    conn = sqlite3.connect(db_path)
+    return conn
+
+
 
 # def clear_tables(cursor):
 #     try:
@@ -110,9 +152,9 @@ cursor.execute('''
 #         print("All tables cleared successfully.")
 #     except sqlite3.Error as e:
 #         print("An error occurred:", e)
-#
-# #Виклик функції для очистки таблиць
-# clear_tables(cursor)
+
+#Виклик функції для очистки таблиць
+#clear_tables(cursor)
 
 # cursor.execute('DROP TABLE IF EXISTS Contract')
 # cursor.execute('DROP TABLE IF EXISTS Cargo')

@@ -1,6 +1,7 @@
 import re
 import sqlite3
 import win32ui
+import win32con
 import win32print
 import customtkinter
 from CTkToolTip import *
@@ -12,7 +13,7 @@ from database import cursor, conn
 from classes.Tariff import Tariff
 from classes.Contract import Contract
 from classes.ContractInfo import ContractInfo
-from classes.ContractList import ContractList
+from classes.ContractInfo import ContractList
 from classes.CargoType import CargoType
 from CTkMessagebox import CTkMessagebox
 from classes.Users import Dispatcher,Client
@@ -525,42 +526,58 @@ def create_contract():
             cursor.execute("SELECT itinerary_id FROM Itinerary ORDER BY itinerary_id DESC LIMIT 1")
             itinerary_id = cursor.fetchone()[0]
 
-            def create_contract(self, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id):
+            def create_contract(cursor, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id):
+                contract_list = ContractList()
                 current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 try:
-                    self.cursor.execute(
+                    cursor.execute(
                         "INSERT INTO Contract (conclusion_date, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id) "
                         "VALUES (?, ?, ?, ?, ?, ?)",
                         (current_datetime, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id))
-                    self.conn.commit()
-                    contract_id = self.cursor.lastrowid  # Get the ID of the newly created contract
-                    self.contracts.append(contract_id)  # Add the contract ID to the list
+                    conn.commit()
+                    contract_id = cursor.lastrowid
+                    contract_info = ContractInfo(contract_id)
+                    contract_list.add_contract(contract_info)
                     CTkMessagebox(message="Contract saved successfully!", icon="check", option_1="Thanks")
+                    return contract_id
                 except sqlite3.Error as e:
-                    CTkMessagebox(message="Error", icon="cancel", option_1="OK")
+                    CTkMessagebox(message="Error: " + str(e), icon="cancel", option_1="OK")
+                    return None
+
             def enter_pib():
                 def save_dispatcher_id():
-                    dispatcher_pib = pib_entry.get()
-                    client_phone = pib_cl.get()
-                    cursor.execute("SELECT dispatcher_id FROM Dispatcher WHERE d_pib = ?", (dispatcher_pib,))
-                    dispatcher_data = cursor.fetchone()
-                    if dispatcher_data:
-                        dispatcher_id = dispatcher_data[0]
-                        cursor.execute("SELECT client_id FROM Client WHERE c_phone_number = ?", (client_phone,))
-                        client_data = cursor.fetchone()
-                        if client_data:
-                            client_id = client_data[0]
-                            create_contract(cursor, dispatcher_id, client_id)
-                            dialog_window.destroy()
+                    try:
+                        dispatcher_pib = pib_entry.get()
+                        client_phone = client_phone_entry.get()
+                        cursor.execute("SELECT dispatcher_id FROM Dispatcher WHERE d_pib = ?", (dispatcher_pib,))
+                        dispatcher_data = cursor.fetchone()
+                        if dispatcher_data:
+                            dispatcher_id = dispatcher_data[0]
+                            cursor.execute("SELECT client_id FROM Client WHERE c_phone_number = ?", (client_phone,))
+                            client_data = cursor.fetchone()
+                            if client_data:
+                                client_id = client_data[0]
+                                contract_id = create_contract(cursor, client_id, payment_id, dispatcher_id, cargo_id,
+                                                              itinerary_id)
+                                if contract_id:
+                                    create_print_button(contract_id)
+                                dialog_window.destroy()
+                            else:
+                                CTkMessagebox(message="Client with provided phone number not found!", icon="cancel",
+                                              option_1="OK")
                         else:
-                            CTkMessagebox(message="Client with provided phone number not found!", icon="cancel",
+                            CTkMessagebox(message="Dispatcher with provided PIB not found!", icon="cancel",
                                           option_1="OK")
-                    else:
-                        CTkMessagebox(message="Dispatcher with provided PIB not found!", icon="cancel", option_1="OK")
+                    except sqlite3.Error as e:
+                        CTkMessagebox(message="Database error: " + str(e), icon="cancel", option_1="OK")
+
+                def on_closing():
+                    dialog_window.destroy()
 
                 dialog_window = customtkinter.CTk()
-                dialog_window.geometry("300x250")
+                dialog_window.geometry("300x200")
                 dialog_window.title("Attention")
+                dialog_window.protocol("WM_DELETE_WINDOW", on_closing)
 
                 pib_label = customtkinter.CTkLabel(dialog_window, text="Confirm your PIB one more time:")
                 pib_label.pack()
@@ -568,19 +585,128 @@ def create_contract():
                 pib_entry = customtkinter.CTkEntry(dialog_window)
                 pib_entry.pack()
 
-                pib_cl = customtkinter.CTkLabel(dialog_window, text="Phone number of the client:")
-                pib_cl.pack()
+                client_phone_label = customtkinter.CTkLabel(dialog_window, text="Phone number of the client:")
+                client_phone_label.pack()
 
-                pib_cl = customtkinter.CTkEntry(dialog_window)
-                pib_cl.pack()
+                client_phone_entry = customtkinter.CTkEntry(dialog_window)
+                client_phone_entry.pack()
 
                 confirm_button = customtkinter.CTkButton(dialog_window, text="Confirm", command=save_dispatcher_id)
                 confirm_button.pack()
                 dialog_window.mainloop()
-            enter_pib()
 
-            print_btn = CTkButton(master=screen_frame, text="Print contract", **btn_style)
-            print_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=30)
+            savec_btn = CTkButton(master=screen_frame, text="Save contract", **btn_style, command=enter_pib)
+            savec_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=30)
+
+            def get_contract_data(cursor, contract_id):
+                try:
+                    cursor.execute("SELECT * FROM Contract WHERE contract_id = ?", (contract_id,))
+                    contract_data = cursor.fetchone()
+                    if not contract_data:
+                        return None, None, None, None, None, None, None
+
+                    cursor.execute("SELECT * FROM Client WHERE client_id = ?", (contract_data[2],))
+                    client_data = cursor.fetchone()
+                    if not client_data:
+                        return contract_data, None, None, None, None, None, None
+
+                    cursor.execute("SELECT * FROM Payment WHERE payment_id = ?", (contract_data[3],))
+                    payment_data = cursor.fetchone()
+                    if not payment_data:
+                        return contract_data, client_data, None, None, None, None, None
+
+                    cursor.execute("SELECT * FROM Dispatcher WHERE dispatcher_id = ?", (contract_data[4],))
+                    dispatcher_data = cursor.fetchone()
+                    if not dispatcher_data:
+                        return contract_data, client_data, payment_data, None, None, None, None
+
+                    cursor.execute("SELECT * FROM Cargo WHERE cargo_id = ?", (contract_data[5],))
+                    cargo_data = cursor.fetchone()
+                    if not cargo_data:
+                        return contract_data, client_data, payment_data, dispatcher_data, None, None, None
+
+                    cursor.execute("SELECT * FROM CargoType WHERE cargo_type_id = ?", (cargo_data[1],))
+                    cargo_type_data = cursor.fetchone()
+                    if not cargo_type_data:
+                        return contract_data, client_data, payment_data, dispatcher_data, cargo_data, None, None
+
+                    cursor.execute("SELECT * FROM Itinerary WHERE itinerary_id = ?", (contract_data[6],))
+                    itinerary_data = cursor.fetchone()
+                    if not itinerary_data:
+                        return contract_data, client_data, payment_data, dispatcher_data, cargo_data, cargo_type_data, None
+
+                    return contract_data, client_data, payment_data, dispatcher_data, cargo_data, cargo_type_data, itinerary_data
+                except sqlite3.Error as e:
+                    print(f"Error fetching contract data: {e}")
+                    return None, None, None, None, None, None, None
+
+            def print_contract(contract_id):
+                try:
+                    conn = sqlite3.connect('data.db')
+                    cursor = conn.cursor()
+
+                    contract_data, client_data, payment_data, dispatcher_data, cargo_data, cargo_type_data, itinerary_data = get_contract_data(
+                        cursor, contract_id)
+
+                    if not contract_data:
+                        CTkMessagebox(message="Failed to fetch contract data", icon="cancel", option_1="OK")
+                        return
+
+                    # Initialize fields with empty values if data is missing
+                    client_info = f"PIB: {client_data[1]}\nPhone Number: {client_data[2]}\nEmail: {client_data[3]}" if client_data else "Client information not available"
+                    payment_info = f"Payment Amount: {payment_data[1]}\nPayment Date: {payment_data[2]}" if payment_data else "Payment information not available"
+                    dispatcher_info = f"PIB: {dispatcher_data[1]}" if dispatcher_data else "Dispatcher information not available"
+                    cargo_info = f"Cargo Type: {cargo_type_data[1]}\nDescription: {cargo_type_data[2]}\nDimensions: {cargo_type_data[3]}\nQuantity: {cargo_data[2]}\nWeight: {cargo_data[3]}" if cargo_data and cargo_type_data else "Cargo information not available"
+                    itinerary_info = f"Departure Station: {itinerary_data[1]}\nArrival Station: {itinerary_data[2]}\nRoute Length: {itinerary_data[3]}\nDuration: {itinerary_data[4]}" if itinerary_data else "Itinerary information not available"
+
+                    contract_details = f"""
+                            Contract ID: {contract_data[0]}
+                            Conclusion Date: {contract_data[1]}
+
+                            Client Information:
+                            {client_info}
+
+                            Payment Information:
+                            {payment_info}
+
+                            Dispatcher Information:
+                            {dispatcher_info}
+
+                            Cargo Information:
+                            {cargo_info}
+
+                            Itinerary Information:
+                            {itinerary_info}
+                            """
+
+                    hdc = win32ui.CreateDC()
+                    hdc.CreatePrinterDC(win32print.GetDefaultPrinter())
+                    hdc.StartDoc("Contract Document")
+                    hdc.StartPage()
+
+                    hdc.SetMapMode(win32con.MM_TWIPS)
+                    font = win32ui.CreateFont({
+                        "name": "Arial",
+                        "height": 200,
+                        "weight": win32con.FW_NORMAL,
+                    })
+                    hdc.SelectObject(font)
+
+                    for i, line in enumerate(contract_details.split('\n')):
+                        hdc.TextOut(1000, -1000 - (i * 300), line)
+
+                    hdc.EndPage()
+                    hdc.EndDoc()
+                    hdc.DeleteDC()
+
+                    conn.close()
+                except Exception as e:
+                    print(f"Error in print_contract: {e}")
+
+            def create_print_button(contract_id):
+                print_btn = CTkButton(master=screen_frame, text="Print contract", **btn_style,
+                                      command=lambda: print_contract(contract_id))
+                print_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=50)
 
 
     show_current_step()

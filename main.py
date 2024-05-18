@@ -91,7 +91,6 @@ def register():
                             client.get_с_phone_num()))
             CTkMessagebox(message="Registration successful!", icon="check", option_1="Thanks")
     conn.commit()
-
 def login():
     user_type = user_type_combo.get()
     email = email_entry.get()
