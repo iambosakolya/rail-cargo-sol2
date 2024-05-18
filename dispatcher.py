@@ -11,6 +11,8 @@ from classes.Calc import Calc
 from database import cursor, conn
 from classes.Tariff import Tariff
 from classes.Contract import Contract
+from classes.ContractInfo import ContractInfo
+from classes.ContractList import ContractList
 from classes.CargoType import CargoType
 from CTkMessagebox import CTkMessagebox
 from classes.Users import Dispatcher,Client
@@ -434,6 +436,11 @@ def create_contract():
                                  text_color="#CCCCCC", anchor="w", justify="left", font=("Arial Rounded MT Bold", 14))
             cl_label1.place(relx=0, rely=0.1, anchor="w", x=30, y=50)
 
+            cl_label2 = CTkLabel(master=screen_frame, text="*Reminder\nIf the client already exists"
+                                                           "\njust skip this step",
+                                 text_color="#CCCCCC", anchor="w", justify="left", font=("Arial Rounded MT Bold", 14))
+            cl_label2.place(relx=0, rely=0.1, anchor="w", x=400, y=5)
+
             rec_pib = CTkLabel(master=screen_frame, text="Enter pib:", **label_style)
             rec_pib.place(relx=0, rely=0.1, anchor="w", x=30, y=100)
 
@@ -518,33 +525,32 @@ def create_contract():
             cursor.execute("SELECT itinerary_id FROM Itinerary ORDER BY itinerary_id DESC LIMIT 1")
             itinerary_id = cursor.fetchone()[0]
 
-            def create_contract(cursor, dispatcher_id, client_id):
+            def create_contract(self, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id):
                 current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 try:
-                    cursor.execute(
+                    self.cursor.execute(
                         "INSERT INTO Contract (conclusion_date, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id) "
                         "VALUES (?, ?, ?, ?, ?, ?)",
                         (current_datetime, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id))
-                    conn.commit()
+                    self.conn.commit()
+                    contract_id = self.cursor.lastrowid  # Get the ID of the newly created contract
+                    self.contracts.append(contract_id)  # Add the contract ID to the list
                     CTkMessagebox(message="Contract saved successfully!", icon="check", option_1="Thanks")
                 except sqlite3.Error as e:
                     CTkMessagebox(message="Error", icon="cancel", option_1="OK")
-
             def enter_pib():
                 def save_dispatcher_id():
                     dispatcher_pib = pib_entry.get()
-                    client_phone = pib_cl.get()  # Отримуємо номер телефону клієнта
+                    client_phone = pib_cl.get()
                     cursor.execute("SELECT dispatcher_id FROM Dispatcher WHERE d_pib = ?", (dispatcher_pib,))
                     dispatcher_data = cursor.fetchone()
                     if dispatcher_data:
                         dispatcher_id = dispatcher_data[0]
-                        # Додайте запит для отримання айді клієнта за номером телефону
                         cursor.execute("SELECT client_id FROM Client WHERE c_phone_number = ?", (client_phone,))
                         client_data = cursor.fetchone()
                         if client_data:
                             client_id = client_data[0]
-                            create_contract(cursor, dispatcher_id,
-                                            client_id)  # Передайте айді клієнта в функцію create_contract
+                            create_contract(cursor, dispatcher_id, client_id)
                             dialog_window.destroy()
                         else:
                             CTkMessagebox(message="Client with provided phone number not found!", icon="cancel",
@@ -571,78 +577,12 @@ def create_contract():
                 confirm_button = customtkinter.CTkButton(dialog_window, text="Confirm", command=save_dispatcher_id)
                 confirm_button.pack()
                 dialog_window.mainloop()
-
             enter_pib()
 
-            # def print_contract_data(contract_data):
-            #     printer_name = win32print.GetDefaultPrinter()
-            #
-            #     hprinter = win32print.OpenPrinter(printer_name)
-            #     hprinter_start_doc = win32print.StartDocPrinter(hprinter, 1, ("Contract", None, "RAW"))
-            #     hprinter_start_page = win32print.StartPagePrinter(hprinter)
-            #
-            #     dc = win32ui.CreateDC()
-            #     dc.CreatePrinterDC(printer_name)
-            #     dc.StartDoc("Contract")
-            #     dc.StartPage()
-            #
-            #     # Print contract data
-            #     for category, data in contract_data.items():
-            #         dc.TextOut(10, 10, f"{category}: {data}")
-            #
-            #     dc.EndPage()
-            #     dc.EndDoc()
-            #
-            #     win32print.EndPagePrinter(hprinter)
-            #     win32print.EndDocPrinter(hprinter)
-            #     win32print.ClosePrinter(hprinter)
-            # def gather_data(cursor):
-            #     try:
-            #         # Fetch data from Client table
-            #         cursor.execute("SELECT * FROM Client WHERE client_id = (SELECT MAX(client_id) FROM Client)")
-            #         client_data = cursor.fetchone()
-            #
-            #         # Fetch data from Payment table
-            #         cursor.execute("SELECT * FROM Payment WHERE payment_id = (SELECT MAX(payment_id) FROM Payment)")
-            #         payment_data = cursor.fetchone()
-            #
-            #         # Fetch data from Dispatcher table
-            #         cursor.execute(
-            #             "SELECT * FROM Dispatcher WHERE dispatcher_id = (SELECT MAX(dispatcher_id) FROM Dispatcher)")
-            #         dispatcher_data = cursor.fetchone()
-            #
-            #         # Fetch data from Cargo table
-            #         cursor.execute("SELECT * FROM Cargo WHERE cargo_id = (SELECT MAX(cargo_id) FROM Cargo)")
-            #         cargo_data = cursor.fetchone()
-            #
-            #         # Fetch data from Itinerary table
-            #         cursor.execute(
-            #             "SELECT * FROM Itinerary WHERE itinerary_id = (SELECT MAX(itinerary_id) FROM Itinerary)")
-            #         itinerary_data = cursor.fetchone()
-            #
-            #         # Fetch data from CargoType table for cargo_type_id from Cargo table
-            #         cursor.execute("SELECT * FROM CargoType WHERE cargo_type_id = ?", (cargo_data[1],))
-            #         cargo_type_data = cursor.fetchone()
-            #
-            #         # Organize gathered data into printable format
-            #         contract_data = {
-            #             "Client Data": client_data,
-            #             "Payment Data": payment_data,
-            #             "Dispatcher Data": dispatcher_data,
-            #             "Cargo Data": cargo_data,
-            #             "Itinerary Data": itinerary_data,
-            #             "Cargo Type Data": cargo_type_data
-            #         }
-            #
-            #         # Print contract data
-            #         print_contract_data(contract_data)
-            #     except sqlite3.Error as e:
-            #         CTkMessagebox(message="Error", icon="check", option_1="OK")
-            #
-            #
-            # print_contract = CTkButton(master=screen_frame, text="Print contract", **btn_style,
-            #                            command=gather_data(cursor))
-            # print_contract.place(relx=0, rely=0.1, anchor="w", x=420, y=100)
+            print_btn = CTkButton(master=screen_frame, text="Print contract", **btn_style)
+            print_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=30)
+
+
     show_current_step()
     contract_window.mainloop()
 def dispatcher_window():
@@ -675,9 +615,15 @@ def dispatcher_window():
              justify="center",
              font=("Arial Rounded MT Bold", 25)).place(relx=0, rely=0, anchor="w", x=90, y=30)
 
+    info_btn = CTkButton(master=left_frame, text="Change my info", **btn_style)
+    info_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+
     c_btn = CTkButton(master=left_frame, text="New contract", **btn_style,
              command=lambda: create_contract())
     c_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+
+    list_btn = CTkButton(master=left_frame, text="All contracts", **btn_style)
+    list_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
     up_btn = CTkButton(master=left_frame, text="Delete contract", **btn_style)
     up_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))

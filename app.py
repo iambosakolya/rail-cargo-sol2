@@ -10,6 +10,15 @@ from dispatcher import dispatcher_window
 conn = sqlite3.connect('data.db')
 cursor = conn.cursor()
 
+# cursor.execute('DROP TABLE IF EXISTS Contract')
+# cursor.execute('DROP TABLE IF EXISTS Cargo')
+# cursor.execute('DROP TABLE IF EXISTS CargoType')
+# cursor.execute('DROP TABLE IF EXISTS Payment')
+# cursor.execute('DROP TABLE IF EXISTS Itinerary')
+# cursor.execute('DROP TABLE IF EXISTS Dispatcher')
+# cursor.execute('DROP TABLE IF EXISTS Client')
+
+
 # def clear_tables(cursor):
 #     try:
 #         # Очистка таблиць
@@ -24,9 +33,10 @@ cursor = conn.cursor()
 #         print("All tables cleared successfully.")
 #     except sqlite3.Error as e:
 #         print("An error occurred:", e)
+#
+# #Виклик функції для очистки таблиць
+# clear_tables(cursor)
 
-# Виклик функції для очистки таблиць
-clear_tables(cursor)
 
 # cursor.execute('''
 #     CREATE TABLE IF NOT EXISTS Client (
@@ -47,7 +57,7 @@ clear_tables(cursor)
 #         d_phone_number TEXT
 #     )
 # ''')
-
+#
 # cursor.execute('''
 #     CREATE TABLE IF NOT EXISTS Train (
 #         train_id INTEGER PRIMARY KEY,
@@ -56,7 +66,7 @@ clear_tables(cursor)
 #         year_of_manufacture INTEGER
 #     )
 # ''')
-
+#
 # cursor.execute('''
 #     CREATE TABLE IF NOT EXISTS Itinerary (
 #         itinerary_id INTEGER PRIMARY KEY,

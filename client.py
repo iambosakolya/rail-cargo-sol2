@@ -36,7 +36,7 @@ def client_window():
     CTkLabel(master=right_frame, text="You are logged as a client",
              text_color="#000000", anchor="w",
              justify="center",
-             font=("Arial Rounded MT Bold", 25)).place(relx=0, rely=0.1, anchor="w", x=150, y=30)
+             font=("Arial Rounded MT Bold", 25)).place(relx=0, rely=0, anchor="w", x=120, y=30)
 
     c_btn = CTkButton(master=left_frame, text="Change my info", **btn_style)
     c_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
@@ -44,10 +44,10 @@ def client_window():
     up_btn = CTkButton(master=left_frame, text="My contracts", **btn_style)
     up_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
-    del_btn = CTkButton(master=left_frame, text="Update contract", **btn_style)
+    del_btn = CTkButton(master=left_frame, text="Update my contract", **btn_style)
     del_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
-    add_btn = CTkButton(master=left_frame, text="Delete my account", **btn_style)
+    add_btn = CTkButton(master=left_frame, text="Deactivate my account", **btn_style)
     add_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
     app.mainloop()

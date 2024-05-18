@@ -9,9 +9,6 @@ class Calc:
         self.cargo_type = cargo_type
         self.weight = weight
 
-    # def set_contract_id(self, contract_id):
-    #     self.contract_id = contract_id
-
     def set_price(self, price):
         self.price = price
 
@@ -23,9 +20,6 @@ class Calc:
 
     def set_type(self, cargo_type):
         self.cargo_type = cargo_type
-
-    # def get_contract_id(self):
-    #     return self.contract_id
 
     def get_price(self):
         return self.price
@@ -46,7 +40,6 @@ class Calc:
         return self.weight
 
     def calculate_price(self):
-        # Implement the logic to calculate price based on distance and weight
-        # For example:
+        # the logic to calculate price based on distance and weight
         tariff = Tariff(self.distance, self.weight)
         self.price = tariff.get_tariff()

@@ -17,7 +17,7 @@ class Tariff:
         return self.weight
 
     def get_tariff(self):
-        price_per_km = 2  # $1 per km
-        base_price = 50  # ₴50 base price
+        price_per_km = 2  # $2 per km
+        base_price = 50  # $50 base price
         total_price = base_price + (self.distance * price_per_km)
         return total_price
