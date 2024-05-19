@@ -43,6 +43,16 @@ class ContractList:
         else:
             raise ValueError("Expected a ContractInfo object")
 
+    def delete_contract_from_db(self, contract_info):
+        if isinstance(contract_info, ContractInfo):  # Перевіряємо, чи це об'єкт ContractInfo
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM Contracts WHERE contract_id = ?",
+                               (contract_info.get_contract_id(),))
+                conn.commit()
+        else:
+            raise ValueError("Expected a ContractInfo object")
+
     def find_by_id(self, contract_id):
         for contract in self.contracts:
             if contract.get_contract_id() == contract_id:
@@ -53,16 +63,6 @@ class ContractList:
         if isinstance(contract_info, ContractInfo):  # Перевіряємо, чи це об'єкт ContractInfo
             self.contracts.remove(contract_info)
             self.delete_contract_from_db(contract_info)
-        else:
-            raise ValueError("Expected a ContractInfo object")
-
-    def delete_contract_from_db(self, contract_info):
-        if isinstance(contract_info, ContractInfo):  # Перевіряємо, чи це об'єкт ContractInfo
-            with sqlite3.connect(self.db_path) as conn:
-                cursor = conn.cursor()
-                cursor.execute("DELETE FROM Contracts WHERE contract_id = ?",
-                               (contract_info.get_contract_id(),))
-                conn.commit()
         else:
             raise ValueError("Expected a ContractInfo object")
 

@@ -26,12 +26,19 @@ class CargoType:
             'Gases',
         ]
 
-    def set_type(self, cargo_types):
-        self.cargo_types = cargo_types
+    def isCargoType(self):
+        cargo_type = self.get_cargo_types()
+        if cargo_type in self.unavailable_cargo_types:
+            CTkMessagebox(title="Error", message="This cargo type is not available!", icon="cancel")
+            return False
+        else:
+            return True
 
     def get_cargo_types(self):
         return self.cargo_types
 
+    def set_type(self, cargo_types):
+        self.cargo_types = cargo_types
 
     def set_dimensions(self, dimensions):
         self.dimensions = dimension
@@ -55,17 +62,8 @@ class CargoType:
     def get_description(self):
         return self.description
 
-
     def set_quantity(self, quantity):
         self.description = quantity
 
     def get_quantity(self):
         return self.quantity
-
-    def isCargoType(self):
-        cargo_type = self.get_cargo_types()
-        if cargo_type in self.unavailable_cargo_types:
-            CTkMessagebox(title="Error", message="This cargo type is not available!", icon="cancel")
-            return False
-        else:
-            return True

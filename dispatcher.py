@@ -11,6 +11,7 @@ from datetime import datetime
 from classes.Calc import Calc
 from database import cursor, conn
 from classes.Tariff import Tariff
+from classes.Register import Register
 from classes.Contract import Contract
 from classes.ContractInfo import ContractInfo
 from classes.ContractInfo import ContractList
@@ -148,9 +149,9 @@ def create_contract():
             # adding new type
 
             cargo_type_checked = False
-            def cargo_type_check(cargo_instance):
+            def cargo_type_check(cargo_obj):
                 global cargo_type_checked
-                if cargo_instance.isCargoType():
+                if cargo_obj.isCargoType():
                     cargo_type_checked = True
                     CTkMessagebox(message="Cargo type is available", icon="check", option_1="Thanks")
                     save.configure(state="normal")
@@ -188,6 +189,7 @@ def create_contract():
                 description = desc_entry.get()
                 dimensions = dim_entry.get()
                 insert_type(cargo_name, description, dimensions)
+                cargo_obj = CargoType(cargo_name, description, dimensions, quantity_input.get(), weight_input.get())
 
                 # save cargo data
                 selected_type = type_combobox.get()
@@ -261,8 +263,8 @@ def create_contract():
                     CTkMessagebox(message="Please enter the arrival station with a capital letter!", icon="cancel")
                     return
 
-                map_instance = Map(dep_station, arr_station, 0, 0)
-                is_connection, distance, duration = map_instance.is_station()
+                map_obj = Map(dep_station, arr_station, 0, 0)
+                is_connection, distance, duration = map_obj.is_station()
 
                 if is_connection:
                     message = f"Railway connection exists!\nDistance: {distance} km\nDuration: {duration} hours"
@@ -378,9 +380,9 @@ def create_contract():
                         cargo_type, weight = cargo_data
                         distance, _ = route_data
 
-                        calc_instance = Calc(None, distance, None, cargo_type, weight)
-                        calc_instance.calculate_price()
-                        calculated_tariff = calc_instance.get_price()
+                        calc_obj = Calc(None, distance, None, cargo_type, weight)
+                        calc_obj.calculate_price()
+                        calculated_tariff = calc_obj.get_price()
 
                         record_payment(calculated_tariff)
 
@@ -526,7 +528,7 @@ def create_contract():
             cursor.execute("SELECT itinerary_id FROM Itinerary ORDER BY itinerary_id DESC LIMIT 1")
             itinerary_id = cursor.fetchone()[0]
 
-            def create_contract(cursor, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id):
+            def create(cursor, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id):
                 contract_list = ContractList()
                 current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 try:
@@ -536,14 +538,56 @@ def create_contract():
                         (current_datetime, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id))
                     conn.commit()
                     contract_id = cursor.lastrowid
+
+                    # Отримання даних з таблиці Cargo
+                    cursor.execute("SELECT quantity, weight, cargo_type_id FROM Cargo WHERE cargo_id = ?", (cargo_id,))
+                    cargo_data1 = cursor.fetchone()
+                    quantity, weight, cargo_type_id = cargo_data1
+
+                    # Отримання даних з таблиці CargoType
+                    cursor.execute("SELECT cargo_name, description, dimensions FROM CargoType WHERE cargo_type_id = ?",
+                                   (cargo_type_id,))
+                    cargo_data2 = cursor.fetchone()
+                    cargo_obj = CargoType(cargo_data2[0], cargo_data2[1], cargo_data2[2], quantity, weight)
+
+                    # Отримання даних з таблиці Itinerary
+                    cursor.execute(
+                        "SELECT departure_station, arrival_station, route_length, duration FROM Itinerary WHERE itinerary_id = ?",
+                        (itinerary_id,))
+                    map_data = cursor.fetchone()
+                    map_obj = Map(*map_data)
+
+                    # Отримання даних з таблиці Payment
+                    cursor.execute("SELECT payment_amount, payment_datetime FROM Payment WHERE payment_id = ?",
+                                   (payment_id,))
+                    payment_data = cursor.fetchone()
+                    calc_obj = Calc(payment_data[0], payment_data[1], cargo_data2[0], map_data[2], map_data[3], weight)
+
+                    # Отримання даних клієнта та диспетчера
+                    cursor.execute("SELECT c_email, c_phone_number, c_pib FROM Client WHERE client_id = ?",
+                                   (client_id,))
+                    client_data = cursor.fetchone()
+                    c_email, c_phone_number, pib_c = client_data
+
+                    cursor.execute("SELECT d_pib FROM Dispatcher WHERE dispatcher_id = ?", (dispatcher_id,))
+                    dispatcher_data = cursor.fetchone()
+                    pib_d = dispatcher_data[0]
+
+                    # Створення екземпляра Contract
+                    contract = Contract(contract_id, current_datetime, pib_c, c_phone_number, c_email, pib_d, cargo_obj,
+                                        map_obj, calc_obj)
+
+                    register = Register(contract_obj, map_obj, calc_obj, list_obj)
+
+                    # Збереження контракту в списку контрактів
                     contract_info = ContractInfo(contract_id)
                     contract_list.add_contract(contract_info)
+
                     CTkMessagebox(message="Contract saved successfully!", icon="check", option_1="Thanks")
                     return contract_id
                 except sqlite3.Error as e:
                     CTkMessagebox(message="Error: " + str(e), icon="cancel", option_1="OK")
                     return None
-
             def enter_pib():
                 def save_dispatcher_id():
                     try:
@@ -557,10 +601,10 @@ def create_contract():
                             client_data = cursor.fetchone()
                             if client_data:
                                 client_id = client_data[0]
-                                contract_id = create_contract(cursor, client_id, payment_id, dispatcher_id, cargo_id,
+                                contract_id = create(cursor, client_id, payment_id, dispatcher_id, cargo_id,
                                                               itinerary_id)
                                 if contract_id:
-                                    create_print_button(contract_id)
+                                    print_button(contract_id)
                                 dialog_window.destroy()
                             else:
                                 CTkMessagebox(message="Client with provided phone number not found!", icon="cancel",
@@ -596,7 +640,7 @@ def create_contract():
                 dialog_window.mainloop()
 
             savec_btn = CTkButton(master=screen_frame, text="Save contract", **btn_style, command=enter_pib)
-            savec_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=30)
+            savec_btn.place(relx=0, rely=0, anchor="w", x=220, y=180)
 
             def get_contract_data(cursor, contract_id):
                 try:
@@ -605,55 +649,56 @@ def create_contract():
                     if not contract_data:
                         print("No contract data found.")
                         return None, None, None, None, None, None, None
-                    print(f"Contract data: {contract_data}")
+                    #print(f"Contract data: {contract_data}")
 
                     cursor.execute("SELECT * FROM Client WHERE client_id = ?", (contract_data[2],))
                     client_data = cursor.fetchone()
                     if not client_data:
                         print("No client data found.")
                         return contract_data, None, None, None, None, None, None
-                    print(f"Client data: {client_data}")
+                    #print(f"Client data: {client_data}")
 
                     cursor.execute("SELECT * FROM Payment WHERE payment_id = ?", (contract_data[5],))
                     payment_data = cursor.fetchone()
                     if not payment_data:
                         print("No payment data found.")
                         return contract_data, client_data, None, None, None, None, None
-                    print(f"Payment data: {payment_data}")
+                    #print(f"Payment data: {payment_data}")
 
                     cursor.execute("SELECT * FROM Dispatcher WHERE dispatcher_id = ?", (contract_data[3],))
                     dispatcher_data = cursor.fetchone()
                     if not dispatcher_data:
                         print("No dispatcher data found.")
                         return contract_data, client_data, payment_data, None, None, None, None
-                    print(f"Dispatcher data: {dispatcher_data}")
+                    #print(f"Dispatcher data: {dispatcher_data}")
 
                     cursor.execute("SELECT * FROM Cargo WHERE cargo_id = ?", (contract_data[4],))
                     cargo_data = cursor.fetchone()
                     if not cargo_data:
                         print("No cargo data found.")
                         return contract_data, client_data, payment_data, dispatcher_data, None, None, None
-                    print(f"Cargo data: {cargo_data}")
+                    #print(f"Cargo data: {cargo_data}")
 
                     cursor.execute("SELECT * FROM CargoType WHERE cargo_type_id = ?", (cargo_data[1],))
                     cargo_type_data = cursor.fetchone()
                     if not cargo_type_data:
                         print("No cargo type data found.")
                         return contract_data, client_data, payment_data, dispatcher_data, cargo_data, None, None
-                    print(f"Cargo type data: {cargo_type_data}")
+                    #print(f"Cargo type data: {cargo_type_data}")
 
                     cursor.execute("SELECT * FROM Itinerary WHERE itinerary_id = ?", (contract_data[6],))
                     itinerary_data = cursor.fetchone()
                     if not itinerary_data:
                         print("No itinerary data found.")
                         return contract_data, client_data, payment_data, dispatcher_data, cargo_data, cargo_type_data, None
-                    print(f"Itinerary data: {itinerary_data}")
+                   # print(f"Itinerary data: {itinerary_data}")
 
                     return contract_data, client_data, payment_data, dispatcher_data, cargo_data, cargo_type_data, itinerary_data
                 except sqlite3.Error as e:
                     print(f"Error fetching contract data: {e}")
                     return None, None, None, None, None, None, None
-
+            def finish():
+                contract_window.destroy()
             def print_contract(contract_id):
                 try:
                     conn = sqlite3.connect('data.db')
@@ -666,50 +711,39 @@ def create_contract():
                         CTkMessagebox(message="Failed to fetch contract data", icon="cancel", option_1="OK")
                         return
 
-                    company = RailCargoSol(city_location="Head office: Odesa, Ukraine",
-                                           company_name="Company name: Rail Cargo Solutions")
+                    company_name = "Rail Cargo Solutions"
+                    head_office = "Head office: Odesa, Ukraine"
 
-                    client_info = (f"PIB: {client_data[1]}\nPhone number: {client_data[2]}"
-                                   f"\nEmail: {client_data[3]}") if client_data else "Client information not available"
-
-                    payment_info = (f"Payment amount: {payment_data[1]} UAH"
-                                    f"\nPayment date: {payment_data[2]}") \
-                        if payment_data else "Payment information not available"
-
-                    dispatcher_info = f"PIB: {dispatcher_data[1]}" \
-                        if dispatcher_data else "Dispatcher information not available"
-
-                    cargo_info = (f"Cargo type: {cargo_type_data[1]}\nDescription: {cargo_type_data[2]}"
-                                  f"\nDimensions: {cargo_type_data[3]}"
-                                  f"\nQuantity: {cargo_data[2]}"
-                                  f"\nWeight: {cargo_data[3]} tons") \
-                        if cargo_data and cargo_type_data else "Cargo information not available"
-
-                    itinerary_info = (f"Departure Station: {itinerary_data[1]}"
-                                      f"\nArrival Station: {itinerary_data[2]}"
-                                      f"\nRoute Length: {itinerary_data[3]} km"
-                                      f"\nDuration: {itinerary_data[4]} hour(s)") \
-                        if itinerary_data else "Itinerary information not available"
+                    client_info = (
+                        f"\nPIB: {client_data[1]}\nPhone number: {client_data[2]}\nEmail: {client_data[3]}") if client_data else "Client information not available"
+                    payment_info = (
+                        f"\nPayment amount: {payment_data[1]} UAH\nPayment date: {payment_data[2]}") if payment_data else "Payment information not available"
+                    dispatcher_info = f"\nPIB: {dispatcher_data[1]}" if dispatcher_data else "Dispatcher information not available"
+                    cargo_info = (
+                        f"\nCargo type: {cargo_type_data[1]}\nDescription: {cargo_type_data[2]}\nDimensions: {cargo_type_data[3]} metres\nQuantity: {cargo_data[2]}\nWeight: {cargo_data[3]} tons") if cargo_data and cargo_type_data else "Cargo information not available"
+                    itinerary_info = (
+                        f"\nDeparture station: {itinerary_data[1]}\nArrival station: {itinerary_data[2]}\nRoute length: {itinerary_data[3]} km\nDuration: {itinerary_data[4]} hour(s)") if itinerary_data else "Itinerary information not available"
 
                     contract_details = f"""
             Contract ID: {contract_data[0]}
-            Conclusion date: {contract_data[1]}
+            Conclusion Date: {contract_data[1]}
 
-            Client Information:
+            \tClient Information:
             {client_info}
 
-            Payment Information:
-            {payment_info}
-
-            Dispatcher Information:
+            \tDispatcher Information:
             {dispatcher_info}
 
-            Cargo Information:
+            \tCargo Information:
             {cargo_info}
 
-            Itinerary Information:
+            \tItinerary Information:
             {itinerary_info}
+
+            \tPayment Information:
+            {payment_info}
             """
+
                     hdc = win32ui.CreateDC()
                     hdc.CreatePrinterDC(win32print.GetDefaultPrinter())
                     hdc.StartDoc("Contract")
@@ -724,19 +758,31 @@ def create_contract():
                         "weight": win32con.FW_BOLD,
                     })
                     hdc.SelectObject(header_font)
-                    hdc.TextOut(1000, -1000, company.get_company_name())
-                    hdc.TextOut(1000, -1500, company.get_city_location())
+                    hdc.TextOut(1000, -1000, company_name)
+                    hdc.TextOut(1000, -1500, head_office)
 
                     # Body font
                     body_font = win32ui.CreateFont({
                         "name": "Arial",
-                        "height": 300,
+                        "height": 320,
                         "weight": win32con.FW_NORMAL,
                     })
-                    hdc.SelectObject(body_font)
 
-                    for i, line in enumerate(contract_details.split('\n')):
-                        hdc.TextOut(1000, -3000 - (i * 300), line)
+                    bold_body_font = win32ui.CreateFont({
+                        "name": "Arial",
+                        "height": 320,
+                        "weight": win32con.FW_BOLD,
+                    })
+
+                    y_offset = -2000
+
+                    for line in contract_details.split('\n'):
+                        if " Information:" in line or "Contract ID" in line or "Conclusion Date" in line:
+                            hdc.SelectObject(bold_body_font)
+                        else:
+                            hdc.SelectObject(body_font)
+                        hdc.TextOut(1000, y_offset, line)
+                        y_offset -= 300
 
                     hdc.EndPage()
                     hdc.EndDoc()
@@ -745,15 +791,17 @@ def create_contract():
                     conn.close()
                 except Exception as e:
                     print(f"Error in print_contract: {e}")
-
-            def create_print_button(contract_id):
+            def print_button(contract_id):
                 print_btn = CTkButton(master=screen_frame, text="Print contract", **btn_style,
                                       command=lambda: print_contract(contract_id))
-                print_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=50)
+                print_btn.place(relx=0, rely=0, anchor="w", x=220, y=230)
 
+            finish_btn = CTkButton(master=screen_frame, text="Finish", **btn_style, command=finish)
+            finish_btn.place(relx=0, rely=0, anchor="w", x=220, y=280)
 
     show_current_step()
     contract_window.mainloop()
+
 def dispatcher_window():
     app = CTk()
     app.title("Dispatcher window")
