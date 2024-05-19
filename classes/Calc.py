@@ -30,8 +30,6 @@ class Calc:
     def set_type(self, cargo_type):
         self.cargo_type = cargo_type
 
-
-
     def get_distance(self):
         return self.distance
 

@@ -1,9 +1,11 @@
 import re
+import tk
 import sqlite3
 import win32ui
 import win32con
 import win32print
 import customtkinter
+from CTkTable import *
 from CTkToolTip import *
 from customtkinter import *
 from classes.Map import Map
@@ -35,6 +37,40 @@ entry_style = {
     "border_color": "#601E88",
     "border_width": 1,
     "text_color": "#000000"}
+
+conn = sqlite3.connect('data.db')
+cursor = conn.cursor()
+
+# Define the table names
+tables = [
+    'Client', 'Dispatcher', 'Itinerary', 'Payment',
+    'CargoType', 'Cargo', 'Contract', 'Contracts'
+]
+current_table_index = 0
+
+def display_table_data(table_name, text_box):
+    cursor.execute(f"SELECT * FROM {table_name}")
+    rows = cursor.fetchall()
+    columns = [description[0] for description in cursor.description]
+
+    text_box.configure(state='normal')
+    text_box.delete(1.0, END)
+    text_box.insert(END, f"Table: {table_name}\n")
+    text_box.insert(END, " | ".join(columns) + "\n")
+    text_box.insert(END, "-" * 100 + "\n")
+    for row in rows:
+        text_box.insert(END, " | ".join(map(str, row)) + "\n")
+    text_box.configure(state='disabled')
+
+def show_next_table(text_box):
+    global current_table_index
+    current_table_index = (current_table_index + 1) % len(tables)
+    display_table_data(tables[current_table_index], text_box)
+
+def show_previous_table(text_box):
+    global current_table_index
+    current_table_index = (current_table_index - 1) % len(tables)
+    display_table_data(tables[current_table_index], text_box)
 
 def create_contract():
     global screen_frame
@@ -364,6 +400,7 @@ def create_contract():
                     CTkMessagebox(message="Payment recorded successfully!", icon="check", option_1="Thanks")
                 except sqlite3.Error as e:
                     CTkMessagebox(message="Payment is not recorded!", icon="cancel", option_1="OK")
+
             def calculate_tariff():
                 global calculated_tariff
                 try:
@@ -378,12 +415,11 @@ def create_contract():
 
                     if cargo_data and route_data:
                         cargo_type, weight = cargo_data
-                        distance, _ = route_data
+                        distance, duration = route_data  # Fetching duration from route_data
 
-                        calc_obj = Calc(None, distance, None, cargo_type, weight)
+                        calc_obj = Calc(None, distance, None, duration, cargo_type, weight)  # Passing duration
                         calc_obj.calculate_price()
                         calculated_tariff = calc_obj.get_price()
-
                         record_payment(calculated_tariff)
 
                         textbox1.configure(state="normal")
@@ -539,31 +575,26 @@ def create_contract():
                     conn.commit()
                     contract_id = cursor.lastrowid
 
-                    # Отримання даних з таблиці Cargo
                     cursor.execute("SELECT quantity, weight, cargo_type_id FROM Cargo WHERE cargo_id = ?", (cargo_id,))
                     cargo_data1 = cursor.fetchone()
                     quantity, weight, cargo_type_id = cargo_data1
 
-                    # Отримання даних з таблиці CargoType
                     cursor.execute("SELECT cargo_name, description, dimensions FROM CargoType WHERE cargo_type_id = ?",
                                    (cargo_type_id,))
                     cargo_data2 = cursor.fetchone()
                     cargo_obj = CargoType(cargo_data2[0], cargo_data2[1], cargo_data2[2], quantity, weight)
 
-                    # Отримання даних з таблиці Itinerary
                     cursor.execute(
                         "SELECT departure_station, arrival_station, route_length, duration FROM Itinerary WHERE itinerary_id = ?",
                         (itinerary_id,))
                     map_data = cursor.fetchone()
                     map_obj = Map(*map_data)
 
-                    # Отримання даних з таблиці Payment
                     cursor.execute("SELECT payment_amount, payment_datetime FROM Payment WHERE payment_id = ?",
                                    (payment_id,))
                     payment_data = cursor.fetchone()
                     calc_obj = Calc(payment_data[0], payment_data[1], cargo_data2[0], map_data[2], map_data[3], weight)
 
-                    # Отримання даних клієнта та диспетчера
                     cursor.execute("SELECT c_email, c_phone_number, c_pib FROM Client WHERE client_id = ?",
                                    (client_id,))
                     client_data = cursor.fetchone()
@@ -573,13 +604,11 @@ def create_contract():
                     dispatcher_data = cursor.fetchone()
                     pib_d = dispatcher_data[0]
 
-                    # Створення екземпляра Contract
                     contract = Contract(contract_id, current_datetime, pib_c, c_phone_number, c_email, pib_d, cargo_obj,
                                         map_obj, calc_obj)
 
-                    register = Register(contract_obj, map_obj, calc_obj, list_obj)
+                    register = Register(contract, map_obj, calc_obj,contract_list)
 
-                    # Збереження контракту в списку контрактів
                     contract_info = ContractInfo(contract_id)
                     contract_list.add_contract(contract_info)
 
@@ -801,7 +830,6 @@ def create_contract():
 
     show_current_step()
     contract_window.mainloop()
-
 def dispatcher_window():
     app = CTk()
     app.title("Dispatcher window")
@@ -832,6 +860,21 @@ def dispatcher_window():
              justify="center",
              font=("Arial Rounded MT Bold", 25)).place(relx=0, rely=0, anchor="w", x=90, y=30)
 
+    text_box = CTkTextbox(master=right_frame, width=530, height=300)
+    text_box.place(relx=0, rely=0.1, anchor="w", x=5, y=150)
+
+    prev_btn = CTkButton(master=right_frame, text="Previous", **btn_style, width=40,
+                         command=lambda: show_previous_table(text_box))
+    prev_btn.place(relx=0, rely=0.1, anchor="w", x=5, y=320)
+
+    next_btn = CTkButton(master=right_frame, text="Next", **btn_style, width=40,
+                         command=lambda: show_next_table(text_box))
+    next_btn.place(relx=0, rely=0.1, anchor="w", x=500, y=320)
+
+    # Show the initial table
+    display_table_data(tables[current_table_index], text_box)
+
+    # buttons
     info_btn = CTkButton(master=left_frame, text="Change my info", **btn_style)
     info_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
@@ -839,7 +882,8 @@ def dispatcher_window():
              command=lambda: create_contract())
     c_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
-    list_btn = CTkButton(master=left_frame, text="All contracts", **btn_style)
+    list_btn = CTkButton(master=left_frame, text="All contracts", **btn_style,
+                         command=show_next_table(text_box))
     list_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
     up_btn = CTkButton(master=left_frame, text="Delete contract", **btn_style)

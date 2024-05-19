@@ -1,6 +1,8 @@
 import re
 import PIL
 import database
+import tk
+import tkinter
 import customtkinter
 from PIL import Image
 from customtkinter import *
