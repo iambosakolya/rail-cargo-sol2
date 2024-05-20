@@ -136,21 +136,21 @@ def get_db_connection(db_path='data.db'):
 
 # def clear_tables(cursor):
 #     try:
-#         # Очистка таблиць
+#         #Очистка таблиць
 #         # cursor.execute("DELETE FROM Client")
 #         # cursor.execute("DELETE FROM Dispatcher")
-#         # cursor.execute("DELETE FROM Itinerary")
-#         # cursor.execute("DELETE FROM Payment")
-#         # cursor.execute("DELETE FROM CargoType")
-#         # cursor.execute("DELETE FROM Contracts")
-#         # cursor.execute("DELETE FROM Cargo")
-#         # cursor.execute("DELETE FROM Contract")
+#         cursor.execute("DELETE FROM Itinerary")
+#         cursor.execute("DELETE FROM Payment")
+#         cursor.execute("DELETE FROM CargoType")
+#         cursor.execute("DELETE FROM Contracts")
+#         cursor.execute("DELETE FROM Cargo")
+#         cursor.execute("DELETE FROM Contract")
 #         conn.commit()
 #         print("All tables cleared successfully.")
 #     except sqlite3.Error as e:
 #         print("An error occurred:", e)
-# #
-# # Виклик функції для очистки таблиць
+#
+# #Виклик функції для очистки таблиць
 # clear_tables(cursor)
 
 # cursor.execute('DROP TABLE IF EXISTS Contract')
@@ -160,4 +160,3 @@ def get_db_connection(db_path='data.db'):
 # cursor.execute('DROP TABLE IF EXISTS Itinerary')
 # cursor.execute('DROP TABLE IF EXISTS Dispatcher')
 # cursor.execute('DROP TABLE IF EXISTS Client')
-
