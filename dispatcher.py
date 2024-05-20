@@ -1,10 +1,10 @@
 import re
-import tk
 import sqlite3
 import win32ui
 import win32con
 import win32print
 import customtkinter
+import customtkinter as ctk
 from CTkTable import *
 from CTkToolTip import *
 from customtkinter import *
@@ -41,14 +41,13 @@ entry_style = {
 conn = sqlite3.connect('data.db')
 cursor = conn.cursor()
 
-# Define the table names
 tables = [
     'Client', 'Dispatcher', 'Itinerary', 'Payment',
     'CargoType', 'Cargo', 'Contract', 'Contracts'
 ]
 current_table_index = 0
 
-def display_table_data(table_name, text_box):
+def display_tables(table_name, text_box):
     cursor.execute(f"SELECT * FROM {table_name}")
     rows = cursor.fetchall()
     columns = [description[0] for description in cursor.description]
@@ -61,16 +60,174 @@ def display_table_data(table_name, text_box):
     for row in rows:
         text_box.insert(END, " | ".join(map(str, row)) + "\n")
     text_box.configure(state='disabled')
-
 def show_next_table(text_box):
     global current_table_index
     current_table_index = (current_table_index + 1) % len(tables)
-    display_table_data(tables[current_table_index], text_box)
-
+    display_tables(tables[current_table_index], text_box)
 def show_previous_table(text_box):
     global current_table_index
     current_table_index = (current_table_index - 1) % len(tables)
-    display_table_data(tables[current_table_index], text_box)
+    display_tables(tables[current_table_index], text_box)
+
+def delete_data(contract_id):
+    cursor.execute("SELECT cargo_id, payment_id, itinerary_id FROM Contract WHERE contract_id = ?", (contract_id,))
+    result = cursor.fetchone()
+
+    if result:
+        cargo_id, payment_id, itinerary_id = result
+
+        cursor.execute("SELECT cargo_type_id FROM Cargo WHERE cargo_id = ?", (cargo_id,))
+        cargo_result = cursor.fetchone()
+
+        if cargo_result:
+            cargo_type_id = cargo_result[0]
+
+            cursor.execute("DELETE FROM Cargo WHERE cargo_id = ?", (cargo_id,))
+            cursor.execute("DELETE FROM CargoType WHERE cargo_type_id = ?", (cargo_type_id,))
+            cursor.execute("DELETE FROM Payment WHERE payment_id = ?", (payment_id,))
+            cursor.execute("DELETE FROM Itinerary WHERE itinerary_id = ?", (itinerary_id,))
+            cursor.execute("DELETE FROM Contracts WHERE contract_id = ?", (contract_id,))
+
+        cursor.execute("DELETE FROM Contract WHERE contract_id = ?", (contract_id,))
+
+        conn.commit()
+
+        CTkMessagebox(message="Contract with ID {contract_id} deleted successfully", icon="check", option_1="Thanks")
+    else:
+        CTkMessagebox(message="No contract found with ID {contract_id}", icon="cancel", option_1="OK")
+def delete_contract():
+    def on_confirm():
+        contract_id = entry_d.get()
+        delete_data(contract_id)
+        dialog.destroy()
+
+    dialog = ctk.CTk()
+    dialog.title("Delete contract")
+
+    screen_width = dialog.winfo_screenwidth()
+    screen_height = dialog.winfo_screenheight()
+
+    dialog_width = 300
+    dialog_height = 150
+
+    x_position = (screen_width - dialog_width) // 2
+    y_position = (screen_height - dialog_height) // 2
+
+    dialog.geometry(f"{dialog_width}x{dialog_height}+{x_position}+{y_position}")
+    dialog.resizable(0, 0)
+
+    screen_frame = CTkFrame(master=dialog, width=350, height=200, fg_color="#897E9B")
+    screen_frame.pack_propagate(0)
+    screen_frame.pack(expand=True, fill="both")
+
+    label_d = ctk.CTkLabel(screen_frame, text="Contract ID to delete:", anchor="w",
+                           text_color="#000000",justify="left")
+    label_d.pack(anchor="w", padx=88, pady=10)
+
+    entry_d = ctk.CTkEntry(screen_frame)
+    entry_d.pack(anchor="w", padx=80, pady=5)
+
+    confirm_d = ctk.CTkButton(screen_frame, text="Confirm", fg_color="#000000", hover_color="#4F2346",
+                              text_color="#ffffff", command=on_confirm)
+    confirm_d.pack(pady=10)
+
+    dialog.mainloop()
+
+def delete_d_data(d_pib):
+    cursor.execute("SELECT * FROM Dispatcher WHERE d_pib = ?", (d_pib,))
+    result = cursor.fetchone()
+
+    if result:
+        cursor.execute("DELETE FROM Dispatcher WHERE d_pib = ?", (d_pib,))
+        conn.commit()
+        CTkMessagebox(message=f"Dispatcher with surname '{d_pib}' deleted successfully", icon="check", option_1="Thanks")
+    else:
+        CTkMessagebox(message=f"No dispatcher found with surname '{d_pib}'", icon="cancel", option_1="OK")
+def delete_dispatcher():
+    def on_confirm():
+        d_pib = entry_d.get()
+        delete_d_data(d_pib)
+        dialog.destroy()
+
+    dialog = ctk.CTk()
+    dialog.title("Delete Dispatcher")
+
+    screen_width = dialog.winfo_screenwidth()
+    screen_height = dialog.winfo_screenheight()
+
+    dialog_width = 300
+    dialog_height = 150
+
+    x_position = (screen_width - dialog_width) // 2
+    y_position = (screen_height - dialog_height) // 2
+
+    dialog.geometry(f"{dialog_width}x{dialog_height}+{x_position}+{y_position}")
+    dialog.resizable(0, 0)
+
+    screen_frame = CTkFrame(master=dialog, width=350, height=200, fg_color="#897E9B")
+    screen_frame.pack_propagate(0)
+    screen_frame.pack(expand=True, fill="both")
+
+    label_d = ctk.CTkLabel(screen_frame, text="Dispatcher pib to delete:", anchor="w",
+                           text_color="#000000", justify="left")
+    label_d.pack(anchor="w", padx=80, pady=10)
+
+    entry_d = ctk.CTkEntry(screen_frame)
+    entry_d.pack(anchor="w", padx=80, pady=5)
+
+    confirm_d = ctk.CTkButton(screen_frame, text="Confirm", fg_color="#000000", hover_color="#4F2346",
+                              text_color="#ffffff", command=on_confirm)
+    confirm_d.pack(pady=10)
+
+    dialog.mainloop()
+
+def delete_c_data(c_pib):
+    cursor.execute("SELECT * FROM Client WHERE c_pib = ?", (c_pib,))
+    result = cursor.fetchone()
+
+    if result:
+        cursor.execute("DELETE FROM Client WHERE c_pib = ?", (c_pib,))
+        conn.commit()
+        CTkMessagebox(message=f"Client with surname '{c_pib}' deleted successfully", icon="check", option_1="Thanks")
+    else:
+        CTkMessagebox(message=f"No client found with surname '{c_pib}'", icon="cancel", option_1="OK")
+def delete_client():
+    def on_confirm():
+        c_pib = entry_c.get()
+        delete_c_data(c_pib)
+        dialog1.destroy()
+
+    dialog1 = ctk.CTk()
+    dialog1.title("Delete Client")
+
+    screen_width = dialog1.winfo_screenwidth()
+    screen_height = dialog1.winfo_screenheight()
+
+    dialog_width = 300
+    dialog_height = 150
+
+    x_position = (screen_width - dialog_width) // 2
+    y_position = (screen_height - dialog_height) // 2
+
+    dialog1.geometry(f"{dialog_width}x{dialog_height}+{x_position}+{y_position}")
+    dialog1.resizable(0, 0)
+
+    screen_frame = CTkFrame(master=dialog1, width=350, height=200, fg_color="#897E9B")
+    screen_frame.pack_propagate(0)
+    screen_frame.pack(expand=True, fill="both")
+
+    label_c = ctk.CTkLabel(screen_frame, text="Client pib to delete:", anchor="w",
+                           text_color="#000000", justify="left")
+    label_c.pack(anchor="w", padx=90, pady=10)
+
+    entry_c = ctk.CTkEntry(screen_frame)
+    entry_c.pack(anchor="w", padx=80, pady=5)
+
+    confirm_c = ctk.CTkButton(screen_frame, text="Confirm", fg_color="#000000", hover_color="#4F2346",
+                              text_color="#ffffff", command=on_confirm)
+    confirm_c.pack(pady=10)
+
+    dialog1.mainloop()
 
 def create_contract():
     global screen_frame
@@ -251,9 +408,9 @@ def create_contract():
             save.place(relx=0, rely=0.1, anchor="w", x=200, y=300)
             save.configure(state="disabled")
 
-            reminder0 = CTkLabel(master=screen_frame, text="Dont forget to save the type!:",
+            reminder0 = CTkLabel(master=screen_frame, text="Don`t forget to save the type!",
                                 text_color="#CCCCCC", anchor="w", justify="left", font=("Arial Rounded MT Bold", 14))
-            reminder0.place(relx=0, rely=0.1, anchor="w", x=200, y=350)
+            reminder0.place(relx=0, rely=0.1, anchor="w", x=300, y=300)
 
             # cargo`s dimension
             type_label1 = CTkLabel(master=screen_frame, text="Enter dimensions:", **label_style)
@@ -272,17 +429,17 @@ def create_contract():
             # cargo`s weight
             weight_label = CTkLabel(master=screen_frame, text="Enter weight:(tons)",
                                     **label_style)
-            weight_label.place(relx=0, rely=0.1, anchor="w", x=420, y=185)
+            weight_label.place(relx=0, rely=0.1, anchor="w", x=420, y=95)
 
             weight_input = CTkEntry(master=screen_frame, width=150, height=30,**entry_style)
-            weight_input.place(relx=0, rely=0.1, anchor="w", x=420, y=225)
+            weight_input.place(relx=0, rely=0.1, anchor="w", x=420, y=135)
 
             # cargo`s quantity
             quantity_label = CTkLabel(master=screen_frame, text="Enter quantity:", **label_style)
-            quantity_label.place(relx=0, rely=0.1, anchor="w", x=420, y=265)
+            quantity_label.place(relx=0, rely=0.1, anchor="w", x=420, y=185)
 
             quantity_input = CTkEntry(master=screen_frame, width=150, height=30, **entry_style)
-            quantity_input.place(relx=0, rely=0.1, anchor="w", x=420, y=295)
+            quantity_input.place(relx=0, rely=0.1, anchor="w", x=420, y=225)
 
             next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style, command=next_step)
             next_btn.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
@@ -647,24 +804,33 @@ def create_contract():
                 def on_closing():
                     dialog_window.destroy()
 
-                dialog_window = customtkinter.CTk()
-                dialog_window.geometry("300x200")
+                dialog_window = ctk.CTk()
                 dialog_window.title("Attention")
-                dialog_window.protocol("WM_DELETE_WINDOW", on_closing)
 
-                pib_label = customtkinter.CTkLabel(dialog_window, text="Confirm your PIB one more time:")
+                screen_width = dialog_window.winfo_screenwidth()
+                screen_height = dialog_window.winfo_screenheight()
+
+                dialog_width = 300
+                dialog_height = 200
+
+                x_position = (screen_width - dialog_width) // 2
+                y_position = (screen_height - dialog_height) // 2
+                dialog_window.geometry(f"{dialog_width}x{dialog_height}+{x_position}+{y_position}")
+                dialog_window.resizable(0, 0)
+
+                pib_label = ctk.CTkLabel(dialog_window, text="Confirm your PIB one more time:")
                 pib_label.pack()
 
-                pib_entry = customtkinter.CTkEntry(dialog_window)
+                pib_entry = ctk.CTkEntry(dialog_window)
                 pib_entry.pack()
 
-                client_phone_label = customtkinter.CTkLabel(dialog_window, text="Phone number of the client:")
+                client_phone_label = ctk.CTkLabel(dialog_window, text="Phone number of the client:")
                 client_phone_label.pack()
 
-                client_phone_entry = customtkinter.CTkEntry(dialog_window)
+                client_phone_entry = ctk.CTkEntry(dialog_window)
                 client_phone_entry.pack()
 
-                confirm_button = customtkinter.CTkButton(dialog_window, text="Confirm", command=save_dispatcher_id)
+                confirm_button = ctk.CTkButton(dialog_window, text="Confirm", command=save_dispatcher_id)
                 confirm_button.pack()
                 dialog_window.mainloop()
 
@@ -830,6 +996,140 @@ def create_contract():
 
     show_current_step()
     contract_window.mainloop()
+def update_contract():
+    global screen_frame
+    dialog = CTkInputDialog(text="Enter contract ID:", title="Update contract")
+    contract_id = dialog.get_input()
+
+    if contract_id is None:
+        return
+
+    contract_id = int(contract_id)
+    def get_contract_data(cursor, contract_id):
+        try:
+            cursor.execute("SELECT * FROM Contract WHERE contract_id = ?", (contract_id,))
+            contract_data = cursor.fetchone()
+            if not contract_data:
+                print("No contract data found.")
+                return None, None, None, None, None, None, None
+
+            cursor.execute("SELECT * FROM Client WHERE client_id = ?", (contract_data[2],))
+            client_data = cursor.fetchone()
+            if not client_data:
+                print("No client data found.")
+                return contract_data, None, None, None, None, None, None
+
+            cursor.execute("SELECT * FROM Payment WHERE payment_id = ?", (contract_data[5],))
+            payment_data = cursor.fetchone()
+            if not payment_data:
+                print("No payment data found.")
+                return contract_data, client_data, None, None, None, None, None
+
+            cursor.execute("SELECT * FROM Dispatcher WHERE dispatcher_id = ?", (contract_data[3],))
+            dispatcher_data = cursor.fetchone()
+            if not dispatcher_data:
+                print("No dispatcher data found.")
+                return contract_data, client_data, payment_data, None, None, None, None
+
+            cursor.execute("SELECT * FROM Cargo WHERE cargo_id = ?", (contract_data[4],))
+            cargo_data = cursor.fetchone()
+            if not cargo_data:
+                print("No cargo data found.")
+                return contract_data, client_data, payment_data, dispatcher_data, None, None, None
+
+            cursor.execute("SELECT * FROM CargoType WHERE cargo_type_id = ?", (cargo_data[1],))
+            cargo_type_data = cursor.fetchone()
+            if not cargo_type_data:
+                print("No cargo type data found.")
+                return contract_data, client_data, payment_data, dispatcher_data, cargo_data, None, None
+
+            cursor.execute("SELECT * FROM Itinerary WHERE itinerary_id = ?", (contract_data[6],))
+            itinerary_data = cursor.fetchone()
+            if not itinerary_data:
+                print("No itinerary data found.")
+                return contract_data, client_data, payment_data, dispatcher_data, cargo_data, cargo_type_data, None
+
+            return contract_data, client_data, payment_data, dispatcher_data, cargo_data, cargo_type_data, itinerary_data
+        except sqlite3.Error as e:
+            print(f"Error fetching contract data: {e}")
+            return None, None, None, None, None, None, None
+
+    (contract_data, client_data, payment_data,
+     dispatcher_data, cargo_data, cargo_type_data, itinerary_data) = get_contract_data(cursor, contract_id)
+
+    if not contract_data:
+        CTkMessagebox(title="Error", message="Contract not found", icon="cancel")
+        return
+
+    update_window = CTk()
+    update_window.title(f"Update contract with id:{contract_id}")
+
+    screen_width = update_window.winfo_screenwidth()
+    screen_height = update_window.winfo_screenheight()
+
+    app_width = 600
+    app_height = 500
+
+    x_position = (screen_width - app_width) // 2
+    y_position = (screen_height - app_height) // 2
+
+    update_window.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
+    update_window.resizable(0, 0)
+
+    screen_frame = CTkFrame(master=update_window, width=850, height=750, fg_color="#897E9B")
+    screen_frame.pack_propagate(0)
+    screen_frame.pack(expand=True, fill="both")
+
+    data_text = f"""
+    Contract ID: {contract_data[0]}
+    Conclusion date: {contract_data[1]}
+    
+    Client ID: {contract_data[2]}
+    Dispatcher ID: {contract_data[3]}
+    
+    Cargo ID: {contract_data[4]}
+    Type ID: {cargo_data[1]}
+    Payment ID: {contract_data[5]}
+    Itinerary ID: {contract_data[6]}
+
+    Client email: {client_data[1]}
+    Client phone: {client_data[2]}
+    Client PIB: {client_data[3]}
+    
+    Dispatcher PIB: {dispatcher_data[1]}
+    
+    Name: {cargo_type_data[1]}
+    Description: {cargo_type_data[2]}
+    Dimensions: {cargo_type_data[3]}  
+    Quantity: {cargo_data[2]}
+    Weight: {cargo_data[3]}
+    
+    Departure station: {itinerary_data[1]}
+    Arrival station: {itinerary_data[2]}
+    Route length: {itinerary_data[3]}
+    Duration: {itinerary_data[4]}
+
+    Payment amount: {payment_data[1]}
+    Payment date: {payment_data[2]}
+    """
+
+    text_box = CTkTextbox(screen_frame, width=400, height=340)
+    text_box.pack(padx=60, pady=20, fill='both', expand=False)
+    text_box.insert('1.0', data_text)
+    text_box.configure(state='disabled')
+
+    info_label = CTkLabel(master=screen_frame, text="You can modify:\n1 Cargo info\n2 Route info" ,
+                          text_color="#CCCCCC", anchor="w",justify="left", font=("Arial Rounded MT Bold", 14))
+    info_label.place(relx=0, rely=0.1, anchor="w", x=30, y=350)
+
+    cargo_btn = CTkButton(master=screen_frame, text="Change contract info", **btn_style)
+    cargo_btn.place(relx=0, rely=0.1, anchor="w", x=240, y=350)
+
+
+
+
+    update_window.mainloop()
+
 def dispatcher_window():
     app = CTk()
     app.title("Dispatcher window")
@@ -871,9 +1171,6 @@ def dispatcher_window():
                          command=lambda: show_next_table(text_box))
     next_btn.place(relx=0, rely=0.1, anchor="w", x=500, y=320)
 
-    # Show the initial table
-    display_table_data(tables[current_table_index], text_box)
-
     # buttons
     info_btn = CTkButton(master=left_frame, text="Change my info", **btn_style)
     info_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
@@ -883,16 +1180,23 @@ def dispatcher_window():
     c_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
     list_btn = CTkButton(master=left_frame, text="All contracts", **btn_style,
-                         command=show_next_table(text_box))
+                         command=lambda:display_tables(tables[current_table_index], text_box))
     list_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
-    up_btn = CTkButton(master=left_frame, text="Delete contract", **btn_style)
+    up_btn = CTkButton(master=left_frame, text="Delete contract", **btn_style,
+                           command=delete_contract)
     up_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
-    del_btn = CTkButton(master=left_frame, text="Update contract", **btn_style)
-    del_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
-
-    add_btn = CTkButton(master=left_frame, text="Add new....", **btn_style)
+    add_btn = CTkButton(master=left_frame, text="Update contract", **btn_style,
+                        command=update_contract)
     add_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+
+    deld_btn = CTkButton(master=left_frame, text="Deactivate \ndispatcher account", **btn_style,
+                        command=delete_dispatcher)
+    deld_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+
+    delc_btn = CTkButton(master=left_frame, text="Deactivate \nclient account", **btn_style,
+                        command=delete_client)
+    delc_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
     app.mainloop()
