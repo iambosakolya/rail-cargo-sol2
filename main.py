@@ -191,9 +191,11 @@ CTkLabel(master=frame_right, text="Password:",  **label_style,
 password_entry = CTkEntry(master=frame_right, **entry_style, width=300, show="*")
 password_entry.pack(anchor="w", padx=(50, 0))
 
+
 register_button = CTkButton(master=frame_right, text="Register", **btn_style,
                             width=300, command=register)
 register_button.pack(anchor="w", pady=(40, 0), padx=(50, 0))
+
 
 CTkButton(master=frame_right, text="Log in",  **btn_style,
           width=300, command=login).pack(anchor="w", pady=(10, 0), padx=(50, 0))

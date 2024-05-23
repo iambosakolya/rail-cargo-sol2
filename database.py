@@ -128,11 +128,7 @@ cursor = conn.cursor()
 #         contract_id TEXT PRIMARY KEY
 #     )
 # ''')
-
 conn.commit()
-def get_db_connection(db_path='data.db'):
-    conn = sqlite3.connect(db_path)
-    return conn
 
 # def clear_tables(cursor):
 #     try:
