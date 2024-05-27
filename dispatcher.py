@@ -3,9 +3,9 @@ import sqlite3
 import win32ui
 import win32con
 import win32print
+import database
 import customtkinter
 import customtkinter as ctk
-from CTkTable import *
 from CTkToolTip import *
 from customtkinter import *
 from classes.Map import Map
@@ -15,6 +15,7 @@ from database import cursor, conn
 from classes.Tariff import Tariff
 from classes.Register import Register
 from classes.Contract import Contract
+from database import find1
 from classes.ContractInfo import ContractInfo
 from classes.ContractInfo import ContractList
 from classes.RailCargoSol import RailCargoSol
@@ -60,23 +61,63 @@ def display_tables(table_name, text_box):
     for row in rows:
         text_box.insert(END, " | ".join(map(str, row)) + "\n")
     text_box.configure(state='disabled')
-def show_next_table(text_box):
+def next_table(text_box):
     global current_table_index
     current_table_index = (current_table_index + 1) % len(tables)
     display_tables(tables[current_table_index], text_box)
-def show_previous_table(text_box):
+def previous_table(text_box):
     global current_table_index
     current_table_index = (current_table_index - 1) % len(tables)
     display_tables(tables[current_table_index], text_box)
+def contracts_window():
+    contracts_window = ctk.CTk()
+    contracts_window.title("Contracts")
+
+    screen_width = contracts_window.winfo_screenwidth()
+    screen_height = contracts_window.winfo_screenheight()
+
+    app_width = 500
+    app_height = 400
+
+    x_position = (screen_width - app_width) // 2
+    y_position = (screen_height - app_height) // 2
+
+    contracts_window.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
+    contracts_window.resizable(0, 0)
+
+    screen_frame = ctk.CTkFrame(master=contracts_window, width=850, height=750, fg_color="#897E9B")
+    screen_frame.pack_propagate(0)
+    screen_frame.pack(expand=True, fill="both")
+
+    text_box = ctk.CTkTextbox(master=screen_frame, wrap="none")
+    text_box.pack(expand=True, fill="both")
+
+    button_frame = ctk.CTkFrame(master=screen_frame)
+    button_frame.pack(pady=10)
+
+    prev_button = ctk.CTkButton(master=button_frame, text="Previous", **btn_style,
+                                command=lambda: previous_table(text_box))
+    prev_button.pack(side="left", padx=10)
+
+    next_button = ctk.CTkButton(master=button_frame, text="Next", **btn_style,
+                                command=lambda: next_table(text_box))
+    next_button.pack(side="left", padx=10)
+
+    display_tables(tables[current_table_index], text_box)
+    contracts_window.mainloop()
 
 def delete_data(contract_id):
-    cursor.execute("SELECT cargo_id, payment_id, itinerary_id FROM Contract WHERE contract_id = ?", (contract_id,))
+    cursor.execute("SELECT cargo_id, payment_id, itinerary_id "
+                   "FROM Contract WHERE contract_id = ?",
+                   (contract_id,))
     result = cursor.fetchone()
 
     if result:
         cargo_id, payment_id, itinerary_id = result
 
-        cursor.execute("SELECT cargo_type_id FROM Cargo WHERE cargo_id = ?", (cargo_id,))
+        cursor.execute("SELECT cargo_type_id "
+                       "FROM Cargo WHERE cargo_id = ?",
+                       (cargo_id,))
         cargo_result = cursor.fetchone()
 
         if cargo_result:
@@ -132,17 +173,24 @@ def delete_contract():
     confirm_d.pack(pady=10)
 
     dialog.mainloop()
-
 def delete_d_data(d_pib):
-    cursor.execute("SELECT * FROM Dispatcher WHERE d_pib = ?", (d_pib,))
+    cursor.execute("SELECT * FROM Dispatcher "
+                   "WHERE d_pib = ?",
+                   (d_pib,))
     result = cursor.fetchone()
 
     if result:
-        cursor.execute("DELETE FROM Dispatcher WHERE d_pib = ?", (d_pib,))
+        cursor.execute("DELETE FROM Dispatcher "
+                       "WHERE d_pib = ?",
+                       (d_pib,))
         conn.commit()
-        CTkMessagebox(message=f"Dispatcher with surname '{d_pib}' deleted successfully", icon="check", option_1="Thanks")
+        CTkMessagebox(message=f"Dispatcher with surname '{d_pib}' deleted successfully",
+                      icon="check",
+                      option_1="Thanks")
     else:
-        CTkMessagebox(message=f"No dispatcher found with surname '{d_pib}'", icon="cancel", option_1="OK")
+        CTkMessagebox(message=f"No dispatcher found with surname '{d_pib}'",
+                      icon="cancel",
+                      option_1="OK")
 def delete_dispatcher():
     def on_confirm():
         d_pib = entry_d.get()
@@ -175,22 +223,23 @@ def delete_dispatcher():
     entry_d = ctk.CTkEntry(screen_frame)
     entry_d.pack(anchor="w", padx=80, pady=5)
 
-    confirm_d = ctk.CTkButton(screen_frame, text="Confirm", fg_color="#000000", hover_color="#4F2346",
+    confirm_d = ctk.CTkButton(screen_frame, text="Confirm", fg_color="#000000",
+                              hover_color="#4F2346",
                               text_color="#ffffff", command=on_confirm)
     confirm_d.pack(pady=10)
 
     dialog.mainloop()
 
-
 def find_dispatcher():
-    pib_dialog = CTkInputDialog(text="Enter your full name (PIB):", title="Update info")
+    pib_dialog = CTkInputDialog(text="Enter your full name (PIB):",
+                                title="Update info")
     dispatcher_pib = pib_dialog.get_input()
 
     if dispatcher_pib:
         update_dispatcher(dispatcher_pib)
 def update_dispatcher(dispatcher_pib):
     update_dispatcher = CTk()
-    update_dispatcher.title(f"Update Dispatcher Info")
+    update_dispatcher.title(f"Update dispatcher info")
 
     screen_width = update_dispatcher.winfo_screenwidth()
     screen_height = update_dispatcher.winfo_screenheight()
@@ -208,21 +257,21 @@ def update_dispatcher(dispatcher_pib):
     screen_frame.pack_propagate(0)
     screen_frame.pack(expand=True, fill="both")
 
-    cursor.execute("SELECT * FROM Dispatcher "
+    cursor.execute("SELECT d_pib, d_email, d_password, d_phone_number "
+                   "FROM Dispatcher "
                    "WHERE d_pib = ?",
                    (dispatcher_pib,))
     dispatcher = cursor.fetchone()
 
     if dispatcher:
-
-        (existing_email, existing_password,
-         existing_phone_number) = dispatcher[1], dispatcher[2], dispatcher[3]
+        (existing_pib, existing_email,
+         existing_password, existing_phone_number) = dispatcher
 
         new_name = CTkLabel(master=screen_frame, text="PIB:", **label_style)
         new_name.pack(anchor="w", pady=(18, 0), padx=(50, 0))
 
         nname_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
-        nname_entry.insert(0, dispatcher_pib)
+        nname_entry.insert(0, existing_pib)
         nname_entry.pack(anchor="w", padx=(50, 0))
 
         new_phone = CTkLabel(master=screen_frame, text="Phone number(+38):", **label_style)
@@ -243,10 +292,10 @@ def update_dispatcher(dispatcher_pib):
         nnew_password.pack(anchor="w", padx=(50, 0))
 
         def update_dispatcher_info():
-            new_pib = name_entry.get()
-            new_email = email_entry.get()
-            new_password = password_entry.get()
-            new_phone_number = phone_entry.get()
+            new_pib = nname_entry.get()
+            new_email = nnew_email.get()
+            new_password = nnew_password.get()
+            new_phone_number = nnew_phone.get()
 
             if not re.match(r"[^@]+@[^@]+\.[^@]+", new_email):
                 CTkMessagebox(message="Invalid email format!",
@@ -267,11 +316,9 @@ def update_dispatcher(dispatcher_pib):
                 return
 
             cursor.execute(
-                "UPDATE Dispatcher "
-                "SET d_pib = ?, d_email = ?, d_password = ?, d_phone_number = ? "
+                "UPDATE Dispatcher SET d_pib = ?, d_email = ?, d_password = ?, d_phone_number = ? "
                 "WHERE d_pib = ?",
-                (new_pib, new_email, new_password,
-                 new_phone_number, dispatcher_pib)
+                (new_pib, new_email, new_password, new_phone_number, dispatcher_pib)
             )
             conn.commit()
 
@@ -280,26 +327,34 @@ def update_dispatcher(dispatcher_pib):
                           option_1="Thanks")
             update_dispatcher.destroy()
 
-        update_button = CTkButton(master=screen_frame, text="Update Info",
-                                  **btn_style ,command=update_dispatcher_info)
+        update_button = CTkButton(master=screen_frame, text="Update Info", **btn_style,
+                                  command=update_dispatcher_info)
         update_button.pack(anchor="w", pady=(20, 0), padx=(50, 0))
     else:
-        CTkMessagebox(message="Dispatcher not found!", icon="cancel", option_1="OK")
+        CTkMessagebox(message="Dispatcher not found!",
+                      icon="cancel",
+                      option_1="OK")
         update_dispatcher.destroy()
 
     update_dispatcher.mainloop()
 
-
 def delete_c_data(c_pib):
-    cursor.execute("SELECT * FROM Client WHERE c_pib = ?", (c_pib,))
+    cursor.execute("SELECT * FROM Client "
+                   "WHERE c_pib = ?",
+                   (c_pib,))
     result = cursor.fetchone()
 
     if result:
-        cursor.execute("DELETE FROM Client WHERE c_pib = ?", (c_pib,))
+        cursor.execute("DELETE FROM Client "
+                       "WHERE c_pib = ?",
+                       (c_pib,))
         conn.commit()
-        CTkMessagebox(message=f"Client with surname '{c_pib}' deleted successfully", icon="check", option_1="Thanks")
+        CTkMessagebox(message=f"Client with surname '{c_pib}' deleted successfully",
+                      icon="check",
+                      option_1="Thanks")
     else:
-        CTkMessagebox(message=f"No client found with surname '{c_pib}'", icon="cancel", option_1="OK")
+        CTkMessagebox(message=f"No client found with surname '{c_pib}'",
+                      icon="cancel", option_1="OK")
 def delete_client():
     def on_confirm():
         c_pib = entry_c.get()
@@ -1574,7 +1629,8 @@ def modifying_contract():
                     cursor = conn.cursor()
                     current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                    cursor.execute("SELECT payment_id FROM Payment ORDER BY payment_id DESC LIMIT 1")
+                    cursor.execute("SELECT payment_id "
+                                   "FROM Payment ORDER BY payment_id DESC LIMIT 1")
                     payment_record = cursor.fetchone()
 
                     if payment_record:
@@ -1597,10 +1653,13 @@ def modifying_contract():
                 global calculated_tariff
                 try:
                     cursor.execute(
-                        "SELECT ct.cargo_name, c.weight FROM Cargo c INNER JOIN CargoType ct ON c.cargo_type_id = ct.cargo_type_id ORDER BY c.rowid DESC LIMIT 1")
+                        "SELECT ct.cargo_name, c.weight "
+                        "FROM Cargo c INNER JOIN CargoType ct ON c.cargo_type_id = ct.cargo_type_id "
+                        "ORDER BY c.rowid DESC LIMIT 1")
                     cargo_data = cursor.fetchone()
 
-                    cursor.execute("SELECT route_length, duration FROM Itinerary ORDER BY rowid DESC LIMIT 1")
+                    cursor.execute("SELECT route_length, duration "
+                                   "FROM Itinerary ORDER BY rowid DESC LIMIT 1")
                     route_data = cursor.fetchone()
                     display_data(cargo_data, route_data)
 
@@ -1693,47 +1752,60 @@ def dispatcher_window():
     left_frame.pack_propagate(0)
     left_frame.pack(expand=True, side="left")
 
+    # right frame
     CTkLabel(master=right_frame, text="You are logged as a dispatcher",
              text_color="#000000", anchor="w",
              justify="center",
-             font=("Arial Rounded MT Bold", 25)).place(relx=0, rely=0, anchor="w", x=90, y=30)
-
-    text_box = CTkTextbox(master=right_frame, width=530, height=300)
-    text_box.place(relx=0, rely=0.1, anchor="w", x=5, y=150)
+             font=("Hanson", 20)).place(relx=0, rely=0, anchor="w", x=30, y=100)
 
 
-    # buttons
-    prev_btn = CTkButton(master=right_frame, text="Previous", **btn_style, width=40,
-                         command=lambda: show_previous_table(text_box))
-    prev_btn.place(relx=0, rely=0.1, anchor="w", x=5, y=320)
+    req_frame1 = ctk.CTkFrame(master=right_frame, fg_color="#FFFFFF", width=550, height=95)
+    req_frame1.place(relx=0, rely=0, anchor="w", x=30, y=50)
 
-    next_btn = CTkButton(master=right_frame, text="Next", **btn_style, width=40,
-                         command=lambda: show_next_table(text_box))
-    next_btn.place(relx=0, rely=0.1, anchor="w", x=500, y=320)
 
+    first_btn = ctk.CTkButton(master=req_frame1, text="Contracts\nby dispatcher", **btn_style,
+                              command=find1)
+    first_btn.pack(side="left", padx=10, pady=10)
+
+
+    second_btn = ctk.CTkButton(master=req_frame1, text="Search\nclients", **btn_style)
+    second_btn.pack(side="left", padx=10, pady=10)
+
+
+    third_btn = ctk.CTkButton(master=req_frame1, text="Contracts\nby date", **btn_style)
+    third_btn.pack(side="left", padx=10, pady=10)
+
+
+    # left frame --> buttons
     info_btn = CTkButton(master=left_frame, text="Change my info", **btn_style,
                          command=find_dispatcher)
     info_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+
 
     c_btn = CTkButton(master=left_frame, text="New contract", **btn_style,
              command=lambda: create_contract())
     c_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
+
     list_btn = CTkButton(master=left_frame, text="All contracts", **btn_style,
-                         command=lambda:display_tables(tables[current_table_index], text_box))
+                         command=contracts_window)
     list_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+
 
     up_btn = CTkButton(master=left_frame, text="Delete contract", **btn_style,
                            command=delete_contract)
     up_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
+
     add_btn = CTkButton(master=left_frame, text="Update contract", **btn_style,
                         command=modifying_contract)
     add_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
+
     deld_btn = CTkButton(master=left_frame, text="Deactivate \ndispatcher account", **btn_style,
                         command=delete_dispatcher)
     deld_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+
 
     delc_btn = CTkButton(master=left_frame, text="Deactivate \nclient account", **btn_style,
                         command=delete_client)

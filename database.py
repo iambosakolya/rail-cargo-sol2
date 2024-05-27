@@ -1,53 +1,22 @@
 import sqlite3
+import customtkinter
+import customtkinter as ctk
+from customtkinter import *
 from classes.Map import Map
 from classes.Contract import Contract
 from classes.CargoType import CargoType
+from CTkMessagebox import CTkMessagebox
 from classes.Users import Dispatcher, Client
 
 conn = sqlite3.connect('data.db')
 cursor = conn.cursor()
 
-# # Insert example data into Client table
-# cursor.execute('''
-#     INSERT INTO Client (c_pib, c_phone_number, c_email, c_password)
-#     VALUES (?, ?, ?, ?)
-# ''', ("Kwe", "0952163862", "we@gmail.com", "password123"))
-#
-# # Insert example data into Dispatcher table
-# cursor.execute('''
-#     INSERT INTO Dispatcher (d_pib, d_email, d_password, d_phone_number)
-#     VALUES (?, ?, ?, ?)
-# ''', ("Dispatcher Name", "dispatcher@example.com", "password123", "0123456789"))
-#
-# # Insert example data into Itinerary table
-# cursor.execute('''
-#     INSERT INTO Itinerary (departure_station, arrival_station, route_length, duration)
-#     VALUES (?, ?, ?, ?)
-# ''', ("Station A", "Station B", 120.5, 3.5))
-#
-# # Insert example data into Payment table
-# cursor.execute('''
-#     INSERT INTO Payment (payment_amount, payment_datetime)
-#     VALUES (?, ?)
-# ''', (1556.0, "2024-05-18 16:47:08"))
-#
-# # Insert example data into CargoType table
-# cursor.execute('''
-#     INSERT INTO CargoType (cargo_name, description, dimensions)
-#     VALUES (?, ?, ?)
-# ''', ("Type A", "Description A", "10x10x10"))
-#
-# # Insert example data into Cargo table
-# cursor.execute('''
-#     INSERT INTO Cargo (cargo_type_id, quantity, weight)
-#     VALUES (?, ?, ?)
-# ''', (1, 100, 200.5))
-#
-# # Insert example data into Contract table
-# cursor.execute('''
-#     INSERT INTO Contract (conclusion_date, client_id, dispatcher_id, cargo_id, payment_id, itinerary_id)
-#     VALUES (?, ?, ?, ?, ?, ?)
-# ''', ("2024-05-18 19:09:48", 1, 1, 1, 1, 1))
+label_style = {
+    "text_color": "#000000",
+    "anchor": "w",
+    "justify": "left",
+    "font": ("Arial Rounded MT Bold", 15)
+}
 
 # cursor.execute('''
 #     CREATE TABLE IF NOT EXISTS Client (
@@ -129,7 +98,6 @@ cursor = conn.cursor()
 #     )
 # ''')
 conn.commit()
-
 # def clear_tables(cursor):
 #     try:
 #         #Очистка таблиць
@@ -156,3 +124,146 @@ conn.commit()
 # cursor.execute('DROP TABLE IF EXISTS Itinerary')
 # cursor.execute('DROP TABLE IF EXISTS Dispatcher')
 # cursor.execute('DROP TABLE IF EXISTS Client')
+
+
+# 1.Вибір з декількох таблиць із сортуванням
+
+# список контрактів, які були створені заданим диспетчером
+def get_contracts_by_pib(dispatcher_pib):
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+
+    query = '''
+    SELECT 
+        Contract.contract_id, Contract.conclusion_date,
+        Client.c_pib, Client.c_phone_number, 
+        Dispatcher.d_pib, Dispatcher.d_email, 
+        Itinerary.departure_station, Itinerary.arrival_station, Itinerary.route_length,
+        Itinerary.duration, Payment.payment_amount, Payment.payment_datetime, 
+        CargoType.cargo_name, CargoType.description, CargoType.dimensions, 
+        Cargo.quantity, Cargo.weight
+    FROM Contract
+    JOIN Dispatcher ON Contract.dispatcher_id = Dispatcher.dispatcher_id
+    JOIN Client ON Contract.client_id = Client.client_id
+    JOIN Cargo ON Contract.cargo_id = Cargo.cargo_id
+    JOIN CargoType ON Cargo.cargo_type_id = CargoType.cargo_type_id
+    JOIN Itinerary ON Contract.itinerary_id = Itinerary.itinerary_id
+    JOIN Payment ON Contract.payment_id = Payment.payment_id
+    WHERE Dispatcher.d_pib = ?
+    ORDER BY Contract.conclusion_date;
+    '''
+    cursor.execute(query, (dispatcher_pib,))
+    contracts = cursor.fetchall()
+    conn.close()
+    return contracts
+
+def find1():
+    root = ctk.CTkToplevel()
+    root.title("Find contracts by dispatcher PIB")
+
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+
+    app_width = 300
+    app_height = 150
+
+    x_position = (screen_width - app_width) // 2
+    y_position = (screen_height - app_height) // 2
+
+    root.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
+    root.resizable(0, 0)
+
+    screen_frame = ctk.CTkFrame(master=root, width=300, height=150, fg_color="#897E9B")
+    screen_frame.pack_propagate(0)
+    screen_frame.pack(expand=True, fill="both")
+
+    label = ctk.CTkLabel(screen_frame, text="Enter Dispatcher PIB:")
+    label.pack(pady=10)
+
+    entry = ctk.CTkEntry(screen_frame)
+    entry.pack(pady=10)
+
+    def on_confirm():
+        dispatcher_pib = entry.get()
+        if dispatcher_pib:
+            root.destroy()
+            contracts = get_contracts_by_pib(dispatcher_pib)
+            if not contracts:
+                CTkMessagebox(message="No contracts found for the given dispatcher PIB!\nTry again!",
+                              icon="cancel",
+                              option_1="OK")
+                return
+
+            result_window = ctk.CTkToplevel()
+            result_window.title("Contracts by dispatcher")
+            result_window.geometry("450x350")
+
+            screen_frame = ctk.CTkFrame(master=result_window, width=450, height=350, fg_color="#FFFFFF")
+            screen_frame.pack_propagate(0)
+            screen_frame.pack(expand=True, fill="both", padx=10, pady=10)
+
+            label = ctk.CTkLabel(master=screen_frame, text="A list of contracts that were created"
+                                                           "\n by the specified dispatcher", **label_style)
+            label.pack(pady=10)
+
+            text_box = ctk.CTkTextbox(master=screen_frame, height=200, wrap="none")
+            text_box.pack(expand=True, fill="both", padx=10, pady=10)
+
+            for contract in contracts:
+                text_box.insert("end",
+                                f"Contract ID: {contract[0]} \nConclusion date: {contract[1]}\n"
+                                f"\nClient PIB: {contract[2]} \nPhone: {contract[3]}\n"
+                                f"\nDispatcher PIB: {contract[4]} \nEmail: {contract[5]}\n"
+                                f"\nFrom: {contract[6]} to {contract[7]}, "
+                                f"\nRoute length: {contract[8]} \nDuration: {contract[9]}\n"
+                                f"\nPayment amount: {contract[10]} \nPayment time: {contract[11]}\n"
+                                f"\nCargo name: {contract[12]} \nDimensions: {contract[14]}\n"
+                                f"\nQuantity: {contract[15]} \nWeight: {contract[16]}\n"
+                                "---------------------------------\n")
+
+
+    button = ctk.CTkButton(screen_frame, text="Submit", command=on_confirm, fg_color="#000000",
+                           hover_color="#4F2346", text_color="#ffffff", font=("Arial Rounded MT Bold", 13))
+    button.pack(pady=10)
+
+    root.mainloop()
+
+
+# 2. Завдання умови відбору з використанням предиката LIKE
+
+# 3. Завдання умови відбору з використанням предиката BETWEEN
+
+# 4. Агрегатна функція без угруповання
+cursor.execute('''
+    SELECT COUNT(*) AS contracts_last_month
+    FROM Contract
+    WHERE conclusion_date BETWEEN DATE('now', '-1 month') AND DATE('now');
+''')
+contracts_last_month = cursor.fetchone()[0]
+
+# 5. Агрегатна функція з угрупованням
+cursor.execute('''
+    SELECT Dispatcher.dispatcher_id, Dispatcher.d_pib, COUNT(Contract.contract_id) AS contract_count
+    FROM Contract
+    JOIN Dispatcher ON Contract.dispatcher_id = Dispatcher.dispatcher_id
+    GROUP BY Dispatcher.dispatcher_id;
+''')
+contracts_by_dispatcher = cursor.fetchall()
+
+# 6. Використання предиката ALL або ANY
+cursor.execute('''
+    SELECT Dispatcher.dispatcher_id, Dispatcher.d_pib, COUNT(Contract.contract_id) AS contract_count
+    FROM Contract
+    JOIN Dispatcher ON Contract.dispatcher_id = Dispatcher.dispatcher_id
+    GROUP BY Dispatcher.dispatcher_id
+    HAVING COUNT(Contract.contract_id) = (
+        SELECT MAX(contract_count)
+        FROM (
+            SELECT COUNT(contract_id) AS contract_count
+            FROM Contract
+            GROUP BY dispatcher_id
+        )
+    );
+''')
+top_dispatcher = cursor.fetchall()
+
