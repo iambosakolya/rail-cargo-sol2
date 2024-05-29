@@ -1,15 +1,17 @@
 import re
 import PIL
-import database
-import tk
-import tkinter
-import customtkinter
 from PIL import Image
+
+import customtkinter
 from customtkinter import *
-from client import client_window
-from database import cursor, conn
 from CTkMessagebox import CTkMessagebox
+
+import database
+from database import cursor, conn
+
+from client import client_window
 from dispatcher import dispatcher_window
+
 from classes.Users import Dispatcher, Client
 
 label_style = {
@@ -161,11 +163,13 @@ password_icon_data = Image.open("images/password-icon.png")
 pib_icon_data = Image.open("images/pib-icon.png")
 phone_icon_data = Image.open("images/phone-icon.png")
 
+
 side_img = CTkImage(dark_image=side_img_data, light_image=side_img_data, size=(350, 650))
 email_icon = CTkImage(dark_image=email_icon_data, light_image=email_icon_data, size=(25, 25))
 password_icon = CTkImage(dark_image=password_icon_data, light_image=password_icon_data, size=(25, 25))
 pib_icon = CTkImage(dark_image=pib_icon_data, light_image=pib_icon_data, size=(25, 25))
 phone_icon = CTkImage(dark_image=phone_icon_data, light_image=phone_icon_data, size=(25, 25))
+
 
 frame = CTkFrame(master=app, width=350, height=650, fg_color="#ffffff")
 frame.pack_propagate(0)
@@ -223,7 +227,8 @@ email_entry.pack(anchor="w", padx=(50, 0))
 CTkLabel(master=frame_right, text="Password:",  **label_style,
              image=password_icon, compound="left").pack(anchor="w", pady=(15, 0), padx=(50, 0))
 
-password_entry = CTkEntry(master=frame_right, **entry_style, width=300, show="*")
+password_entry = CTkEntry(master=frame_right,
+                          **entry_style, width=300, show="*")
 password_entry.pack(anchor="w", padx=(50, 0))
 
 

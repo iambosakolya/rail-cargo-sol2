@@ -1,27 +1,36 @@
 import re
 import sqlite3
+import database
 import win32ui
 import win32con
 import win32print
-import database
-import customtkinter
-import customtkinter as ctk
-from CTkToolTip import *
-from customtkinter import *
-from classes.Map import Map
+
 from datetime import datetime
+import customtkinter
+from CTkToolTip import *
+import customtkinter as ctk
+from customtkinter import *
+from CTkMessagebox import CTkMessagebox
+
+from classes.Map import Map
 from classes.Calc import Calc
-from database import cursor, conn
 from classes.Tariff import Tariff
 from classes.Register import Register
 from classes.Contract import Contract
-from database import find1
+from classes.CargoType import CargoType
+from classes.Users import Dispatcher,Client
 from classes.ContractInfo import ContractInfo
 from classes.ContractInfo import ContractList
 from classes.RailCargoSol import RailCargoSol
-from classes.CargoType import CargoType
-from CTkMessagebox import CTkMessagebox
-from classes.Users import Dispatcher,Client
+
+from database import cursor, conn
+from database import find_clients
+from database import find_contracts_pib
+from database import find_contracts_date
+from database import find_contracts_week
+from database import find_contracts_dispatcher
+from database import find_max_contracts
+from database import find_max_payment
 
 label_style = {
     "text_color": "#000000",
@@ -92,15 +101,20 @@ def contracts_window():
     text_box = ctk.CTkTextbox(master=screen_frame, wrap="none")
     text_box.pack(expand=True, fill="both")
 
-    button_frame = ctk.CTkFrame(master=screen_frame)
+    button_frame = ctk.CTkFrame(master=screen_frame, fg_color="#FFFFFF")
     button_frame.pack(pady=10)
 
-    prev_button = ctk.CTkButton(master=button_frame, text="Previous", **btn_style,
-                                command=lambda: previous_table(text_box))
+    prev_button = ctk.CTkButton(master=button_frame, text="Previous", height=40,
+                                command=lambda: previous_table(text_box),
+                                fg_color="#FFFFFF", hover_color="#897E9B",
+                                text_color="#000000", font=("Arial Rounded MT Bold", 13))
     prev_button.pack(side="left", padx=10)
 
-    next_button = ctk.CTkButton(master=button_frame, text="Next", **btn_style,
-                                command=lambda: next_table(text_box))
+    next_button = ctk.CTkButton(master=button_frame, text="Next", height=40,
+                                command=lambda: next_table(text_box),
+                                fg_color="#FFFFFF",
+                                hover_color="#897E9B", text_color="#000000",
+                                font=("Arial Rounded MT Bold", 13))
     next_button.pack(side="left", padx=10)
 
     display_tables(tables[current_table_index], text_box)
@@ -1727,6 +1741,7 @@ def modifying_contract():
 
     show_current_step()
     cont_window.mainloop()
+
 def dispatcher_window():
     app = CTk()
     app.title("Dispatcher window")
@@ -1758,57 +1773,101 @@ def dispatcher_window():
              justify="center",
              font=("Hanson", 20)).place(relx=0, rely=0, anchor="w", x=30, y=100)
 
-
-    req_frame1 = ctk.CTkFrame(master=right_frame, fg_color="#FFFFFF", width=550, height=95)
+    #query section 1
+    req_frame1 = ctk.CTkFrame(master=right_frame, fg_color="#FFFFFF", width=450, height=95)
     req_frame1.place(relx=0, rely=0, anchor="w", x=30, y=50)
 
-
-    first_btn = ctk.CTkButton(master=req_frame1, text="Contracts\nby dispatcher", **btn_style,
-                              command=find1)
+    first_btn = ctk.CTkButton(master=req_frame1, text="Contracts\nby dispatcher",
+                              **btn_style, command=find_contracts_pib)
     first_btn.pack(side="left", padx=10, pady=10)
 
 
-    second_btn = ctk.CTkButton(master=req_frame1, text="Search\nclients", **btn_style)
+    second_btn = ctk.CTkButton(master=req_frame1, text="Search clients\nby a letter",
+                               **btn_style, command=find_clients)
     second_btn.pack(side="left", padx=10, pady=10)
 
 
-    third_btn = ctk.CTkButton(master=req_frame1, text="Contracts\nby date", **btn_style)
+    third_btn = ctk.CTkButton(master=req_frame1, text="Contracts\nby date",
+                              **btn_style, command=find_contracts_date)
     third_btn.pack(side="left", padx=10, pady=10)
 
 
+    result_textbox = ctk.CTkTextbox(master=right_frame, width=500, height=150, wrap="word")
+    result_textbox.place(relx=0, rely=0, anchor="w", x=30, y=450)
+
+
+    # query section 2
+    req_frame2 = ctk.CTkFrame(master=right_frame, fg_color="#FFFFFF", width=500, height=95)
+    req_frame2.place(relx=0, rely=0, anchor="w", x=30, y=600)
+
+    fourth_btn = ctk.CTkButton(master=req_frame2, text="Contract counter\nfor the week",
+                               **btn_style, command=lambda: find_contracts_week(result_textbox))
+    fourth_btn.pack(side="left", padx=10, pady=10)
+
+    fifth_btn = ctk.CTkButton(master=req_frame2, text="Contract counter"
+                                                      "\nby dispatcher",
+                               **btn_style, command=lambda: find_contracts_dispatcher(result_textbox))
+    fifth_btn.pack(side="left", padx=10, pady=10)
+
+
+    sixth_btn = ctk.CTkButton(master=req_frame2, text="Max contracts "
+                                                      "\nby dispatcher",
+                              **btn_style, command=lambda: find_max_contracts(result_textbox))
+    sixth_btn.pack(side="left", padx=10, pady=10)
+
+
+    #query section 3
+    req_frame3 = ctk.CTkFrame(master=right_frame, fg_color="#FFFFFF",
+                              width=80, height=400)
+    req_frame3.place(relx=0, rely=0, anchor="w", x=350, y=250)
+
+    seventh_btn = ctk.CTkButton(master=req_frame3, text="7", height=50,
+                                width=150,**btn_style, command=lambda: find_max_payment(result_textbox))
+    seventh_btn.pack(side="top", padx=10, pady=10)
+
+    eighth_btn = ctk.CTkButton(master=req_frame3, text="8", height=50,
+                               **btn_style, command=find_clients)
+    eighth_btn.pack(side="top", padx=10, pady=10)
+
+    ninth_btn = ctk.CTkButton(master=req_frame3, text="9", height=50,
+                              **btn_style, command=find_contracts_date)
+    ninth_btn.pack(side="top", padx=10, pady=10)
+
+
     # left frame --> buttons
-    info_btn = CTkButton(master=left_frame, text="Change my info", **btn_style,
-                         command=find_dispatcher)
+    info_btn = CTkButton(master=left_frame, text="Change my info",
+                         **btn_style, command=find_dispatcher)
     info_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
 
-    c_btn = CTkButton(master=left_frame, text="New contract", **btn_style,
-             command=lambda: create_contract())
+    c_btn = CTkButton(master=left_frame, text="New contract",
+                      **btn_style, command=lambda: create_contract())
     c_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
 
-    list_btn = CTkButton(master=left_frame, text="All contracts", **btn_style,
-                         command=contracts_window)
+    list_btn = CTkButton(master=left_frame, text="All contracts",
+                         **btn_style, command=contracts_window)
     list_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
 
-    up_btn = CTkButton(master=left_frame, text="Delete contract", **btn_style,
-                           command=delete_contract)
+    up_btn = CTkButton(master=left_frame, text="Delete contract",
+                       **btn_style, command=delete_contract)
     up_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
 
-    add_btn = CTkButton(master=left_frame, text="Update contract", **btn_style,
-                        command=modifying_contract)
+    add_btn = CTkButton(master=left_frame, text="Update contract",
+                        **btn_style, command=modifying_contract)
     add_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
 
-    deld_btn = CTkButton(master=left_frame, text="Deactivate \ndispatcher account", **btn_style,
-                        command=delete_dispatcher)
+    deld_btn = CTkButton(master=left_frame, text="Deactivate \ndispatcher account",
+                         **btn_style, command=delete_dispatcher)
     deld_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
 
-    delc_btn = CTkButton(master=left_frame, text="Deactivate \nclient account", **btn_style,
-                        command=delete_client)
+    delc_btn = CTkButton(master=left_frame, text="Deactivate \nclient account",
+                         **btn_style, command=delete_client)
     delc_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
 
     app.mainloop()
+
