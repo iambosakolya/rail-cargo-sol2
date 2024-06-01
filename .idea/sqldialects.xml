@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/database/database_setup.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/database/queries.py" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/main.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/modules/auth.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/modules/crud/create.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/modules/crud/delete.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/modules/crud/read.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/modules/crud/update.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/ui/dispatcher.py" dialect="GenericSQL" />
   </component>
 </project>

@@ -1,5 +1,5 @@
 import sqlite3
-from database import cursor, conn
+from database.database_setup import cursor, conn
 
 class ContractInfo:
     def __init__(self, contract_id):

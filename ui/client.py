@@ -1,5 +1,6 @@
 import customtkinter
 from customtkinter import *
+from database.database_setup import cursor, conn
 
 label_style = {
     "text_color": "#000000",

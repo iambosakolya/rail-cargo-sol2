@@ -1,15 +1,12 @@
 import sqlite3
 from datetime import datetime, timedelta
+import datetime
+import customtkinter as ctk
 
 import customtkinter
 import customtkinter as ctk
 from customtkinter import *
 from CTkMessagebox import CTkMessagebox
-
-from classes.Map import Map
-from classes.Contract import Contract
-from classes.CargoType import CargoType
-from classes.Users import Dispatcher, Client
 
 label_style = {
     "text_color": "#000000",
@@ -18,117 +15,7 @@ label_style = {
     "font": ("Arial Rounded MT Bold", 15)
 }
 
-conn = sqlite3.connect('data.db')
-cursor = conn.cursor()
-
-# cursor.execute('''
-#     CREATE TABLE IF NOT EXISTS Client (
-#         client_id INTEGER PRIMARY KEY,
-#         c_pib TEXT,
-#         c_phone_number TEXT,
-#         c_email TEXT,
-#         c_password TEXT
-#     )
-# ''')
-#
-# cursor.execute('''
-#     CREATE TABLE IF NOT EXISTS Dispatcher (
-#         dispatcher_id INTEGER PRIMARY KEY,
-#         d_pib TEXT,
-#         d_email TEXT,
-#         d_password TEXT,
-#         d_phone_number TEXT
-#     )
-# ''')
-#
-# cursor.execute('''
-#     CREATE TABLE IF NOT EXISTS Itinerary (
-#         itinerary_id INTEGER PRIMARY KEY,
-#         departure_station TEXT,
-#         arrival_station TEXT,
-#         route_length REAL,
-#         duration REAL
-#     )
-# ''')
-#
-# cursor.execute('''
-#     CREATE TABLE IF NOT EXISTS Payment (
-#         payment_id INTEGER PRIMARY KEY,
-#         payment_amount REAL,
-#         payment_datetime TEXT
-#     )
-# ''')
-#
-# cursor.execute('''
-#     CREATE TABLE IF NOT EXISTS CargoType (
-#         cargo_type_id INTEGER PRIMARY KEY,
-#         cargo_name TEXT,
-#         description TEXT,
-#         dimensions TEXT
-#     )
-# ''')
-#
-# cursor.execute('''
-#     CREATE TABLE IF NOT EXISTS Cargo (
-#         cargo_id INTEGER PRIMARY KEY,
-#         cargo_type_id INTEGER,
-#         quantity INTEGER,
-#         weight REAL,
-#         FOREIGN KEY (cargo_type_id) REFERENCES CargoType(cargo_type_id)
-#     )
-# ''')
-#
-# cursor.execute('''
-#     CREATE TABLE IF NOT EXISTS Contract (
-#         contract_id INTEGER PRIMARY KEY AUTOINCREMENT,
-#         conclusion_date TEXT,
-#         client_id INTEGER,
-#         dispatcher_id INTEGER,
-#         cargo_id INTEGER,
-#         payment_id INTEGER,
-#         itinerary_id INTEGER,
-#         FOREIGN KEY (client_id) REFERENCES Client(client_id),
-#         FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
-#         FOREIGN KEY (dispatcher_id) REFERENCES Dispatcher(dispatcher_id),
-#         FOREIGN KEY (cargo_id) REFERENCES Cargo(cargo_id),
-#         FOREIGN KEY (itinerary_id) REFERENCES Itinerary(itinerary_id)
-#         )
-#     ''')
-#
-# cursor.execute('''
-#     CREATE TABLE IF NOT EXISTS Contracts (
-#         contract_id TEXT PRIMARY KEY
-#     )
-# ''')
-conn.commit()
-# def clear_tables(cursor):
-#     try:
-#         #Очистка таблиць
-#         # cursor.execute("DELETE FROM Client")
-#         # cursor.execute("DELETE FROM Dispatcher")
-#         cursor.execute("DELETE FROM Itinerary")
-#         cursor.execute("DELETE FROM Payment")
-#         cursor.execute("DELETE FROM CargoType")
-#         cursor.execute("DELETE FROM Contracts")
-#         cursor.execute("DELETE FROM Cargo")
-#         cursor.execute("DELETE FROM Contract")
-#         conn.commit()
-#         print("All tables cleared successfully.")
-#     except sqlite3.Error as e:
-#         print("An error occurred:", e)
-#
-# #Виклик функції для очистки таблиць
-# clear_tables(cursor)
-
-# cursor.execute('DROP TABLE IF EXISTS Contract')
-# cursor.execute('DROP TABLE IF EXISTS Cargo')
-# cursor.execute('DROP TABLE IF EXISTS CargoType')
-# cursor.execute('DROP TABLE IF EXISTS Payment')
-# cursor.execute('DROP TABLE IF EXISTS Itinerary')
-# cursor.execute('DROP TABLE IF EXISTS Dispatcher')
-# cursor.execute('DROP TABLE IF EXISTS Client')
-
-# Вибір з декількох таблиць із сортуванням
+# 1 Вибір з декількох таблиць із сортуванням
 # список контрактів, які були створені заданим диспетчером
 def get_contracts_by_pib(dispatcher_pib):
     conn = sqlite3.connect('data.db')
@@ -249,8 +136,7 @@ def find_contracts_pib():
 
     root.mainloop()
 
-
-# Завдання умови відбору з використанням предиката LІKE
+# 2 Завдання умови відбору з використанням предиката LІKE
 # знайти всіх клієнтів, чиє прізвище починається на задану букву
 def get_clients_letter(letter):
     conn = sqlite3.connect('data.db')
@@ -353,8 +239,7 @@ def find_clients():
 
     root.mainloop()
 
-
-# Завдання умови відбору з використанням предиката BETWEEN
+# 3 Завдання умови відбору з використанням предиката BETWEEN
 # список контрактів, які були згенеровані в заданий період
 def get_contracts_by_date(start_date, end_date):
     conn = sqlite3.connect('data.db')
@@ -400,14 +285,15 @@ def find_contracts_date():
         return months
 
     # Start date
-    label_start = ctk.CTkLabel(screen_frame, text="Select start date:",
-                               **label_style)
+    label_start = ctk.CTkLabel(screen_frame, text="Select start date:", **label_style)
     label_start.pack(pady=5)
 
     label_start_year = ctk.CTkLabel(screen_frame, text="Year:", **label_style)
     label_start_year.pack(pady=5)
-    start_year_combobox = ctk.CTkComboBox(screen_frame,
-                                          values=[str(year) for year in range(2024, datetime.date.today().year + 1)])
+    start_year_combobox = ctk.CTkComboBox(
+        screen_frame,
+        values=[str(year) for year in range(2024, datetime.date.today().year + 1)]
+    )
     start_year_combobox.pack(pady=5)
 
     label_start_month = ctk.CTkLabel(screen_frame, text="Month:", **label_style)
@@ -426,8 +312,10 @@ def find_contracts_date():
 
     label_end_year = ctk.CTkLabel(screen_frame, text="Year:", **label_style)
     label_end_year.pack(pady=5)
-    end_year_combobox = ctk.CTkComboBox(screen_frame,
-                                        values=[str(year) for year in range(2024, datetime.date.today().year + 1)])
+    end_year_combobox = ctk.CTkComboBox(
+        screen_frame,
+        values=[str(year) for year in range(2024, datetime.date.today().year + 1)]
+    )
     end_year_combobox.pack(pady=5)
 
     label_end_month = ctk.CTkLabel(screen_frame, text="Month:", **label_style)
@@ -442,10 +330,8 @@ def find_contracts_date():
 
     def on_confirm():
         try:
-            s_year, s_month, s_day = int(start_year_combobox.get()), int(start_month_combobox.get().split(" - ")[0]), int(
-                start_day_combobox.get())
-            e_year, e_month, e_day = int(end_year_combobox.get()), int(end_month_combobox.get().split(" - ")[0]), int(
-                end_day_combobox.get())
+            s_year, s_month, s_day = int(start_year_combobox.get()), int(start_month_combobox.get().split()[0]), int(start_day_combobox.get())
+            e_year, e_month, e_day = int(end_year_combobox.get()), int(end_month_combobox.get().split()[0]), int(end_day_combobox.get())
             start_date = datetime.date(s_year, s_month, s_day)
             end_date = datetime.date(e_year, e_month, e_day)
 
@@ -507,8 +393,7 @@ def find_contracts_date():
 
     root.mainloop()
 
-
-# Агрегатна функція без угруповання
+# 4 Агрегатна функція без угруповання
 # скільки контрактів було укладено за останній тиждень
 def get_contracts_last_week():
     conn = sqlite3.connect('data.db')
@@ -528,8 +413,7 @@ def find_contracts_week(result_textbox):
     result_textbox.delete("1.0", "end")
     result_textbox.insert("1.0", f"Number of contracts made last week: {count}")
 
-
-# Агрегатна функція з угрупованням
+# 5 Агрегатна функція з угрупованням
 # Скільки контрактів було укладено кожним диспетчером
 def get_contracts_dispatcher():
     conn = sqlite3.connect('data.db')
@@ -550,8 +434,7 @@ def find_contracts_dispatcher(result_textbox):
     for dispatcher_id, count in results:
         result_textbox.insert("end", f"Dispatcher {dispatcher_id}: {count} contracts\n")
 
-
-# Використання предиката ALL або ANY
+# 6 Використання предиката ALL або ANY
 # Хто з диспетчерів уклав найбільшу кількість контрактів
 def get_max_contracts():
     conn = sqlite3.connect('data.db')
@@ -592,8 +475,7 @@ def find_max_contracts(result_textbox):
     else:
         result_textbox.insert("1.0", "No data available")
 
-
-# Корельований підзапит
+# 7 Корельований підзапит
 # знайти клієнтів, які зробили найбільші оплати для кожного типу вантажу, відобразити відповідні дані.
 def get_max_payment_clients():
     conn = sqlite3.connect('data.db')
@@ -630,40 +512,37 @@ def find_max_payment(result_textbox):
     else:
         result_textbox.insert("1.0", "No data available")
 
-
-
-# 8.	Запит на заперечення
+# 8 Запит на заперечення
 # Запит реалізувати у трьох варіантах: з використанням LEFT JOІN, предиката ІN і предиката EXІSTS;
 # хто з диспетчерів не укладав контракти на цьому тижні?
 
- ## LEFT JOIN
+# # LEFT JOIN
+def get_dispatchers_without_contract():
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+
+    today = datetime.datetime.today()
+    start_of_week = today - timedelta(days=today.weekday())
+
+    query = '''
+    SELECT d.dispatcher_id, d.d_pib
+    FROM Dispatcher d
+    LEFT JOIN Contract co ON d.dispatcher_id = co.dispatcher_id
+    AND co.conclusion_date >= ?
+    WHERE co.contract_id IS NULL;
+    '''
+    cursor.execute(query, (start_of_week,))
+    results = cursor.fetchall()
+
+    conn.close()
+    return results
+
+# # предикат ІN
 # def get_dispatchers_without_contract():
 #     conn = sqlite3.connect('data.db')
 #     cursor = conn.cursor()
 #
-#     today = datetime.today()
-#     start_of_week = today - timedelta(days=today.weekday())
-#
-#     query = '''
-#     SELECT d.dispatcher_id, d.d_pib
-#     FROM Dispatcher d
-#     LEFT JOIN Contract co ON d.dispatcher_id = co.dispatcher_id
-#     AND co.conclusion_date >= ?
-#     WHERE co.contract_id IS NULL;
-#     '''
-#     cursor.execute(query, (start_of_week,))
-#     results = cursor.fetchall()
-#
-#     conn.close()
-#     return results
-
-
- # # предикат ІN
-# def get_dispatchers_without_contract():
-#     conn = sqlite3.connect('data.db')
-#     cursor = conn.cursor()
-#
-#     today = datetime.today()
+#     today = datetime.datetime.today()
 #     start_of_week = today - timedelta(days=today.weekday())
 #
 #     query = '''
@@ -681,29 +560,31 @@ def find_max_payment(result_textbox):
 #     conn.close()
 #     return results
 
-# предикат EXІSTS
-def get_dispatchers_without_contract():
-    conn = sqlite3.connect('data.db')
-    cursor = conn.cursor()
+# # предикат EXІSTS
+# def get_dispatchers_without_contract():
+#     conn = sqlite3.connect('data.db')
+#     cursor = conn.cursor()
+#
+#     today = datetime.datetime.today()
+#     print(today)
+#     start_of_week = today - timedelta(days=today.weekday())
+#
+#     query = '''
+#     SELECT d.dispatcher_id, d.d_pib
+#     FROM Dispatcher d
+#     WHERE NOT EXISTS (
+#         SELECT 1
+#         FROM Contract co
+#         WHERE co.dispatcher_id = d.dispatcher_id
+#         AND co.conclusion_date >= ?
+#     );
+#     '''
+#     cursor.execute(query, (start_of_week,))
+#     results = cursor.fetchall()
+#
+#     conn.close()
+#     return results
 
-    today = datetime.today()
-    start_of_week = today - timedelta(days=today.weekday())
-
-    query = '''
-    SELECT d.dispatcher_id, d.d_pib
-    FROM Dispatcher d
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM Contract co
-        WHERE co.dispatcher_id = d.dispatcher_id
-        AND co.conclusion_date >= ?
-    );
-    '''
-    cursor.execute(query, (start_of_week,))
-    results = cursor.fetchall()
-
-    conn.close()
-    return results
 def find_dispatchers(result_textbox):
     results = get_dispatchers_without_contract()
     result_textbox.delete("1.0", "end")
@@ -714,8 +595,7 @@ def find_dispatchers(result_textbox):
     else:
         result_textbox.insert("1.0", "No data available")
 
-
-# Операція об'єднання UNІON із включенням коментарю в кожен рядок
+# 9 Операція об'єднання UNІON із включенням коментарю в кожен рядок
 # список усіх диспетчерів з коментарем «Має максимальну кількість заключених контрактів»,
 # «Не має в цей час заключених контрактів», "має n заклюених контрактів);
 def get_dispatchers_comments():
@@ -775,7 +655,3 @@ def find_dispatchers_comments(result_textbox):
                                          f"---------------------------------\n")
     else:
         result_textbox.insert("1.0", "No data available")
-
-
-
-
