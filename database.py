@@ -1,5 +1,5 @@
 import sqlite3
-import datetime
+from datetime import datetime, timedelta
 
 import customtkinter
 import customtkinter as ctk
@@ -636,8 +636,146 @@ def find_max_payment(result_textbox):
 # Запит реалізувати у трьох варіантах: з використанням LEFT JOІN, предиката ІN і предиката EXІSTS;
 # хто з диспетчерів не укладав контракти на цьому тижні?
 
-# Запит реалізувати у трьох варіантах: з використанням LEFT JOІN, предиката ІN і предиката EXІSTS;
+ ## LEFT JOIN
+# def get_dispatchers_without_contract():
+#     conn = sqlite3.connect('data.db')
+#     cursor = conn.cursor()
+#
+#     today = datetime.today()
+#     start_of_week = today - timedelta(days=today.weekday())
+#
+#     query = '''
+#     SELECT d.dispatcher_id, d.d_pib
+#     FROM Dispatcher d
+#     LEFT JOIN Contract co ON d.dispatcher_id = co.dispatcher_id
+#     AND co.conclusion_date >= ?
+#     WHERE co.contract_id IS NULL;
+#     '''
+#     cursor.execute(query, (start_of_week,))
+#     results = cursor.fetchall()
+#
+#     conn.close()
+#     return results
 
 
-# 9.	Операція об'єднання UNІON із включенням коментарю в кожен рядок
-# (наприклад, список лікарів з коментарем «Має максимальну кількість хворих», «Не має в цей час хворих»);
+ # # предикат ІN
+# def get_dispatchers_without_contract():
+#     conn = sqlite3.connect('data.db')
+#     cursor = conn.cursor()
+#
+#     today = datetime.today()
+#     start_of_week = today - timedelta(days=today.weekday())
+#
+#     query = '''
+#     SELECT dispatcher_id, d_pib
+#     FROM Dispatcher
+#     WHERE dispatcher_id NOT IN (
+#         SELECT dispatcher_id
+#         FROM Contract
+#         WHERE conclusion_date >= ?
+#     );
+#     '''
+#     cursor.execute(query, (start_of_week,))
+#     results = cursor.fetchall()
+#
+#     conn.close()
+#     return results
+
+# предикат EXІSTS
+def get_dispatchers_without_contract():
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+
+    today = datetime.today()
+    start_of_week = today - timedelta(days=today.weekday())
+
+    query = '''
+    SELECT d.dispatcher_id, d.d_pib
+    FROM Dispatcher d
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM Contract co
+        WHERE co.dispatcher_id = d.dispatcher_id
+        AND co.conclusion_date >= ?
+    );
+    '''
+    cursor.execute(query, (start_of_week,))
+    results = cursor.fetchall()
+
+    conn.close()
+    return results
+def find_dispatchers(result_textbox):
+    results = get_dispatchers_without_contract()
+    result_textbox.delete("1.0", "end")
+    if results:
+        for dispatcher_id, d_pib in results:
+            result_textbox.insert("end", f"\nDispatcher ID: {dispatcher_id}\nPIB: {d_pib}\n"
+                                         f"---------------------------------\n")
+    else:
+        result_textbox.insert("1.0", "No data available")
+
+
+# Операція об'єднання UNІON із включенням коментарю в кожен рядок
+# список усіх диспетчерів з коментарем «Має максимальну кількість заключених контрактів»,
+# «Не має в цей час заключених контрактів», "має n заклюених контрактів);
+def get_dispatchers_comments():
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+
+    query = '''
+    SELECT d.dispatcher_id, d.d_pib, 'Has maximum signed contracts' AS comment
+    FROM Dispatcher d
+    WHERE d.dispatcher_id IN (
+        SELECT co.dispatcher_id
+        FROM Contract co
+        GROUP BY co.dispatcher_id
+        HAVING COUNT(*) = (
+            SELECT MAX(contract_count)
+            FROM (
+                SELECT co.dispatcher_id, COUNT(*) AS contract_count
+                FROM Contract co
+                GROUP BY co.dispatcher_id
+            ) AS contract_table
+        )
+    )
+    UNION
+    SELECT d.dispatcher_id, d.d_pib, 'Doesn`t have any signed contracts' AS comment
+    FROM Dispatcher d
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM Contract co
+        WHERE co.dispatcher_id = d.dispatcher_id
+    )
+    UNION
+    SELECT d.dispatcher_id, d.d_pib, 'Has ' || COUNT(co.contract_id) || ' signed contracts' AS comment
+    FROM Dispatcher d
+    LEFT JOIN Contract co ON d.dispatcher_id = co.dispatcher_id
+    GROUP BY d.dispatcher_id, d.d_pib
+    HAVING COUNT(co.contract_id) > 0 
+    AND COUNT(co.contract_id) < (
+        SELECT MAX(contract_count)
+        FROM (
+            SELECT co.dispatcher_id, COUNT(*) AS contract_count
+            FROM Contract co
+            GROUP BY co.dispatcher_id
+        ) AS contract_table
+    );
+    '''
+    cursor.execute(query)
+    results = cursor.fetchall()
+
+    conn.close()
+    return results
+def find_dispatchers_comments(result_textbox):
+    results = get_dispatchers_comments()
+    result_textbox.delete("1.0", "end")
+    if results:
+        for dispatcher_id, d_pib, comment in results:
+            result_textbox.insert("end", f"\nDispatcher PIB: {d_pib}\nComment: {comment}\n"
+                                         f"---------------------------------\n")
+    else:
+        result_textbox.insert("1.0", "No data available")
+
+
+
+

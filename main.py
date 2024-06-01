@@ -14,6 +14,11 @@ from dispatcher import dispatcher_window
 
 from classes.Users import Dispatcher, Client
 
+from modules import auth
+from auth import register
+from auth import login
+
+
 label_style = {
     "text_color": "#601E88",
     "anchor": "w",

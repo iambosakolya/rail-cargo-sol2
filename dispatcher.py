@@ -31,6 +31,8 @@ from database import find_contracts_week
 from database import find_contracts_dispatcher
 from database import find_max_contracts
 from database import find_max_payment
+from database import find_dispatchers
+from database import find_dispatchers_comments
 
 label_style = {
     "text_color": "#000000",
@@ -1822,15 +1824,18 @@ def dispatcher_window():
     req_frame3.place(relx=0, rely=0, anchor="w", x=350, y=250)
 
     seventh_btn = ctk.CTkButton(master=req_frame3, text="7", height=50,
-                                width=150,**btn_style, command=lambda: find_max_payment(result_textbox))
+                                width=150,**btn_style,
+                                command=lambda: find_max_payment(result_textbox))
     seventh_btn.pack(side="top", padx=10, pady=10)
 
     eighth_btn = ctk.CTkButton(master=req_frame3, text="8", height=50,
-                               **btn_style, command=find_clients)
+                               **btn_style,
+                               command=lambda: find_dispatchers(result_textbox))
     eighth_btn.pack(side="top", padx=10, pady=10)
 
     ninth_btn = ctk.CTkButton(master=req_frame3, text="9", height=50,
-                              **btn_style, command=find_contracts_date)
+                              **btn_style,
+                              command= lambda: find_dispatchers_comments(result_textbox))
     ninth_btn.pack(side="top", padx=10, pady=10)
 
 
