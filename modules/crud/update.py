@@ -1,9 +1,7 @@
 import re
 import sqlite3
 from datetime import datetime
-import customtkinter
 from CTkToolTip import *
-import customtkinter as ctk
 from customtkinter import *
 from CTkMessagebox import CTkMessagebox
 
@@ -12,6 +10,7 @@ from classes.Calc import Calc
 from classes.CargoType import CargoType
 from database.database_setup import cursor, conn
 
+regional_centers = Map.regional_centers
 
 label_style = {
     "text_color": "#000000",
@@ -36,7 +35,6 @@ def find_dispatcher():
 
     if dispatcher_pib:
         update_dispatcher(dispatcher_pib)
-
 def update_dispatcher(dispatcher_pib):
     update_dispatcher = CTk()
     update_dispatcher.title(f"Update dispatcher info")
@@ -138,6 +136,184 @@ def update_dispatcher(dispatcher_pib):
 
     update_dispatcher.mainloop()
 
+    def fetch_contract_data(contract_id):
+        conn = sqlite3.connect('data.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT Contract.contract_id, Contract.conclusion_date, Client.c_email, Client.c_phone_number, Client.c_pib, 
+                   Dispatcher.d_pib, CargoType.cargo_name, CargoType.description, CargoType.dimensions, Cargo.quantity, 
+                   Cargo.weight, Itinerary.departure_station, Itinerary.arrival_station, Itinerary.route_length, 
+                   Itinerary.duration, Payment.payment_amount, Payment.payment_datetime
+            FROM Contract
+            JOIN Client ON Contract.client_id = Client.client_id
+            JOIN Dispatcher ON Contract.dispatcher_id = Dispatcher.dispatcher_id
+            JOIN Cargo ON Contract.cargo_id = Cargo.cargo_id
+            JOIN CargoType ON Cargo.cargo_type_id = CargoType.cargo_type_id
+            JOIN Itinerary ON Contract.itinerary_id = Itinerary.itinerary_id
+            JOIN Payment ON Contract.payment_id = Payment.payment_id
+            WHERE Contract.contract_id = ?
+        ''', (contract_id,))
+
+        data = cursor.fetchone()
+        conn.close()
+
+        if data:
+            return {
+                "contract_id": data[0],
+                "conclusion_date": data[1],
+                "client_email": data[2],
+                "client_phone": data[3],
+                "client_pib": data[4],
+                "dispatcher_pib": data[5],
+                "cargo_name": data[6],
+                "cargo_description": data[7],
+                "cargo_dimensions": data[8],
+                "cargo_quantity": data[9],
+                "cargo_weight": data[10],
+                "departure_station": data[11],
+                "arrival_station": data[12],
+                "route_length": data[13],
+                "duration": data[14],
+                "payment_amount": data[15],
+                "payment_datetime": data[16]
+            }
+        else:
+            return None
+
+def find_client():
+    pib_dialog = CTkInputDialog(text="Enter your full name (PIB):", title="Update info")
+    client_pib = pib_dialog.get_input()
+
+    if client_pib:
+        update_client(client_pib)
+def update_client(client_pib):
+    update_client_window = CTk()
+    update_client_window.title(f"Update client info")
+
+    screen_width = update_client_window.winfo_screenwidth()
+    screen_height = update_client_window.winfo_screenheight()
+
+    app_width = 500
+    app_height = 400
+
+    x_position = (screen_width - app_width) // 2
+    y_position = (screen_height - app_height) // 2
+
+    update_client_window.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
+    update_client_window.resizable(0, 0)
+
+    screen_frame = CTkFrame(master=update_client_window, width=850, height=750, fg_color="#897E9B")
+    screen_frame.pack_propagate(0)
+    screen_frame.pack(expand=True, fill="both")
+
+    cursor.execute("SELECT c_pib, c_email, c_password, c_phone_number FROM Client WHERE c_pib = ?", (client_pib,))
+    client = cursor.fetchone()
+
+    if client:
+        existing_pib, existing_email, existing_password, existing_phone_number = client
+
+        CTkLabel(master=screen_frame, text="PIB:", **label_style).pack(anchor="w", pady=(18, 0), padx=(50, 0))
+        pib_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
+        pib_entry.insert(0, existing_pib)
+        pib_entry.pack(anchor="w", padx=(50, 0))
+
+        CTkLabel(master=screen_frame, text="Phone number (+38):", **label_style).pack(anchor="w", pady=(18, 0), padx=(50, 0))
+        phone_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
+        phone_entry.insert(0, existing_phone_number)
+        phone_entry.pack(anchor="w", padx=(50, 0))
+
+        CTkLabel(master=screen_frame, text="Email:", **label_style).pack(anchor="w", pady=(18, 0), padx=(50, 0))
+        email_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
+        email_entry.insert(0, existing_email)
+        email_entry.pack(anchor="w", padx=(50, 0))
+
+        CTkLabel(master=screen_frame, text="Password:", **label_style).pack(anchor="w", pady=(15, 0), padx=(50, 0))
+        password_entry = CTkEntry(master=screen_frame, **entry_style, width=300, show="*")
+        password_entry.insert(0, existing_password)
+        password_entry.pack(anchor="w", padx=(50, 0))
+
+        def update_client_info():
+            new_pib = pib_entry.get()
+            new_email = email_entry.get()
+            new_password = password_entry.get()
+            new_phone_number = phone_entry.get()
+
+            if not re.match(r"[^@]+@[^@]+\.[^@]+", new_email):
+                CTkMessagebox(message="Invalid email format!", icon="cancel", option_1="OK")
+                return
+
+            if len(new_password) < 8:
+                CTkMessagebox(message="Password should contain at least 8 characters!", icon="cancel", option_1="OK")
+                return
+
+            if len(new_phone_number) < 10 or not new_phone_number.isdigit():
+                CTkMessagebox(message="Phone number should contain at least 10 digits!", icon="cancel", option_1="OK")
+                return
+
+            cursor.execute(
+                "UPDATE Client SET c_pib = ?, c_email = ?, c_password = ?, c_phone_number = ? WHERE c_pib = ?",
+                (new_pib, new_email, new_password, new_phone_number, client_pib)
+            )
+            conn.commit()
+
+            CTkMessagebox(message="Information updated successfully!", icon="check", option_1="Thanks")
+            update_client_window.destroy()
+
+        update_button = CTkButton(master=screen_frame, text="Update Info", **btn_style, command=update_client_info)
+        update_button.pack(anchor="w", pady=(20, 0), padx=(50, 0))
+    else:
+        CTkMessagebox(message="Client not found!", icon="cancel", option_1="OK")
+        update_client_window.destroy()
+
+def fetch_contract_data(contract_id):
+    try:
+        conn = sqlite3.connect('data.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+                SELECT Contract.contract_id, Contract.conclusion_date, Client.c_email, Client.c_phone_number, Client.c_pib, 
+                       Dispatcher.d_pib, CargoType.cargo_name, CargoType.description, CargoType.dimensions, Cargo.quantity, 
+                       Cargo.weight, Itinerary.departure_station, Itinerary.arrival_station, Itinerary.route_length, 
+                       Itinerary.duration, Payment.payment_amount, Payment.payment_datetime, Cargo.cargo_type_id, Cargo.cargo_id
+                FROM Contract
+                JOIN Client ON Contract.client_id = Client.client_id
+                JOIN Dispatcher ON Contract.dispatcher_id = Dispatcher.dispatcher_id
+                JOIN Cargo ON Contract.cargo_id = Cargo.cargo_id
+                JOIN CargoType ON Cargo.cargo_type_id = CargoType.cargo_type_id
+                JOIN Itinerary ON Contract.itinerary_id = Itinerary.itinerary_id
+                JOIN Payment ON Contract.payment_id = Payment.payment_id
+                WHERE Contract.contract_id = ?
+            ''', (contract_id,))
+        data = cursor.fetchone()
+        conn.close()
+
+        if data:
+            return {
+                "contract_id": data[0],
+                "conclusion_date": data[1],
+                "client_email": data[2],
+                "client_phone": data[3],
+                "client_pib": data[4],
+                "dispatcher_pib": data[5],
+                "cargo_name": data[6],
+                "cargo_description": data[7],
+                "cargo_dimensions": data[8],
+                "cargo_quantity": data[9],
+                "cargo_weight": data[10],
+                "departure_station": data[11],
+                "arrival_station": data[12],
+                "route_length": data[13],
+                "duration": data[14],
+                "payment_amount": data[15],
+                "payment_datetime": data[16],
+                "cargo_type_id": data[17],
+                "cargo_id": data[18]
+            }
+        else:
+            return None
+    except sqlite3.Error as e:
+        CTkMessagebox(message=f"Error fetching contract data: {e}", icon="cancel")
+        return None
 
 def modifying_contract():
     global screen_frame
@@ -164,62 +340,16 @@ def modifying_contract():
     dialog = CTkInputDialog(text="Enter contract ID:", title="Update contract")
     contract_id = dialog.get_input()
 
-    if contract_id is None:
+    if not contract_id:
         return
 
-    contract_id = int(contract_id)
-    def get_contract_data(cursor, contract_id):
-        try:
-            cursor.execute("SELECT * FROM Contract WHERE contract_id = ?", (contract_id,))
-            contract_data = cursor.fetchone()
-            if not contract_data:
-                print("No contract data found.")
-                return None, None, None, None, None, None, None
+    try:
+        contract_id = int(contract_id)
+    except ValueError:
+        CTkMessagebox(title="Error", message="Invalid contract ID", icon="cancel")
+        return
 
-            cursor.execute("SELECT * FROM Client WHERE client_id = ?", (contract_data[2],))
-            client_data = cursor.fetchone()
-            if not client_data:
-                print("No client data found.")
-                return contract_data, None, None, None, None, None, None
-
-            cursor.execute("SELECT * FROM Payment WHERE payment_id = ?", (contract_data[5],))
-            payment_data = cursor.fetchone()
-            if not payment_data:
-                print("No payment data found.")
-                return contract_data, client_data, None, None, None, None, None
-
-            cursor.execute("SELECT * FROM Dispatcher WHERE dispatcher_id = ?", (contract_data[3],))
-            dispatcher_data = cursor.fetchone()
-            if not dispatcher_data:
-                print("No dispatcher data found.")
-                return contract_data, client_data, payment_data, None, None, None, None
-
-            cursor.execute("SELECT * FROM Cargo WHERE cargo_id = ?", (contract_data[4],))
-            cargo_data = cursor.fetchone()
-            if not cargo_data:
-                print("No cargo data found.")
-                return contract_data, client_data, payment_data, dispatcher_data, None, None, None
-
-            cursor.execute("SELECT * FROM CargoType WHERE cargo_type_id = ?", (cargo_data[1],))
-            cargo_type_data = cursor.fetchone()
-            if not cargo_type_data:
-                print("No cargo type data found.")
-                return contract_data, client_data, payment_data, dispatcher_data, cargo_data, None, None
-
-            cursor.execute("SELECT * FROM Itinerary WHERE itinerary_id = ?", (contract_data[6],))
-            itinerary_data = cursor.fetchone()
-            if not itinerary_data:
-                print("No itinerary data found.")
-                return contract_data, client_data, payment_data, dispatcher_data, cargo_data, cargo_type_data, None
-
-            return contract_data, client_data, payment_data, dispatcher_data, cargo_data, cargo_type_data, itinerary_data
-        except sqlite3.Error as e:
-            print(f"Error fetching contract data: {e}")
-            return None, None, None, None, None, None, None
-
-    (contract_data, client_data, payment_data,
-     dispatcher_data, cargo_data, cargo_type_data,
-     itinerary_data) = get_contract_data(cursor, contract_id)
+    contract_data = fetch_contract_data(contract_id)
 
     if not contract_data:
         CTkMessagebox(title="Error", message="Contract not found", icon="cancel")
@@ -228,41 +358,41 @@ def modifying_contract():
     def next_step():
         nonlocal window_number
         window_number += 1
-        show_current_step()
+        show_current_step(contract_id)
 
-    def show_current_step():
+    def show_current_step(contract_id):
         global screen_frame
         screen_frame.destroy()
         screen_frame = CTkFrame(master=cont_window, width=850, height=750, fg_color="#897E9B")
         screen_frame.pack_propagate(0)
         screen_frame.pack(expand=True, fill="both")
 
+
         if window_number == 1:
-
             data_text = f"""
-                Contract ID: {contract_data[0]}
-                Conclusion date: {contract_data[1]}
+                           Contract ID: {contract_data['contract_id']}
+                           Conclusion date: {contract_data['conclusion_date']}
 
-                Client email: {client_data[1]}
-                Client phone: {client_data[2]}
-                Client PIB: {client_data[3]}
+                           Client email: {contract_data['client_email']}
+                           Client phone: {contract_data['client_phone']}
+                           Client PIB: {contract_data['client_pib']}
 
-                Dispatcher PIB: {dispatcher_data[1]}
+                           Dispatcher PIB: {contract_data['dispatcher_pib']}
 
-                Name: {cargo_type_data[1]}
-                Description: {cargo_type_data[2]}
-                Dimensions: {cargo_type_data[3]}  
-                Quantity: {cargo_data[2]}
-                Weight: {cargo_data[3]}
+                           Name: {contract_data['cargo_name']}
+                           Description: {contract_data['cargo_description']}
+                           Dimensions: {contract_data['cargo_dimensions']}  
+                           Quantity: {contract_data['cargo_quantity']}
+                           Weight: {contract_data['cargo_weight']}
 
-                Departure station: {itinerary_data[1]}
-                Arrival station: {itinerary_data[2]}
-                Route length: {itinerary_data[3]}
-                Duration: {itinerary_data[4]}
+                           Departure station: {contract_data['departure_station']}
+                           Arrival station: {contract_data['arrival_station']}
+                           Route length: {contract_data['route_length']}
+                           Duration: {contract_data['duration']}
 
-                Payment amount: {payment_data[1]}
-                Payment date: {payment_data[2]}
-                """
+                           Payment amount: {contract_data['payment_amount']}
+                           Payment date: {contract_data['payment_datetime']}
+                           """
 
             text_box = CTkTextbox(screen_frame, width=400, height=400)
             text_box.pack(padx=60, pady=130, fill='both', expand=False)
@@ -271,10 +401,12 @@ def modifying_contract():
 
             info_label = CTkLabel(master=screen_frame, text="Here can modify:\n1 Cargo info and route info"
                                                             "\n2 Payment sum will be calculated automatically",
-                                  text_color="#CCCCCC", anchor="w", justify="left", font=("Arial Rounded MT Bold", 16))
+                                  text_color="#CCCCCC", anchor="w", justify="left",
+                                  font=("Arial Rounded MT Bold", 16))
             info_label.place(relx=0, rely=0.1, anchor="w", x=60, y=15)
 
-            next_btn = CTkButton(master=screen_frame, text="Next", **btn_style, command=next_step)
+            next_btn = CTkButton(master=screen_frame, text="Next", **btn_style,
+                                 command=next_step)
             next_btn.place(relx=0.9, rely=0.9, anchor="se")
 
         elif window_number == 2:
@@ -290,86 +422,90 @@ def modifying_contract():
                     return
 
                 try:
+                    conn = sqlite3.connect('data.db')
+                    cursor = conn.cursor()
                     cursor.execute(
-                        "UPDATE CargoType SET cargo_name = ?, description = ?, dimensions = ? WHERE cargo_type_id = ?",
-                        (cargo_name, description, dimensions, cargo_type_data[0]))
-                    cursor.execute("UPDATE Cargo SET quantity = ?, weight = ? WHERE cargo_id = ?",
-                                   (quantity, weight, cargo_data[0]))
+                        "UPDATE CargoType SET cargo_name = ?, description = ?, dimensions = ? "
+                        "WHERE cargo_type_id = ?",
+                        (cargo_name, description, dimensions, contract_data['cargo_type_id']))
+
+                    cursor.execute("UPDATE Cargo SET quantity = ?, weight = ? "
+                                   "WHERE cargo_id = ?",
+                                   (quantity, weight, contract_data['cargo_id']))
                     conn.commit()
                     CTkMessagebox(message="Cargo information updated successfully", icon="check", option_1="OK")
+                    conn.close()
                 except sqlite3.Error as e:
                     CTkMessagebox(message="An error occurred", icon="cancel", option_1="OK")
 
-            type_label = CTkLabel(master=screen_frame, text="Choose new cargo type:", **label_style)
+            type_label = CTkLabel(master=screen_frame, text="Choose new cargo type:",
+                                  **label_style)
             type_label.place(relx=0, rely=0.1, anchor="w", x=30, y=5)
 
             initial_values = ['Freight', 'Coal', 'Grains', 'Steel', 'Lumber', 'Oil', 'Chemicals', 'Machinery',
                               'Automobiles', 'Containers', 'Livestock', 'Cement', 'Fertilizer', 'Papers']
 
-            type_combobox = CTkComboBox(screen_frame, values=[cargo_type_data[1]] + initial_values, width=250)
+            type_combobox = CTkComboBox(screen_frame, values=[contract_data['cargo_name']] + initial_values, width=250)
             type_combobox.place(relx=0, rely=0.1, anchor="w", x=30, y=45)
-            type_combobox.set(cargo_type_data[1])
+            type_combobox.set(contract_data['cargo_name'])
 
-            add_label = CTkLabel(master=screen_frame, text="Or enter new type:", **label_style)
+            add_label = CTkLabel(master=screen_frame, text="Or enter new type:",
+                                 **label_style)
             add_label.place(relx=0, rely=0.1, anchor="w", x=420, y=5)
 
             type_entry = CTkEntry(master=screen_frame, width=140)
             type_entry.place(relx=0, rely=0.1, anchor="w", x=420, y=45)
 
-            tooltip_add = CTkToolTip(type_entry, message="Add new cargo type")
-            tooltip_add.show()
-
             def new_type():
                 new_cargo_type = type_entry.get().strip()
                 if new_cargo_type == "":
                     return
-                if not new_cargo_type[0].isupper():
-                    tooltip_add.configure(message="Please enter the new cargo type with a capital letter!")
-                    return
                 existing_cargo_types = list(type_combobox.cget('values'))
                 existing_cargo_types.append(new_cargo_type)
                 type_combobox.configure(values=existing_cargo_types)
-            add_button = CTkButton(master=screen_frame, text="Add", width=40, **btn_style, command=new_type)
+
+            add_button = CTkButton(master=screen_frame, text="Add", width=40,
+                                   **btn_style, command=new_type)
             add_button.place(relx=0, rely=0.1, anchor="w", x=350, y=45)
 
+            desc_label = CTkLabel(master=screen_frame, text="Add description (if necessary):",
+                                  **label_style)
+            desc_label.place(relx=0, rely=0.1, anchor="w", x=30, y=185)
 
-            cargo_type_checked = False
+            desc_entry = CTkEntry(master=screen_frame, width=350, height=50)
+            desc_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=225)
+            desc_entry.insert(0, contract_data['cargo_description'])
+
+            dim_label = CTkLabel(master=screen_frame, text="Enter dimensions:",
+                                 **label_style)
+            dim_label.place(relx=0, rely=0.1, anchor="w", x=30, y=95)
+            dim_entry = CTkEntry(master=screen_frame, width=150, height=30)
+
+            dim_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=135)
+            dim_entry.insert(0, contract_data['cargo_dimensions'])
+
+            quantity_label = CTkLabel(master=screen_frame, text="Enter quantity:",
+                                      **label_style)
+            quantity_label.place(relx=0, rely=0.1, anchor="w", x=420, y=185)
+            quantity_input = CTkEntry(master=screen_frame, width=150, height=30)
+            quantity_input.place(relx=0, rely=0.1, anchor="w", x=420, y=225)
+            quantity_input.insert(0, contract_data['cargo_quantity'])
+
+            weight_label = CTkLabel(master=screen_frame, text="Enter weight (tons):",
+                                    **label_style)
+            weight_label.place(relx=0, rely=0.1, anchor="w", x=420, y=95)
+
+            weight_input = CTkEntry(master=screen_frame, width=150, height=30)
+            weight_input.place(relx=0, rely=0.1, anchor="w", x=420, y=135)
+            weight_input.insert(0, contract_data['cargo_weight'])
+
             def cargo_type_check(cargo_obj):
-                global cargo_type_checked
                 if cargo_obj.isCargoType():
-                    cargo_type_checked = True
                     CTkMessagebox(message="Cargo type is available", icon="check", option_1="Thanks")
                     update_btn.configure(state="normal")
                 else:
-                    cargo_type_checked = False
                     CTkMessagebox(title="Error", message="This cargo type is not available!", icon="cancel")
                     update_btn.configure(state="disabled")
-
-
-            type_label2 = CTkLabel(master=screen_frame, text="Add description (if necessary):", **label_style)
-            type_label2.place(relx=0, rely=0.1, anchor="w", x=30, y=185)
-
-            desc_entry = CTkEntry(master=screen_frame, width=350, height=50, **entry_style)
-            desc_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=225)
-            desc_entry.insert(0, cargo_type_data[2])
-
-            type_label1 = CTkLabel(master=screen_frame, text="Enter dimensions:", **label_style)
-            type_label1.place(relx=0, rely=0.1, anchor="w", x=30, y=95)
-            dim_entry = CTkEntry(master=screen_frame, width=150, height=30, **entry_style)
-            dim_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=135)
-            dim_entry.insert(0, cargo_type_data[3])
-
-            quantity_label = CTkLabel(master=screen_frame, text="Enter quantity:", **label_style)
-            quantity_label.place(relx=0, rely=0.1, anchor="w", x=420, y=185)
-            quantity_input = CTkEntry(master=screen_frame, width=150, height=30, **entry_style)
-            quantity_input.place(relx=0, rely=0.1, anchor="w", x=420, y=225)
-            quantity_input.insert(0, cargo_data[2])
-
-            weight_label = CTkLabel(master=screen_frame, text="Enter weight:(tons)", **label_style)
-            weight_label.place(relx=0, rely=0.1, anchor="w", x=420, y=95)
-            weight_input = CTkEntry(master=screen_frame, width=150, height=30, **entry_style)
-            weight_input.place(relx=0, rely=0.1, anchor="w", x=420, y=135)
-            weight_input.insert(0, cargo_data[3])
 
             check_btn = CTkButton(master=screen_frame, text="Check availability", **btn_style,
                                   command=lambda: cargo_type_check(
@@ -377,42 +513,42 @@ def modifying_contract():
                                                 quantity_input.get(), desc_entry.get())))
             check_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=300)
 
-            update_btn = CTkButton(screen_frame, text="Update cargo", **btn_style, command=update_cargo)
+            update_btn = CTkButton(screen_frame, text="Update cargo", **btn_style,
+                                   command=update_cargo)
             update_btn.place(relx=0, rely=0.1, anchor="w", x=200, y=300)
             update_btn.configure(state="disabled")
 
-            next_btn = CTkButton(master=screen_frame, text="Next", **btn_style, command=next_step)
+            next_btn = CTkButton(master=screen_frame, text="Next", **btn_style,
+                                 command=next_step)
             next_btn.place(relx=0.9, rely=0.9, anchor="se")
 
         elif window_number == 3:
             def fetch_stations():
+                conn = sqlite3.connect('data.db')
+                cursor = conn.cursor()
                 cursor.execute("SELECT DISTINCT departure_station FROM Itinerary")
                 dep_stations = [row[0] for row in cursor.fetchall()]
                 cursor.execute("SELECT DISTINCT arrival_station FROM Itinerary")
                 arr_stations = [row[0] for row in cursor.fetchall()]
+                conn.close()
                 return dep_stations, arr_stations
 
             def update_station():
-                old_dep_station = dep_combobox.get()
-                new_dep_station = dep_entry.get().strip()
-                old_arr_station = arr_combobox.get()
-                new_arr_station = arr_entry.get().strip()
-
-                if new_dep_station and not new_dep_station[0].isupper():
-                    CTkMessagebox(message="Please enter the new departure station with a capital letter!",
-                                  icon="cancel")
-                    return
-                if new_arr_station and not new_arr_station[0].isupper():
-                    CTkMessagebox(message="Please enter the new arrival station with a capital letter!", icon="cancel")
-                    return
+                old_dep_station = dep_combobox.get().strip()
+                new_dep_station = new_dep_combobox.get().strip()
+                old_arr_station = arr_combobox.get().strip()
+                new_arr_station = new_arr_combobox.get().strip()
 
                 try:
+                    conn = sqlite3.connect('data.db')
+                    cursor = conn.cursor()
+
                     cursor.execute("UPDATE Itinerary SET departure_station = ? WHERE departure_station = ?",
                                    (new_dep_station, old_dep_station))
+
                     cursor.execute("UPDATE Itinerary SET arrival_station = ? WHERE arrival_station = ?",
                                    (new_arr_station, old_arr_station))
 
-                    # Обчислення нового значення route_length та duration
                     map_obj = Map(new_dep_station, new_arr_station, 0, 0)
                     is_connection, distance, duration = map_obj.is_station()
 
@@ -424,89 +560,124 @@ def modifying_contract():
                         CTkMessagebox(message="Stations and route details updated successfully!", icon="info",
                                       option_1="Ok")
                     else:
+                        conn.rollback()
                         CTkMessagebox(message="Cannot find railway connection between the updated stations",
                                       icon="cancel")
 
+                    conn.close()
                     refresh_comboboxes()
                 except sqlite3.Error as e:
                     CTkMessagebox(message=f"Error updating stations: {e}", icon="cancel")
 
             def refresh_comboboxes():
                 dep_stations, arr_stations = fetch_stations()
-                dep_combobox.configure(values=dep_stations)
-                arr_combobox.configure(values=arr_stations)
+                dep_combobox.configure(values=[contract_data["departure_station"]])
+                arr_combobox.configure(values=[contract_data["arrival_station"]])
+                new_dep_combobox.configure(values=regional_centers)
+                new_arr_combobox.configure(values=regional_centers)
+
+            screen_frame.destroy()
+            screen_frame = CTkFrame(master=cont_window, width=850, height=750, fg_color="#897E9B")
+            screen_frame.pack_propagate(0)
+            screen_frame.pack(expand=True, fill="both")
 
             label1 = CTkLabel(master=screen_frame, text="Update stations", text_color="#000000", anchor="w",
                               justify="left", font=("Arial Rounded MT Bold", 17))
             label1.place(relx=0, rely=0.1, anchor="w", x=30, y=5)
 
-            dep_label = CTkLabel(master=screen_frame, text="Select and update departure station:", **label_style)
+            dep_label = CTkLabel(master=screen_frame, text="Select current departure station:", **label_style)
             dep_label.place(relx=0, rely=0.1, anchor="w", x=30, y=50)
 
-            dep_stations, arr_stations = fetch_stations()
-
-            dep_combobox = CTkComboBox(master=screen_frame, values=dep_stations, width=300)
+            dep_combobox = CTkComboBox(master=screen_frame, values=[contract_data["departure_station"]], width=300)
             dep_combobox.place(relx=0, rely=0.1, anchor="w", x=30, y=80)
 
-            dep_entry = CTkEntry(master=screen_frame, width=300)
-            dep_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=110)
+            new_dep_label = CTkLabel(master=screen_frame, text="Select new departure station:", **label_style)
+            new_dep_label.place(relx=0, rely=0.1, anchor="w", x=30, y=110)
 
-            arr_label = CTkLabel(master=screen_frame, text="Select and update arrival station:", **label_style)
-            arr_label.place(relx=0, rely=0.1, anchor="w", x=30, y=150)
+            new_dep_combobox = CTkComboBox(master=screen_frame, values=regional_centers, width=300)
+            new_dep_combobox.place(relx=0, rely=0.1, anchor="w", x=30, y=140)
 
-            arr_combobox = CTkComboBox(master=screen_frame, values=arr_stations, width=300)
-            arr_combobox.place(relx=0, rely=0.1, anchor="w", x=30, y=180)
+            arr_label = CTkLabel(master=screen_frame, text="Select current arrival station:", **label_style)
+            arr_label.place(relx=0, rely=0.1, anchor="w", x=30, y=170)
 
-            arr_entry = CTkEntry(master=screen_frame, width=300)
-            arr_entry.place(relx=0, rely=0.1, anchor="w", x=30, y=210)
+            arr_combobox = CTkComboBox(master=screen_frame, values=[contract_data["arrival_station"]], width=300)
+            arr_combobox.place(relx=0, rely=0.1, anchor="w", x=30, y=200)
+
+            new_arr_label = CTkLabel(master=screen_frame, text="Select new arrival station:", **label_style)
+            new_arr_label.place(relx=0, rely=0.1, anchor="w", x=30, y=230)
+
+            new_arr_combobox = CTkComboBox(master=screen_frame, values=regional_centers, width=300)
+            new_arr_combobox.place(relx=0, rely=0.1, anchor="w", x=30, y=260)
 
             update_btn = CTkButton(master=screen_frame, text="Update stations", width=90, **btn_style,
                                    command=update_station)
-            update_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=250)
+            update_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=300)
 
             next_btn = CTkButton(master=screen_frame, text="Next", **btn_style, command=next_step)
             next_btn.place(relx=0.9, rely=0.9, anchor="se")
 
+            refresh_comboboxes()
+
         elif window_number == 4:
-            def record_payment(calculated_tariff):
+
+            payment_label = CTkLabel(master=screen_frame, text="Almost done!\nNow make the payment",
+                                     text_color="#000000", anchor="w",
+                                     justify="left", font=("Arial Rounded MT Bold", 18))
+            payment_label.place(relx=0, rely=0.1, anchor="w", x=30, y=10)
+
+            list_label = CTkLabel(master=screen_frame,
+                                  text="Click button 'Accept payment' to see the price for the transportation\nand save the payment",
+                                  text_color="#CCCCCC", anchor="w", justify="left", font=("Arial Rounded MT Bold", 14))
+            list_label.place(relx=0, rely=0.1, anchor="w", x=30, y=80)
+
+            def update_payment(calculated_tariff, contract_id):
                 try:
                     conn = sqlite3.connect('data.db')
                     cursor = conn.cursor()
+
                     current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                    cursor.execute("SELECT payment_id "
-                                   "FROM Payment ORDER BY payment_id DESC LIMIT 1")
-                    payment_record = cursor.fetchone()
-
-                    if payment_record:
-                        payment_id = payment_record[0]
-                        cursor.execute(
-                            "UPDATE Payment SET payment_amount = ?, payment_datetime = ? WHERE payment_id = ?",
-                            (calculated_tariff, current_datetime, payment_id))
-                    else:
-                        cursor.execute(
-                            "INSERT INTO Payment (payment_amount, payment_datetime) VALUES (?, ?)",
-                            (calculated_tariff, current_datetime))
+                    cursor.execute(
+                        "UPDATE Payment SET payment_amount = ?, payment_datetime = ? "
+                        "WHERE payment_id = (SELECT payment_id FROM Contract WHERE contract_id = ?)",
+                        (calculated_tariff, current_datetime, contract_id))
 
                     conn.commit()
                     conn.close()
-                    CTkMessagebox(message="Payment recorded successfully!", icon="check", option_1="Thanks")
+                    CTkMessagebox(message="Payment updated successfully!",
+                                  icon="check", option_1="Thanks")
                 except sqlite3.Error as e:
-                    CTkMessagebox(message="Payment is not recorded!", icon="cancel", option_1="OK")
+                    CTkMessagebox(message="Payment is not updated!", icon="cancel", option_1="OK")
 
-            def calculate_tariff():
+            def calculate_tariff(contract_id):
                 global calculated_tariff
                 try:
-                    cursor.execute(
-                        "SELECT ct.cargo_name, c.weight "
-                        "FROM Cargo c INNER JOIN CargoType ct ON c.cargo_type_id = ct.cargo_type_id "
-                        "ORDER BY c.rowid DESC LIMIT 1")
+                    conn = sqlite3.connect('data.db')
+                    cursor = conn.cursor()
+
+                    cursor.execute('''
+                        SELECT ct.cargo_name, c.weight
+                        FROM Cargo c
+                        INNER JOIN CargoType ct ON c.cargo_type_id = ct.cargo_type_id
+                        WHERE c.cargo_id = (
+                            SELECT cargo_id
+                            FROM Contract
+                            WHERE contract_id = ?
+                        )
+                    ''', (contract_id,))
                     cargo_data = cursor.fetchone()
 
-                    cursor.execute("SELECT route_length, duration "
-                                   "FROM Itinerary ORDER BY rowid DESC LIMIT 1")
+                    cursor.execute('''
+                        SELECT route_length, duration
+                        FROM Itinerary
+                        WHERE itinerary_id = (
+                            SELECT itinerary_id
+                            FROM Contract
+                            WHERE contract_id = ?
+                        )
+                    ''', (contract_id,))
                     route_data = cursor.fetchone()
-                    display_data(cargo_data, route_data)
+                    conn.close()
 
                     if cargo_data and route_data:
                         cargo_type, weight = cargo_data
@@ -515,7 +686,7 @@ def modifying_contract():
                         calc_obj = Calc(None, distance, None, duration, cargo_type, weight)
                         calc_obj.calculate_price()
                         calculated_tariff = calc_obj.get_price()
-                        record_payment(calculated_tariff)
+                        update_payment(calculated_tariff, contract_id)
 
                         textbox1.configure(state="normal")
                         textbox1.delete("1.0", "end")
@@ -535,34 +706,18 @@ def modifying_contract():
                     textbox.configure(state="normal")
                     textbox.delete("1.0", "end")
                     headers = f"{'Cargo Type':<35}{'Weight':<35}{'Distance':<35}{'Duration':<35}\n"
-                    table_data = headers
                     row_data = f"{cargo_type:<40}{weight:<40}{distance:<40}{duration:<40}\n"
-                    table_data += row_data
+                    table_data = headers + row_data
                     textbox.insert("end", table_data)
                     textbox.configure(state="disabled")
 
             def display():
                 try:
-                    calculate_tariff()
+                    calculate_tariff(contract_id)
                 except sqlite3.Error as e:
                     CTkMessagebox(message="Error", icon="cancel", option_1="OK")
 
-            payment_label = CTkLabel(master=screen_frame, text="Almost done!"
-                                                               "\nNow make the payment",
-                                     text_color="#000000", anchor="w",
-                                     justify="left",
-                                     font=("Arial Rounded MT Bold", 18))
-            payment_label.place(relx=0, rely=0.1, anchor="w", x=30, y=10)
-
-            list_label = CTkLabel(master=screen_frame,
-                                  text="Click button 'Accept payment' to see the price "
-                                       "for the transportation" "\nand save the payment",
-                                  text_color="#CCCCCC", anchor="w", justify="left",
-                                  font=("Arial Rounded MT Bold", 14))
-            list_label.place(relx=0, rely=0.1, anchor="w", x=30, y=80)
-
-            display_button = CTkButton(master=screen_frame, text="Accept payment", **btn_style,
-                                       width=90, command=display)
+            display_button = CTkButton(master=screen_frame, text="Accept payment", **btn_style, width=90, command=display)
             display_button.place(relx=0, rely=0.1, anchor="w", x=30, y=350)
 
             textbox = CTkTextbox(master=screen_frame, width=500, height=80)
@@ -570,5 +725,8 @@ def modifying_contract():
             textbox1 = CTkTextbox(master=screen_frame, width=500, height=80)
             textbox1.place(relx=0, rely=0.1, anchor="w", x=30, y=255)
 
-    show_current_step()
+            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style, command=next_step)
+            next_btn.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
+
+    show_current_step(contract_id)
     cont_window.mainloop()

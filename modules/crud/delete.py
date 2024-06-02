@@ -9,11 +9,13 @@ from CTkMessagebox import CTkMessagebox
 
 from database.database_setup import cursor, conn
 
+
 label_style = {
     "text_color": "#000000",
     "anchor": "w",
-    "justify": "left",
-    "font": ("Arial Rounded MT Bold", 15)}
+    "justify": "center",
+    "font": ("Arial Rounded MT Bold", 15)
+}
 btn_style = {
     "fg_color": "#000000",
     "hover_color": "#4F2346",
@@ -70,7 +72,7 @@ def delete_contract():
     screen_width = dialog.winfo_screenwidth()
     screen_height = dialog.winfo_screenheight()
 
-    dialog_width = 300
+    dialog_width = 350
     dialog_height = 150
 
     x_position = (screen_width - dialog_width) // 2
@@ -83,12 +85,11 @@ def delete_contract():
     screen_frame.pack_propagate(0)
     screen_frame.pack(expand=True, fill="both")
 
-    label_d = ctk.CTkLabel(screen_frame, text="Contract ID to delete:", anchor="w",
-                           text_color="#000000", justify="left")
-    label_d.pack(anchor="w", padx=88, pady=10)
+    label_d = ctk.CTkLabel(screen_frame, text="Contract ID to delete:", **label_style)
+    label_d.pack(pady=10)
 
     entry_d = ctk.CTkEntry(screen_frame)
-    entry_d.pack(anchor="w", padx=80, pady=5)
+    entry_d.pack(pady=10)
 
     confirm_d = ctk.CTkButton(screen_frame, text="Confirm", fg_color="#000000", hover_color="#4F2346",
                               text_color="#ffffff", command=on_confirm)
@@ -128,7 +129,7 @@ def delete_dispatcher():
     screen_width = dialog.winfo_screenwidth()
     screen_height = dialog.winfo_screenheight()
 
-    dialog_width = 300
+    dialog_width = 350
     dialog_height = 150
 
     x_position = (screen_width - dialog_width) // 2
@@ -141,12 +142,11 @@ def delete_dispatcher():
     screen_frame.pack_propagate(0)
     screen_frame.pack(expand=True, fill="both")
 
-    label_d = ctk.CTkLabel(screen_frame, text="Dispatcher pib to delete:", anchor="w",
-                           text_color="#000000", justify="left")
-    label_d.pack(anchor="w", padx=80, pady=10)
+    label_d = ctk.CTkLabel(screen_frame, text="Dispatcher pib to delete:", **label_style)
+    label_d.pack(pady=10)
 
     entry_d = ctk.CTkEntry(screen_frame)
-    entry_d.pack(anchor="w", padx=80, pady=5)
+    entry_d.pack(pady=10)
 
     confirm_d = ctk.CTkButton(screen_frame, text="Confirm", fg_color="#000000",
                               hover_color="#4F2346",
@@ -186,7 +186,7 @@ def delete_client():
     screen_width = dialog1.winfo_screenwidth()
     screen_height = dialog1.winfo_screenheight()
 
-    dialog_width = 300
+    dialog_width = 350
     dialog_height = 150
 
     x_position = (screen_width - dialog_width) // 2
@@ -195,16 +195,15 @@ def delete_client():
     dialog1.geometry(f"{dialog_width}x{dialog_height}+{x_position}+{y_position}")
     dialog1.resizable(0, 0)
 
-    screen_frame = CTkFrame(master=dialog1, width=350, height=200, fg_color="#897E9B")
+    screen_frame = CTkFrame(master=dialog1, width=dialog_width, height=dialog_height, fg_color="#897E9B")
     screen_frame.pack_propagate(0)
     screen_frame.pack(expand=True, fill="both")
 
-    label_c = ctk.CTkLabel(screen_frame, text="Client pib to delete:", anchor="w",
-                           text_color="#000000", justify="left")
-    label_c.pack(anchor="w", padx=90, pady=10)
+    label_c = ctk.CTkLabel(screen_frame, text="Client pib to delete:", **label_style)
+    label_c.pack(pady=10)
 
     entry_c = ctk.CTkEntry(screen_frame)
-    entry_c.pack(anchor="w", padx=80, pady=5)
+    entry_c.pack(pady=10)
 
     confirm_c = ctk.CTkButton(screen_frame, text="Confirm", fg_color="#000000", hover_color="#4F2346",
                               text_color="#ffffff", command=on_confirm)

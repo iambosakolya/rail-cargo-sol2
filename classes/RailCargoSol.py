@@ -14,3 +14,6 @@ class RailCargoSol:
 
     def get_company_name(self):
         return self.company_name
+
+    def __str__(self):
+        return f"{self.company_name}, {self.city_location}"

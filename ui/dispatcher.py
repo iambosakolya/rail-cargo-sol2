@@ -136,7 +136,7 @@ def dispatcher_window():
     ninth_btn = ctk.CTkButton(master=req_frame3, text="Dispatchers and"
                                                       "\ncontract status",
                               **btn_style2,
-                              command= lambda: find_dispatchers_comments(result_textbox))
+                              command=lambda: find_dispatchers_comments(result_textbox))
     ninth_btn.pack(side="top", padx=10, pady=12)
 
 

@@ -1,19 +1,21 @@
 from PIL import Image
 from customtkinter import *
 
-from modules.auth import register
-from modules.auth import login
+from modules.auth.register import register_main
+from modules.auth.login import login
 
 label_style = {
     "text_color": "#601E88",
     "anchor": "w",
     "justify": "left",
     "font": ("Arial Rounded MT Bold", 15)}
+
 btn_style = {
     "fg_color": "#601E88",
     "hover_color": "#E44982",
     "text_color": "#ffffff",
     "font": ("Arial Rounded MT Bold", 17)}
+
 entry_style = {
     "fg_color": "#EEEEEE",
     "border_color": "#601E88",
@@ -111,7 +113,7 @@ password_entry = CTkEntry(master=frame_right,
 password_entry.pack(anchor="w", padx=(50, 0))
 
 register_button = CTkButton(master=frame_right, text="Register", **btn_style,
-                            width=300, command=lambda: register(name_entry, phone_entry,
+                            width=300, command=lambda: register_main(name_entry, phone_entry,
                                                                 email_entry, password_entry,
                                                                 user_type_combo))
 register_button.pack(anchor="w", pady=(40, 0), padx=(50, 0))

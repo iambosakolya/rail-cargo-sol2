@@ -37,3 +37,14 @@
 9.	Операція об'єднання UNІON із включенням коментарю в кожен рядок
 список усіх диспетчерів з коментарем «Має максимальну кількість заключених контрактів»,
 «Не має в цей час заключених контрактів», "має n заклюених контрактів
+
+
+
+"Kyiv", "Vinnytsia", "Lutsk", "Dnipro", "Donetsk", "Zhytomyr", "Uzhhorod", "Zaporizhzhia",
+"Ivano-Frankivsk", "Kropyvnytskyi", "Luhansk", "Lviv", "Mykolaiv", "Odesa", "Poltava",
+"Rivne", "Sumy", "Ternopil", "Kharkiv", "Kherson", "Khmelnytskyi", "Cherkasy",
+"Chernihiv", "Chernivtsi" +simferopol
+
+
+
+

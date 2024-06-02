@@ -67,598 +67,3250 @@
       "duration": 9.5
     },
     {
-        "source": "Kharkiv",
-        "destination": "Kyiv",
-        "distance": 479,
-        "duration": 6.5
+      "source": "Kyiv",
+      "destination": "Lutsk",
+      "distance": 395,
+      "duration": 5.5
     },
     {
-        "source": "Kharkiv",
-        "destination": "Dnipro",
-        "distance": 222,
-        "duration": 3
+      "source": "Kyiv",
+      "destination": "Donetsk",
+      "distance": 700,
+      "duration": 10
     },
     {
-        "source": "Kharkiv",
-        "destination": "Odesa",
-        "distance": 753,
-        "duration": 10
+      "source": "Kyiv",
+      "destination": "Zhytomyr",
+      "distance": 140,
+      "duration": 2
     },
     {
-        "source": "Kharkiv",
-        "destination": "Lviv",
-        "distance": 1052,
-        "duration": 14
+      "source": "Kyiv",
+      "destination": "Uzhhorod",
+      "distance": 800,
+      "duration": 11
     },
     {
-        "source": "Kharkiv",
-        "destination": "Zaporizhzhia",
-        "distance": 284,
-        "duration": 4
+      "source": "Kyiv",
+      "destination": "Ivano-Frankivsk",
+      "distance": 600,
+      "duration": 8.5
     },
     {
-        "source": "Kharkiv",
-        "destination": "Mykolaiv",
-        "distance": 618,
-        "duration": 8
+      "source": "Kyiv",
+      "destination": "Kropyvnytskyi",
+      "distance": 300,
+      "duration": 4.5
     },
     {
-        "source": "Kharkiv",
-        "destination": "Vinnytsia",
-        "distance": 763,
-        "duration": 10
+      "source": "Kyiv",
+      "destination": "Luhansk",
+      "distance": 800,
+      "duration": 11
     },
     {
-        "source": "Kharkiv",
-        "destination": "Chernihiv",
-        "distance": 396,
-        "duration": 5
+      "source": "Kyiv",
+      "destination": "Rivne",
+      "distance": 320,
+      "duration": 4.5
     },
     {
-        "source": "Kharkiv",
-        "destination": "Poltava",
-        "distance": 137,
-        "duration": 2
+      "source": "Kyiv",
+      "destination": "Sumy",
+      "distance": 350,
+      "duration": 5
     },
     {
-        "source": "Kharkiv",
-        "destination": "Cherkasy",
-        "distance": 321,
-        "duration": 4
+      "source": "Kyiv",
+      "destination": "Ternopil",
+      "distance": 450,
+      "duration": 6.5
     },
     {
-        "source": "Kharkiv",
-        "destination": "Simferopol",
-        "distance": 1112,
-        "duration": 15
-    },
-     {
-        "source": "Dnipro",
-        "destination": "Kyiv",
-        "distance": 478,
-        "duration": 6.5
+      "source": "Kyiv",
+      "destination": "Kherson",
+      "distance": 550,
+      "duration": 8
     },
     {
-        "source": "Dnipro",
-        "destination": "Kharkiv",
-        "distance": 222,
-        "duration": 3
+      "source": "Kyiv",
+      "destination": "Khmelnytskyi",
+      "distance": 330,
+      "duration": 4.5
     },
     {
-        "source": "Dnipro",
-        "destination": "Odesa",
-        "distance": 484,
-        "duration": 6.5
+      "source": "Kyiv",
+      "destination": "Chernivtsi",
+      "distance": 550,
+      "duration": 8
     },
     {
-        "source": "Dnipro",
-        "destination": "Lviv",
-        "distance": 1042,
-        "duration": 14
+      "source": "Kharkiv",
+      "destination": "Kyiv",
+      "distance": 479,
+      "duration": 6.5
     },
     {
-        "source": "Dnipro",
-        "destination": "Zaporizhzhia",
-        "distance": 72,
-        "duration": 1
+      "source": "Kharkiv",
+      "destination": "Dnipro",
+      "distance": 221,
+      "duration": 3
     },
     {
-        "source": "Dnipro",
-        "destination": "Mykolaiv",
-        "distance": 220,
-        "duration": 3
+      "source": "Kharkiv",
+      "destination": "Odesa",
+      "distance": 725,
+      "duration": 10.5
     },
     {
-        "source": "Dnipro",
-        "destination": "Vinnytsia",
-        "distance": 380,
-        "duration": 5
+      "source": "Kharkiv",
+      "destination": "Lviv",
+      "distance": 1030,
+      "duration": 14.5
     },
     {
-        "source": "Dnipro",
-        "destination": "Chernihiv",
-        "distance": 650,
-        "duration": 9
+      "source": "Kharkiv",
+      "destination": "Zaporizhzhia",
+      "distance": 451,
+      "duration": 6.5
     },
     {
-        "source": "Dnipro",
-        "destination": "Poltava",
-        "distance": 179,
-        "duration": 2.5
+      "source": "Kharkiv",
+      "destination": "Mykolaiv",
+      "distance": 620,
+      "duration": 9
     },
     {
-        "source": "Dnipro",
-        "destination": "Cherkasy",
-        "distance": 267,
-        "duration": 3.5
+      "source": "Kharkiv",
+      "destination": "Vinnytsia",
+      "distance": 759,
+      "duration": 10.5
     },
     {
-        "source": "Dnipro",
-        "destination": "Simferopol",
-        "distance": 1052,
-        "duration": 14
+      "source": "Kharkiv",
+      "destination": "Chernihiv",
+      "distance": 523,
+      "duration": 7.5
     },
     {
-        "source": "Odesa",
-        "destination": "Kyiv",
-        "distance": 472,
-        "duration": 6.5
+      "source": "Kharkiv",
+      "destination": "Poltava",
+      "distance": 141,
+      "duration": 2
     },
     {
-        "source": "Odesa",
-        "destination": "Kharkiv",
-        "distance": 753,
-        "duration": 10
+      "source": "Kharkiv",
+      "destination": "Cherkasy",
+      "distance": 404,
+      "duration": 5.5
     },
     {
-        "source": "Odesa",
-        "destination": "Dnipro",
-        "distance": 484,
-        "duration": 6.5
+      "source": "Kharkiv",
+      "destination": "Simferopol",
+      "distance": 785,
+      "duration": 11
     },
     {
-        "source": "Odesa",
-        "destination": "Lviv",
-        "distance": 862,
-        "duration": 11.5
+      "source": "Kharkiv",
+      "destination": "Lutsk",
+      "distance": 1055,
+      "duration": 15
     },
     {
-        "source": "Odesa",
-        "destination": "Zaporizhzhia",
-        "distance": 551,
-        "duration": 7.5
+      "source": "Kharkiv",
+      "destination": "Donetsk",
+      "distance": 258,
+      "duration": 3.5
     },
     {
-        "source": "Odesa",
-        "destination": "Mykolaiv",
-        "distance": 135,
-        "duration": 2
+      "source": "Kharkiv",
+      "destination": "Zhytomyr",
+      "distance": 637,
+      "duration": 9
     },
     {
-        "source": "Odesa",
-        "destination": "Vinnytsia",
-        "distance": 378,
-        "duration": 5
+      "source": "Kharkiv",
+      "destination": "Uzhhorod",
+      "distance": 1180,
+      "duration": 16.5
     },
     {
-        "source": "Odesa",
-        "destination": "Chernihiv",
-        "distance": 586,
-        "duration": 8
+      "source": "Kharkiv",
+      "destination": "Ivano-Frankivsk",
+      "distance": 1120,
+      "duration": 15.5
     },
     {
-        "source": "Odesa",
-        "destination": "Poltava",
-        "distance": 626,
-        "duration": 8.5
+      "source": "Kharkiv",
+      "destination": "Kropyvnytskyi",
+      "distance": 312,
+      "duration": 4.5
     },
     {
-        "source": "Odesa",
-        "destination": "Simferopol",
-        "distance": 389,
-        "duration": 5.5
-    },
-     {
-        "source": "Lviv",
-        "destination": "Kyiv",
-        "distance": 545,
-        "duration": 7.5
+      "source": "Kharkiv",
+      "destination": "Luhansk",
+      "distance": 302,
+      "duration": 4
     },
     {
-        "source": "Lviv",
-        "destination": "Kharkiv",
-        "distance": 1052,
-        "duration": 14
+      "source": "Kharkiv",
+      "destination": "Rivne",
+      "distance": 905,
+      "duration": 12.5
     },
     {
-        "source": "Lviv",
-        "destination": "Dnipro",
-        "distance": 1042,
-        "duration": 14
+      "source": "Kharkiv",
+      "destination": "Sumy",
+      "distance": 389,
+      "duration": 5.5
     },
     {
-        "source": "Lviv",
-        "destination": "Odesa",
-        "distance": 862,
-        "duration": 11.5
+      "source": "Kharkiv",
+      "destination": "Ternopil",
+      "distance": 980,
+      "duration": 13.5
     },
     {
-        "source": "Lviv",
-        "destination": "Zaporizhzhia",
-        "distance": 1092,
-        "duration": 14.5
+      "source": "Kharkiv",
+      "destination": "Kherson",
+      "distance": 715,
+      "duration": 10
     },
     {
-        "source": "Lviv",
-        "destination": "Mykolaiv",
-        "distance": 1176,
-        "duration": 16
+      "source": "Kharkiv",
+      "destination": "Khmelnytskyi",
+      "distance": 840,
+      "duration": 12
     },
     {
-        "source": "Lviv",
-        "destination": "Vinnytsia",
-        "distance": 732,
-        "duration": 10
-    },
-    {
-        "source": "Lviv",
-        "destination": "Chernihiv",
-        "distance": 808,
-        "duration": 11
-    },
-    {
-        "source": "Lviv",
-        "destination": "Poltava",
-        "distance": 998,
-        "duration": 13.5
-    },
-    {
-        "source": "Lviv",
-        "destination": "Cherkasy",
-        "distance": 887,
-        "duration": 12
-    },
-    {
-        "source": "Lviv",
-        "destination": "Simferopol",
-        "distance": 1121,
-        "duration": 15
+      "source": "Kharkiv",
+      "destination": "Chernivtsi",
+      "distance": 1020,
+      "duration": 14
     },
         {
-        "source": "Zaporizhzhia",
-        "destination": "Kyiv",
-        "distance": 552,
-        "duration": 7.5
+      "source": "Dnipro",
+      "destination": "Kyiv",
+      "distance": 478,
+      "duration": 6.5
     },
     {
-        "source": "Zaporizhzhia",
-        "destination": "Kharkiv",
-        "distance": 284,
-        "duration": 4
+      "source": "Dnipro",
+      "destination": "Kharkiv",
+      "distance": 221,
+      "duration": 3
     },
     {
-        "source": "Zaporizhzhia",
-        "destination": "Dnipro",
-        "distance": 72,
-        "duration": 1
+      "source": "Dnipro",
+      "destination": "Odesa",
+      "distance": 518,
+      "duration": 7.5
     },
     {
-        "source": "Zaporizhzhia",
-        "destination": "Odesa",
-        "distance": 551,
-        "duration": 7.5
+      "source": "Dnipro",
+      "destination": "Lviv",
+      "distance": 1095,
+      "duration": 15.5
     },
     {
-        "source": "Zaporizhzhia",
-        "destination": "Lviv",
-        "distance": 1092,
-        "duration": 14.5
+      "source": "Dnipro",
+      "destination": "Zaporizhzhia",
+      "distance": 70,
+      "duration": 1
     },
     {
-        "source": "Zaporizhzhia",
-        "destination": "Mykolaiv",
-        "distance": 404,
-        "duration": 5.5
+      "source": "Dnipro",
+      "destination": "Mykolaiv",
+      "distance": 280,
+      "duration": 4
     },
     {
-        "source": "Zaporizhzhia",
-        "destination": "Vinnytsia",
-        "distance": 627,
-        "duration": 8.5
+      "source": "Dnipro",
+      "destination": "Vinnytsia",
+      "distance": 458,
+      "duration": 6.5
     },
     {
-        "source": "Zaporizhzhia",
-        "destination": "Chernihiv",
-        "distance": 725,
-        "duration": 10
+      "source": "Dnipro",
+      "destination": "Chernihiv",
+      "distance": 480,
+      "duration": 7
     },
     {
-        "source": "Zaporizhzhia",
-        "destination": "Poltava",
-        "distance": 492,
-        "duration": 6.5
+      "source": "Dnipro",
+      "destination": "Poltava",
+      "distance": 237,
+      "duration": 3.5
     },
     {
-        "source": "Zaporizhzhia",
-        "destination": "Cherkasy",
-        "distance": 435,
-        "duration": 6
+      "source": "Dnipro",
+      "destination": "Cherkasy",
+      "distance": 275,
+      "duration": 4
     },
     {
-        "source": "Zaporizhzhia",
-        "destination": "Simferopol",
-        "distance": 968,
-        "duration": 13
+      "source": "Dnipro",
+      "destination": "Simferopol",
+      "distance": 620,
+      "duration": 9
     },
     {
-        "source": "Mykolaiv",
-        "destination": "Kyiv",
-        "distance": 475,
-        "duration": 6.5
+      "source": "Dnipro",
+      "destination": "Lutsk",
+      "distance": 1005,
+      "duration": 14
     },
     {
-        "source": "Mykolaiv",
-        "destination": "Kharkiv",
-        "distance": 618,
-        "duration": 8
+      "source": "Dnipro",
+      "destination": "Donetsk",
+      "distance": 280,
+      "duration": 4
     },
     {
-        "source": "Mykolaiv",
-        "destination": "Dnipro",
-        "distance": 220,
-        "duration": 3
+      "source": "Dnipro",
+      "destination": "Zhytomyr",
+      "distance": 515,
+      "duration": 7
     },
     {
-        "source": "Mykolaiv",
-        "destination": "Odesa",
-        "distance": 135,
-        "duration": 2
+      "source": "Dnipro",
+      "destination": "Uzhhorod",
+      "distance": 1005,
+      "duration": 14
     },
     {
-        "source": "Mykolaiv",
-        "destination": "Lviv",
-        "distance": 1176,
-        "duration": 16
+      "source": "Dnipro",
+      "destination": "Ivano-Frankivsk",
+      "distance": 1005,
+      "duration": 14
     },
     {
-        "source": "Mykolaiv",
-        "destination": "Zaporizhzhia",
-        "distance": 404,
-        "duration": 5.5
+      "source": "Dnipro",
+      "destination": "Kropyvnytskyi",
+      "distance": 100,
+      "duration": 1.5
     },
     {
-        "source": "Mykolaiv",
-        "destination": "Vinnytsia",
-        "distance": 291,
-        "duration": 4
+      "source": "Dnipro",
+      "destination": "Luhansk",
+      "distance": 260,
+      "duration": 3.5
     },
     {
-        "source": "Mykolaiv",
-        "destination": "Chernihiv",
-        "distance": 637,
-        "duration": 8.5
+      "source": "Dnipro",
+      "destination": "Rivne",
+      "distance": 950,
+      "duration": 13.5
     },
     {
-        "source": "Mykolaiv",
-        "destination": "Poltava",
-        "distance": 397,
-        "duration": 5.5
+      "source": "Dnipro",
+      "destination": "Sumy",
+      "distance": 465,
+      "duration": 6.5
     },
     {
-        "source": "Mykolaiv",
-        "destination": "Cherkasy",
-        "distance": 341,
-        "duration": 4.5
+      "source": "Dnipro",
+      "destination": "Ternopil",
+      "distance": 885,
+      "duration": 12.5
     },
     {
-        "source": "Mykolaiv",
-        "destination": "Simferopol",
-        "distance": 793,
-        "duration": 10.5
+      "source": "Dnipro",
+      "destination": "Kherson",
+      "distance": 505,
+      "duration": 7
     },
     {
-        "source": "Vinnytsia",
-        "destination": "Kyiv",
-        "distance": 266,
-        "duration": 3.5
+      "source": "Dnipro",
+      "destination": "Khmelnytskyi",
+      "distance": 655,
+      "duration": 9.5
     },
     {
-        "source": "Vinnytsia",
-        "destination": "Kharkiv",
-        "distance": 763,
-        "duration": 10
+      "source": "Dnipro",
+      "destination": "Chernivtsi",
+      "distance": 925,
+      "duration": 13
+    },
+        {
+      "source": "Odesa",
+      "destination": "Kyiv",
+      "distance": 472,
+      "duration": 6.5
     },
     {
-        "source": "Vinnytsia",
-        "destination": "Dnipro",
-        "distance": 380,
-        "duration": 5
+      "source": "Odesa",
+      "destination": "Kharkiv",
+      "distance": 725,
+      "duration": 10.5
     },
     {
-        "source": "Vinnytsia",
-        "destination": "Odesa",
-        "distance": 378,
-        "duration": 5
+      "source": "Odesa",
+      "destination": "Dnipro",
+      "distance": 518,
+      "duration": 7.5
     },
     {
-        "source": "Vinnytsia",
-        "destination": "Lviv",
-        "distance": 732,
-        "duration": 10
+      "source": "Odesa",
+      "destination": "Lviv",
+      "distance": 1300,
+      "duration": 18.5
     },
     {
-        "source": "Vinnytsia",
-        "destination": "Zaporizhzhia",
-        "distance": 627,
-        "duration": 8.5
+      "source": "Odesa",
+      "destination": "Zaporizhzhia",
+      "distance": 560,
+      "duration": 8
     },
     {
-        "source": "Vinnytsia",
-        "destination": "Mykolaiv",
-        "distance": 291,
-        "duration": 4
+      "source": "Odesa",
+      "destination": "Mykolaiv",
+      "distance": 130,
+      "duration": 2
     },
     {
-        "source": "Vinnytsia",
-        "destination": "Chernihiv",
-        "distance": 429,
-        "duration": 6
+      "source": "Odesa",
+      "destination": "Vinnytsia",
+      "distance": 470,
+      "duration": 6.5
     },
     {
-        "source": "Vinnytsia",
-        "destination": "Poltava",
-        "distance": 317,
-        "duration": 4
+      "source": "Odesa",
+      "destination": "Chernihiv",
+      "distance": 670,
+      "duration": 9.5
     },
     {
-        "source": "Vinnytsia",
-        "destination": "Cherkasy",
-        "distance": 170,
-        "duration": 2.5
+      "source": "Odesa",
+      "destination": "Poltava",
+      "distance": 580,
+      "duration": 8.5
     },
     {
-        "source": "Poltava",
-        "destination": "Kyiv",
-        "distance": 343,
-        "duration": 4.5
+      "source": "Odesa",
+      "destination": "Cherkasy",
+      "distance": 490,
+      "duration": 7
     },
     {
-        "source": "Poltava",
-        "destination": "Kharkiv",
-        "distance": 141,
-        "duration": 2
+      "source": "Odesa",
+      "destination": "Simferopol",
+      "distance": 620,
+      "duration": 9
     },
     {
-        "source": "Poltava",
-        "destination": "Dnipro",
-        "distance": 179,
-        "duration": 2.5
+      "source": "Odesa",
+      "destination": "Lutsk",
+      "distance": 1150,
+      "duration": 16.5
     },
     {
-        "source": "Poltava",
-        "destination": "Odesa",
-        "distance": 626,
-        "duration": 8.5
+      "source": "Odesa",
+      "destination": "Donetsk",
+      "distance": 930,
+      "duration": 13
     },
     {
-        "source": "Poltava",
-        "destination": "Lviv",
-        "distance": 998,
-        "duration": 13.5
+      "source": "Odesa",
+      "destination": "Zhytomyr",
+      "distance": 540,
+      "duration": 7.5
     },
     {
-        "source": "Poltava",
-        "destination": "Zaporizhzhia",
-        "distance": 492,
-        "duration": 6.5
+      "source": "Odesa",
+      "destination": "Uzhhorod",
+      "distance": 1100,
+      "duration": 15.5
     },
     {
-        "source": "Poltava",
-        "destination": "Kryvyi Rih",
-        "distance": 358,
-        "duration": 5
+      "source": "Odesa",
+      "destination": "Ivano-Frankivsk",
+      "distance": 1070,
+      "duration": 15
     },
     {
-        "source": "Poltava",
-        "destination": "Mykolaiv",
-        "distance": 397,
-        "duration": 5.5
+      "source": "Odesa",
+      "destination": "Kropyvnytskyi",
+      "distance": 290,
+      "duration": 4
     },
     {
-        "source": "Poltava",
-        "destination": "Vinnytsia",
-        "distance": 317,
-        "duration": 4
+      "source": "Odesa",
+      "destination": "Luhansk",
+      "distance": 980,
+      "duration": 14
     },
     {
-        "source": "Poltava",
-        "destination": "Chernihiv",
-        "distance": 257,
-        "duration": 3.5
+      "source": "Odesa",
+      "destination": "Rivne",
+      "distance": 1085,
+      "duration": 15.5
     },
     {
-        "source": "Poltava",
-        "destination": "Cherkasy",
-        "distance": 163,
-        "duration": 2
+      "source": "Odesa",
+      "destination": "Sumy",
+      "distance": 800,
+      "duration": 11.5
     },
     {
-        "source": "Poltava",
-        "destination": "Simferopol",
-        "distance": 810,
-        "duration": 11
+      "source": "Odesa",
+      "destination": "Ternopil",
+      "distance": 945,
+      "duration": 13.5
     },
     {
-        "source": "Cherkasy",
-        "destination": "Kyiv",
-        "distance": 198,
-        "duration": 2.5
+      "source": "Odesa",
+      "destination": "Kherson",
+      "distance": 195,
+      "duration": 3
     },
     {
-        "source": "Cherkasy",
-        "destination": "Kharkiv",
-        "distance": 401,
-        "duration": 5.5
+      "source": "Odesa",
+      "destination": "Khmelnytskyi",
+      "distance": 500,
+      "duration": 7
     },
     {
-        "source": "Cherkasy",
-        "destination": "Dnipro",
-        "distance": 208,
-        "duration": 3
+      "source": "Odesa",
+      "destination": "Chernivtsi",
+      "distance": 810,
+      "duration": 11.5
     },
     {
-        "source": "Cherkasy",
-        "destination": "Odesa",
-        "distance": 497,
-        "duration": 6.5
+      "source": "Lviv",
+      "destination": "Kyiv",
+      "distance": 545,
+      "duration": 7.5
     },
     {
-        "source": "Cherkasy",
-        "destination": "Lviv",
-        "distance": 887,
-        "duration": 12
+      "source": "Lviv",
+      "destination": "Kharkiv",
+      "distance": 1030,
+      "duration": 14.5
     },
     {
-        "source": "Cherkasy",
-        "destination": "Zaporizhzhia",
-        "distance": 435,
-        "duration": 6
+      "source": "Lviv",
+      "destination": "Dnipro",
+      "distance": 1095,
+      "duration": 15.5
     },
     {
-        "source": "Cherkasy",
-        "destination": "Kryvyi Rih",
-        "distance": 239,
-        "duration": 3.5
+      "source": "Lviv",
+      "destination": "Odesa",
+      "distance": 1300,
+      "duration": 18.5
     },
     {
-        "source": "Cherkasy",
-        "destination": "Mykolaiv",
-        "distance": 341,
-        "duration": 4.5
+      "source": "Lviv",
+      "destination": "Zaporizhzhia",
+      "distance": 1140,
+      "duration": 16
     },
     {
-        "source": "Cherkasy",
-        "destination": "Vinnytsia",
-        "distance": 170,
-        "duration": 2.5
+      "source": "Lviv",
+      "destination": "Mykolaiv",
+      "distance": 1300,
+      "duration": 18
     },
     {
-        "source": "Cherkasy",
-        "destination": "Chernihiv",
-        "distance": 219,
-        "duration": 3
+      "source": "Lviv",
+      "destination": "Vinnytsia",
+      "distance": 590,
+      "duration": 8.5
     },
     {
-        "source": "Cherkasy",
-        "destination": "Poltava",
-        "distance": 163,
-        "duration": 2
+      "source": "Lviv",
+      "destination": "Chernihiv",
+      "distance": 1080,
+      "duration": 15.5
     },
     {
-        "source": "Cherkasy",
-        "destination": "Simferopol",
-        "distance": 874,
-        "duration": 11.5
+      "source": "Lviv",
+      "destination": "Poltava",
+      "distance": 980,
+      "duration": 14
+    },
+    {
+      "source": "Lviv",
+      "destination": "Cherkasy",
+      "distance": 990,
+      "duration": 14
+    },
+    {
+      "source": "Lviv",
+      "destination": "Simferopol",
+      "distance": 1360,
+      "duration": 19.5
+    },
+    {
+      "source": "Lviv",
+      "destination": "Lutsk",
+      "distance": 330,
+      "duration": 4.5
+    },
+    {
+      "source": "Lviv",
+      "destination": "Donetsk",
+      "distance": 1335,
+      "duration": 19
+    },
+    {
+      "source": "Lviv",
+      "destination": "Zhytomyr",
+      "distance": 630,
+      "duration": 9
+    },
+    {
+      "source": "Lviv",
+      "destination": "Uzhhorod",
+      "distance": 280,
+      "duration": 4
+    },
+    {
+      "source": "Lviv",
+      "destination": "Ivano-Frankivsk",
+      "distance": 135,
+      "duration": 2
+    },
+    {
+      "source": "Lviv",
+      "destination": "Kropyvnytskyi",
+      "distance": 835,
+      "duration": 12
+    },
+    {
+      "source": "Lviv",
+      "destination": "Luhansk",
+      "distance": 1410,
+      "duration": 20
+    },
+    {
+      "source": "Lviv",
+      "destination": "Rivne",
+      "distance": 265,
+      "duration": 3.5
+    },
+    {
+      "source": "Lviv",
+      "destination": "Sumy",
+      "distance": 1080,
+      "duration": 15.5
+    },
+    {
+      "source": "Lviv",
+      "destination": "Ternopil",
+      "distance": 180,
+      "duration": 2.5
+    },
+    {
+      "source": "Lviv",
+      "destination": "Kherson",
+      "distance": 1230,
+      "duration": 17.5
+    },
+    {
+      "source": "Lviv",
+      "destination": "Khmelnytskyi",
+      "distance": 675,
+      "duration": 9.5
+    },
+    {
+      "source": "Lviv",
+      "destination": "Chernivtsi",
+      "distance": 225,
+      "duration": 3
+    },
+     {
+      "source": "Zaporizhzhia",
+      "destination": "Kyiv",
+      "distance": 552,
+      "duration": 7.5
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Kharkiv",
+      "distance": 451,
+      "duration": 6.5
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Dnipro",
+      "distance": 70,
+      "duration": 1
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Odesa",
+      "distance": 560,
+      "duration": 8
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Lviv",
+      "distance": 1140,
+      "duration": 16
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Mykolaiv",
+      "distance": 255,
+      "duration": 3.5
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Vinnytsia",
+      "distance": 770,
+      "duration": 11
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Chernihiv",
+      "distance": 750,
+      "duration": 10.5
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Poltava",
+      "distance": 265,
+      "duration": 3.5
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Cherkasy",
+      "distance": 365,
+      "duration": 5
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Simferopol",
+      "distance": 900,
+      "duration": 12.5
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Lutsk",
+      "distance": 1225,
+      "duration": 17
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Donetsk",
+      "distance": 295,
+      "duration": 4
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Zhytomyr",
+      "distance": 595,
+      "duration": 8.5
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Uzhhorod",
+      "distance": 1235,
+      "duration": 17.5
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Ivano-Frankivsk",
+      "distance": 1210,
+      "duration": 17
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Kropyvnytskyi",
+      "distance": 140,
+      "duration": 2
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Luhansk",
+      "distance": 340,
+      "duration": 4.5
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Rivne",
+      "distance": 975,
+      "duration": 13.5
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Sumy",
+      "distance": 515,
+      "duration": 7.5
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Ternopil",
+      "distance": 925,
+      "duration": 13
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Kherson",
+      "distance": 280,
+      "duration": 4
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Khmelnytskyi",
+      "distance": 680,
+      "duration": 9.5
+    },
+    {
+      "source": "Zaporizhzhia",
+      "destination": "Chernivtsi",
+      "distance": 1165,
+      "duration": 16.5
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Kyiv",
+      "distance": 475,
+      "duration": 6.5
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Kharkiv",
+      "distance": 620,
+      "duration": 9
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Dnipro",
+      "distance": 280,
+      "duration": 4
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Odesa",
+      "distance": 130,
+      "duration": 2
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Lviv",
+      "distance": 1300,
+      "duration": 18
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Zaporizhzhia",
+      "distance": 255,
+      "duration": 3.5
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Vinnytsia",
+      "distance": 520,
+      "duration": 7.5
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Chernihiv",
+      "distance": 880,
+      "duration": 12.5
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Poltava",
+      "distance": 645,
+      "duration": 9
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Cherkasy",
+      "distance": 475,
+      "duration": 6.5
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Simferopol",
+      "distance": 620,
+      "duration": 9
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Lutsk",
+      "distance": 1300,
+      "duration": 18
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Donetsk",
+      "distance": 900,
+      "duration": 13
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Zhytomyr",
+      "distance": 670,
+      "duration": 9.5
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Uzhhorod",
+      "distance": 1455,
+      "duration": 20.5
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Ivano-Frankivsk",
+      "distance": 1415,
+      "duration": 20
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Kropyvnytskyi",
+      "distance": 165,
+      "duration": 2.5
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Luhansk",
+      "distance": 830,
+      "duration": 12
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Rivne",
+      "distance": 1305,
+      "duration": 18.5
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Sumy",
+      "distance": 920,
+      "duration": 13
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Ternopil",
+      "distance": 1375,
+      "duration": 19.5
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Kherson",
+      "distance": 130,
+      "duration": 2
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Khmelnytskyi",
+      "distance": 605,
+      "duration": 8.5
+    },
+    {
+      "source": "Mykolaiv",
+      "destination": "Chernivtsi",
+      "distance": 1495,
+      "duration": 21
+    },
+     {
+      "source": "Vinnytsia",
+      "destination": "Kyiv",
+      "distance": 266,
+      "duration": 3.5
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Kharkiv",
+      "distance": 759,
+      "duration": 10.5
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Dnipro",
+      "distance": 458,
+      "duration": 6.5
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Odesa",
+      "distance": 470,
+      "duration": 6.5
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Lviv",
+      "distance": 590,
+      "duration": 8.5
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Zaporizhzhia",
+      "distance": 770,
+      "duration": 11
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Mykolaiv",
+      "distance": 520,
+      "duration": 7.5
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Chernihiv",
+      "distance": 380,
+      "duration": 5.5
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Poltava",
+      "distance": 520,
+      "duration": 7.5
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Cherkasy",
+      "distance": 220,
+      "duration": 3
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Simferopol",
+      "distance": 950,
+      "duration": 13.5
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Lutsk",
+      "distance": 680,
+      "duration": 9.5
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Donetsk",
+      "distance": 980,
+      "duration": 14
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Zhytomyr",
+      "distance": 195,
+      "duration": 3
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Uzhhorod",
+      "distance": 995,
+      "duration": 14
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Ivano-Frankivsk",
+      "distance": 720,
+      "duration": 10
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Kropyvnytskyi",
+      "distance": 370,
+      "duration": 5
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Luhansk",
+      "distance": 1140,
+      "duration": 16
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Rivne",
+      "distance": 360,
+      "duration": 5
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Sumy",
+      "distance": 655,
+      "duration": 9
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Ternopil",
+      "distance": 430,
+      "duration": 6
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Kherson",
+      "distance": 570,
+      "duration": 8
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Khmelnytskyi",
+      "distance": 190,
+      "duration": 3
+    },
+    {
+      "source": "Vinnytsia",
+      "destination": "Chernivtsi",
+      "distance": 390,
+      "duration": 5.5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Kyiv",
+      "distance": 353,
+      "duration": 5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Kharkiv",
+      "distance": 142,
+      "duration": 2
+    },
+    {
+      "source": "Poltava",
+      "destination": "Dnipro",
+      "distance": 237,
+      "duration": 3.5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Odesa",
+      "distance": 580,
+      "duration": 8.5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Lviv",
+      "distance": 980,
+      "duration": 14
+    },
+    {
+      "source": "Poltava",
+      "destination": "Zaporizhzhia",
+      "distance": 265,
+      "duration": 3.5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Mykolaiv",
+      "distance": 645,
+      "duration": 9
+    },
+    {
+      "source": "Poltava",
+      "destination": "Vinnytsia",
+      "distance": 520,
+      "duration": 7.5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Chernihiv",
+      "distance": 295,
+      "duration": 4
+    },
+    {
+      "source": "Poltava",
+      "destination": "Cherkasy",
+      "distance": 220,
+      "duration": 3
+    },
+    {
+      "source": "Poltava",
+      "destination": "Simferopol",
+      "distance": 855,
+      "duration": 12
+    },
+    {
+      "source": "Poltava",
+      "destination": "Lutsk",
+      "distance": 1020,
+      "duration": 14.5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Donetsk",
+      "distance": 750,
+      "duration": 10.5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Zhytomyr",
+      "distance": 420,
+      "duration": 6
+    },
+    {
+      "source": "Poltava",
+      "destination": "Uzhhorod",
+      "distance": 1010,
+      "duration": 14
+    },
+    {
+      "source": "Poltava",
+      "destination": "Ivano-Frankivsk",
+      "distance": 735,
+      "duration": 10.5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Kropyvnytskyi",
+      "distance": 240,
+      "duration": 3.5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Luhansk",
+      "distance": 800,
+      "duration": 11
+    },
+    {
+      "source": "Poltava",
+      "destination": "Rivne",
+      "distance": 940,
+      "duration": 13.5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Sumy",
+      "distance": 265,
+      "duration": 3.5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Ternopil",
+      "distance": 600,
+      "duration": 8.5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Kherson",
+      "distance": 595,
+      "duration": 8.5
+    },
+    {
+      "source": "Poltava",
+      "destination": "Khmelnytskyi",
+      "distance": 430,
+      "duration": 6
+    },
+    {
+      "source": "Poltava",
+      "destination": "Chernivtsi",
+      "distance": 815,
+      "duration": 11.5
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Kyiv",
+      "distance": 197,
+      "duration": 2.5
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Kharkiv",
+      "distance": 459,
+      "duration": 6.5
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Dnipro",
+      "distance": 220,
+      "duration": 3
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Odesa",
+      "distance": 490,
+      "duration": 7
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Lviv",
+      "distance": 990,
+      "duration": 14
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Zaporizhzhia",
+      "distance": 365,
+      "duration": 5
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Mykolaiv",
+      "distance": 475,
+      "duration": 6.5
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Vinnytsia",
+      "distance": 220,
+      "duration": 3
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Chernihiv",
+      "distance": 255,
+      "duration": 3.5
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Poltava",
+      "distance": 220,
+      "duration": 3
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Simferopol",
+      "distance": 830,
+      "duration": 12
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Lutsk",
+      "distance": 840,
+      "duration": 12
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Donetsk",
+      "distance": 725,
+      "duration": 10.5
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Zhytomyr",
+      "distance": 320,
+      "duration": 4.5
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Uzhhorod",
+      "distance": 1120,
+      "duration": 16
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Ivano-Frankivsk",
+      "distance": 845,
+      "duration": 12
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Kropyvnytskyi",
+      "distance": 210,
+      "duration": 3
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Luhansk",
+      "distance": 800,
+      "duration": 11
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Rivne",
+      "distance": 825,
+      "duration": 12
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Sumy",
+      "distance": 470,
+      "duration": 6.5
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Ternopil",
+      "distance": 730,
+      "duration": 10.5
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Kherson",
+      "distance": 535,
+      "duration": 7.5
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Khmelnytskyi",
+      "distance": 300,
+      "duration": 4
+    },
+    {
+      "source": "Cherkasy",
+      "destination": "Chernivtsi",
+      "distance": 845,
+      "duration": 12
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Kyiv",
+      "distance": 420,
+      "duration": 6
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Kharkiv",
+      "distance": 1010,
+      "duration": 14.5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Dnipro",
+      "distance": 1090,
+      "duration": 15.5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Odesa",
+      "distance": 1120,
+      "duration": 16
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Lviv",
+      "distance": 330,
+      "duration": 4.5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Zaporizhzhia",
+      "distance": 1225,
+      "duration": 17
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Mykolaiv",
+      "distance": 1300,
+      "duration": 18
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Vinnytsia",
+      "distance": 680,
+      "duration": 9.5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Chernihiv",
+      "distance": 925,
+      "duration": 13
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Poltava",
+      "distance": 1020,
+      "duration": 14.5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Cherkasy",
+      "distance": 840,
+      "duration": 12
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Simferopol",
+      "distance": 1470,
+      "duration": 21
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Donetsk",
+      "distance": 1365,
+      "duration": 19.5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Zhytomyr",
+      "distance": 360,
+      "duration": 5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Uzhhorod",
+      "distance": 330,
+      "duration": 4.5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Ivano-Frankivsk",
+      "distance": 165,
+      "duration": 2.5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Kropyvnytskyi",
+      "distance": 975,
+      "duration": 13.5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Luhansk",
+      "distance": 1445,
+      "duration": 20.5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Rivne",
+      "distance": 265,
+      "duration": 3.5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Sumy",
+      "distance": 1080,
+      "duration": 15.5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Ternopil",
+      "distance": 345,
+      "duration": 4.5
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Kherson",
+      "distance": 1285,
+      "duration": 18
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Khmelnytskyi",
+      "distance": 630,
+      "duration": 9
+    },
+    {
+      "source": "Lutsk",
+      "destination": "Chernivtsi",
+      "distance": 330,
+      "duration": 4.5
+    },
+     {
+      "source": "Donetsk",
+      "destination": "Kyiv",
+      "distance": 715,
+      "duration": 10
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Kharkiv",
+      "distance": 315,
+      "duration": 4.5
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Dnipro",
+      "distance": 400,
+      "duration": 5.5
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Odesa",
+      "distance": 790,
+      "duration": 11
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Lviv",
+      "distance": 1235,
+      "duration": 17.5
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Zaporizhzhia",
+      "distance": 295,
+      "duration": 4
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Mykolaiv",
+      "distance": 900,
+      "duration": 13
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Vinnytsia",
+      "distance": 980,
+      "duration": 14
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Chernihiv",
+      "distance": 1120,
+      "duration": 16
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Poltava",
+      "distance": 750,
+      "duration": 10.5
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Cherkasy",
+      "distance": 725,
+      "duration": 10.5
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Simferopol",
+      "distance": 1035,
+      "duration": 14.5
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Lutsk",
+      "distance": 1365,
+      "duration": 19.5
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Zhytomyr",
+      "distance": 810,
+      "duration": 11.5
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Uzhhorod",
+      "distance": 1500,
+      "duration": 21
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Ivano-Frankivsk",
+      "distance": 1325,
+      "duration": 19
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Kropyvnytskyi",
+      "distance": 1005,
+      "duration": 14
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Luhansk",
+      "distance": 340,
+      "duration": 4.5
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Rivne",
+      "distance": 1315,
+      "duration": 18.5
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Sumy",
+      "distance": 800,
+      "duration": 11
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Ternopil",
+      "distance": 1190,
+      "duration": 17
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Kherson",
+      "distance": 920,
+      "duration": 13
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Khmelnytskyi",
+      "distance": 970,
+      "duration": 13.5
+    },
+    {
+      "source": "Donetsk",
+      "destination": "Chernivtsi",
+      "distance": 1275,
+      "duration": 18
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Kyiv",
+      "distance": 140,
+      "duration": 2
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Kharkiv",
+      "distance": 640,
+      "duration": 9
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Dnipro",
+      "distance": 510,
+      "duration": 7
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Odesa",
+      "distance": 610,
+      "duration": 8.5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Lviv",
+      "distance": 670,
+      "duration": 9.5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Zaporizhzhia",
+      "distance": 800,
+      "duration": 11.5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Mykolaiv",
+      "distance": 670,
+      "duration": 9.5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Vinnytsia",
+      "distance": 195,
+      "duration": 3
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Chernihiv",
+      "distance": 265,
+      "duration": 3.5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Poltava",
+      "distance": 420,
+      "duration": 6
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Cherkasy",
+      "distance": 320,
+      "duration": 4.5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Simferopol",
+      "distance": 935,
+      "duration": 13.5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Lutsk",
+      "distance": 360,
+      "duration": 5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Donetsk",
+      "distance": 810,
+      "duration": 11.5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Uzhhorod",
+      "distance": 1035,
+      "duration": 14.5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Ivano-Frankivsk",
+      "distance": 700,
+      "duration": 10
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Kropyvnytskyi",
+      "distance": 595,
+      "duration": 8.5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Luhansk",
+      "distance": 980,
+      "duration": 14
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Rivne",
+      "distance": 245,
+      "duration": 3.5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Sumy",
+      "distance": 570,
+      "duration": 8
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Ternopil",
+      "distance": 610,
+      "duration": 8.5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Kherson",
+      "distance": 810,
+      "duration": 11.5
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Khmelnytskyi",
+      "distance": 410,
+      "duration": 6
+    },
+    {
+      "source": "Zhytomyr",
+      "destination": "Chernivtsi",
+      "distance": 670,
+      "duration": 9.5
+    },
+      {
+      "source": "Uzhhorod",
+      "destination": "Kyiv",
+      "distance": 995,
+      "duration": 14
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Kharkiv",
+      "distance": 1350,
+      "duration": 19
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Dnipro",
+      "distance": 1435,
+      "duration": 20.5
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Odesa",
+      "distance": 1420,
+      "duration": 20
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Lviv",
+      "distance": 270,
+      "duration": 4
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Zaporizhzhia",
+      "distance": 1510,
+      "duration": 21.5
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Mykolaiv",
+      "distance": 1585,
+      "duration": 22.5
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Vinnytsia",
+      "distance": 995,
+      "duration": 14
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Chernihiv",
+      "distance": 1410,
+      "duration": 20
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Poltava",
+      "distance": 1010,
+      "duration": 14.5
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Cherkasy",
+      "distance": 1120,
+      "duration": 16
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Simferopol",
+      "distance": 1615,
+      "duration": 23
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Lutsk",
+      "distance": 330,
+      "duration": 4.5
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Donetsk",
+      "distance": 1500,
+      "duration": 21
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Zhytomyr",
+      "distance": 1035,
+      "duration": 14.5
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Ivano-Frankivsk",
+      "distance": 170,
+      "duration": 2.5
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Kropyvnytskyi",
+      "distance": 1440,
+      "duration": 20.5
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Luhansk",
+      "distance": 1610,
+      "duration": 22.5
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Rivne",
+      "distance": 450,
+      "duration": 6.5
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Sumy",
+      "distance": 1370,
+      "duration": 19.5
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Ternopil",
+      "distance": 250,
+      "duration": 3.5
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Kherson",
+      "distance": 1575,
+      "duration": 22
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Khmelnytskyi",
+      "distance": 960,
+      "duration": 13.5
+    },
+    {
+      "source": "Uzhhorod",
+      "destination": "Chernivtsi",
+      "distance": 280,
+      "duration": 4
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Kyiv",
+      "distance": 600,
+      "duration": 8.5
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Kharkiv",
+      "distance": 1300,
+      "duration": 18.5
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Dnipro",
+      "distance": 1120,
+      "duration": 16
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Odesa",
+      "distance": 1080,
+      "duration": 15.5
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Lviv",
+      "distance": 140,
+      "duration": 2
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Zaporizhzhia",
+      "distance": 1305,
+      "duration": 18.5
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Mykolaiv",
+      "distance": 1200,
+      "duration": 17
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Vinnytsia",
+      "distance": 730,
+      "duration": 10.5
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Chernihiv",
+      "distance": 1055,
+      "duration": 15
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Poltava",
+      "distance": 735,
+      "duration": 10.5
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Cherkasy",
+      "distance": 845,
+      "duration": 12
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Simferopol",
+      "distance": 1375,
+      "duration": 19.5
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Lutsk",
+      "distance": 165,
+      "duration": 2.5
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Donetsk",
+      "distance": 1325,
+      "duration": 19
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Zhytomyr",
+      "distance": 700,
+      "duration": 10
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Uzhhorod",
+      "distance": 170,
+      "duration": 2.5
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Kropyvnytskyi",
+      "distance": 975,
+      "duration": 14
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Luhansk",
+      "distance": 1435,
+      "duration": 20.5
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Rivne",
+      "distance": 305,
+      "duration": 4.5
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Sumy",
+      "distance": 1225,
+      "duration": 17.5
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Ternopil",
+      "distance": 140,
+      "duration": 2
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Kherson",
+      "distance": 1300,
+      "duration": 18.5
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Khmelnytskyi",
+      "distance": 775,
+      "duration": 11
+    },
+    {
+      "source": "Ivano-Frankivsk",
+      "destination": "Chernivtsi",
+      "distance": 125,
+      "duration": 2
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Kyiv",
+      "distance": 297,
+      "duration": 4
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Kharkiv",
+      "distance": 570,
+      "duration": 8
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Dnipro",
+      "distance": 175,
+      "duration": 2.5
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Odesa",
+      "distance": 500,
+      "duration": 7
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Lviv",
+      "distance": 770,
+      "duration": 11
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Zaporizhzhia",
+      "distance": 610,
+      "duration": 8.5
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Mykolaiv",
+      "distance": 520,
+      "duration": 7.5
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Vinnytsia",
+      "distance": 195,
+      "duration": 3
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Chernihiv",
+      "distance": 660,
+      "duration": 9.5
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Poltava",
+      "distance": 350,
+      "duration": 5
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Cherkasy",
+      "distance": 210,
+      "duration": 3
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Simferopol",
+      "distance": 1150,
+      "duration": 16.5
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Lutsk",
+      "distance": 975,
+      "duration": 14
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Donetsk",
+      "distance": 1005,
+      "duration": 14.5
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Zhytomyr",
+      "distance": 595,
+      "duration": 8.5
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Uzhhorod",
+      "distance": 1440,
+      "duration": 20.5
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Ivano-Frankivsk",
+      "distance": 975,
+      "duration": 14
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Luhansk",
+      "distance": 1245,
+      "duration": 17.5
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Rivne",
+      "distance": 715,
+      "duration": 10
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Sumy",
+      "distance": 945,
+      "duration": 13.5
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Ternopil",
+      "distance": 520,
+      "duration": 7.5
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Kherson",
+      "distance": 720,
+      "duration": 10.5
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Khmelnytskyi",
+      "distance": 195,
+      "duration": 3
+    },
+    {
+      "source": "Kropyvnytskyi",
+      "destination": "Chernivtsi",
+      "distance": 520,
+      "duration": 7.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Kyiv",
+      "distance": 860,
+      "duration": 12.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Kharkiv",
+      "distance": 370,
+      "duration": 5.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Dnipro",
+      "distance": 400,
+      "duration": 5.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Odesa",
+      "distance": 970,
+      "duration": 13.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Lviv",
+      "distance": 1515,
+      "duration": 21.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Zaporizhzhia",
+      "distance": 705,
+      "duration": 10
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Mykolaiv",
+      "distance": 975,
+      "duration": 14
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Vinnytsia",
+      "distance": 1180,
+      "duration": 16.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Chernihiv",
+      "distance": 870,
+      "duration": 12.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Poltava",
+      "distance": 615,
+      "duration": 9
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Cherkasy",
+      "distance": 780,
+      "duration": 11
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Simferopol",
+      "distance": 1160,
+      "duration": 16.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Lutsk",
+      "distance": 1445,
+      "duration": 20.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Donetsk",
+      "distance": 340,
+      "duration": 4.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Zhytomyr",
+      "distance": 980,
+      "duration": 14
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Uzhhorod",
+      "distance": 1610,
+      "duration": 22.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Ivano-Frankivsk",
+      "distance": 1435,
+      "duration": 20.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Kropyvnytskyi",
+      "distance": 1245,
+      "duration": 17.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Rivne",
+      "distance": 840,
+      "duration": 12
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Sumy",
+      "distance": 610,
+      "duration": 8.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Ternopil",
+      "distance": 1415,
+      "duration": 20
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Kherson",
+      "distance": 1210,
+      "duration": 17
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Khmelnytskyi",
+      "distance": 1035,
+      "duration": 14.5
+    },
+    {
+      "source": "Luhansk",
+      "destination": "Chernivtsi",
+      "distance": 1395,
+      "duration": 20
+    },
+     {
+      "source": "Rivne",
+      "destination": "Kyiv",
+      "distance": 335,
+      "duration": 4.5
+    },
+    {
+      "source": "Rivne",
+      "destination": "Kharkiv",
+      "distance": 890,
+      "duration": 12.5
+    },
+    {
+      "source": "Rivne",
+      "destination": "Dnipro",
+      "distance": 780,
+      "duration": 11
+    },
+    {
+      "source": "Rivne",
+      "destination": "Odesa",
+      "distance": 540,
+      "duration": 7.5
+    },
+    {
+      "source": "Rivne",
+      "destination": "Lviv",
+      "distance": 215,
+      "duration": 3
+    },
+    {
+      "source": "Rivne",
+      "destination": "Zaporizhzhia",
+      "distance": 900,
+      "duration": 12.5
+    },
+    {
+      "source": "Rivne",
+      "destination": "Mykolaiv",
+      "distance": 800,
+      "duration": 11
+    },
+    {
+      "source": "Rivne",
+      "destination": "Vinnytsia",
+      "distance": 195,
+      "duration": 3
+    },
+    {
+      "source": "Rivne",
+      "destination": "Chernihiv",
+      "distance": 295,
+      "duration": 4
+    },
+    {
+      "source": "Rivne",
+      "destination": "Poltava",
+      "distance": 585,
+      "duration": 8
+    },
+    {
+      "source": "Rivne",
+      "destination": "Cherkasy",
+      "distance": 440,
+      "duration": 6
+    },
+    {
+      "source": "Rivne",
+      "destination": "Simferopol",
+      "distance": 1070,
+      "duration": 15
+    },
+    {
+      "source": "Rivne",
+      "destination": "Lutsk",
+      "distance": 135,
+      "duration": 2
+    },
+    {
+      "source": "Rivne",
+      "destination": "Donetsk",
+      "distance": 1315,
+      "duration": 18.5
+    },
+    {
+      "source": "Rivne",
+      "destination": "Zhytomyr",
+      "distance": 245,
+      "duration": 3.5
+    },
+    {
+      "source": "Rivne",
+      "destination": "Uzhhorod",
+      "distance": 450,
+      "duration": 6.5
+    },
+    {
+      "source": "Rivne",
+      "destination": "Ivano-Frankivsk",
+      "distance": 305,
+      "duration": 4.5
+    },
+    {
+      "source": "Rivne",
+      "destination": "Kropyvnytskyi",
+      "distance": 715,
+      "duration": 10
+    },
+    {
+      "source": "Rivne",
+      "destination": "Luhansk",
+      "distance": 840,
+      "duration": 12
+    },
+    {
+      "source": "Rivne",
+      "destination": "Sumy",
+      "distance": 780,
+      "duration": 11
+    },
+    {
+      "source": "Rivne",
+      "destination": "Ternopil",
+      "distance": 325,
+      "duration": 4.5
+    },
+    {
+      "source": "Rivne",
+      "destination": "Kherson",
+      "distance": 945,
+      "duration": 13.5
+    },
+    {
+      "source": "Rivne",
+      "destination": "Khmelnytskyi",
+      "distance": 425,
+      "duration": 6
+    },
+    {
+      "source": "Rivne",
+      "destination": "Chernivtsi",
+      "distance": 220,
+      "duration": 3
+    },
+        {
+      "source": "Sumy",
+      "destination": "Kyiv",
+      "distance": 350,
+      "duration": 5
+    },
+    {
+      "source": "Sumy",
+      "destination": "Kharkiv",
+      "distance": 165,
+      "duration": 2
+    },
+    {
+      "source": "Sumy",
+      "destination": "Dnipro",
+      "distance": 365,
+      "duration": 5
+    },
+    {
+      "source": "Sumy",
+      "destination": "Odesa",
+      "distance": 910,
+      "duration": 13
+    },
+    {
+      "source": "Sumy",
+      "destination": "Lviv",
+      "distance": 990,
+      "duration": 14
+    },
+    {
+      "source": "Sumy",
+      "destination": "Zaporizhzhia",
+      "distance": 695,
+      "duration": 10
+    },
+    {
+      "source": "Sumy",
+      "destination": "Mykolaiv",
+      "distance": 825,
+      "duration": 12
+    },
+    {
+      "source": "Sumy",
+      "destination": "Vinnytsia",
+      "distance": 525,
+      "duration": 7.5
+    },
+    {
+      "source": "Sumy",
+      "destination": "Chernihiv",
+      "distance": 220,
+      "duration": 3
+    },
+    {
+      "source": "Sumy",
+      "destination": "Poltava",
+      "distance": 230,
+      "duration": 3
+    },
+    {
+      "source": "Sumy",
+      "destination": "Cherkasy",
+      "distance": 425,
+      "duration": 6
+    },
+    {
+      "source": "Sumy",
+      "destination": "Simferopol",
+      "distance": 1175,
+      "duration": 16.5
+    },
+    {
+      "source": "Sumy",
+      "destination": "Lutsk",
+      "distance": 570,
+      "duration": 8
+    },
+    {
+      "source": "Sumy",
+      "destination": "Donetsk",
+      "distance": 415,
+      "duration": 6
+    },
+    {
+      "source": "Sumy",
+      "destination": "Zhytomyr",
+      "distance": 570,
+      "duration": 8
+    },
+    {
+      "source": "Sumy",
+      "destination": "Uzhhorod",
+      "distance": 1370,
+      "duration": 19.5
+    },
+    {
+      "source": "Sumy",
+      "destination": "Ivano-Frankivsk",
+      "distance": 1225,
+      "duration": 17.5
+    },
+    {
+      "source": "Sumy",
+      "destination": "Kropyvnytskyi",
+      "distance": 945,
+      "duration": 13.5
+    },
+    {
+      "source": "Sumy",
+      "destination": "Luhansk",
+      "distance": 610,
+      "duration": 8.5
+    },
+    {
+      "source": "Sumy",
+      "destination": "Rivne",
+      "distance": 780,
+      "duration": 11
+    },
+    {
+      "source": "Sumy",
+      "destination": "Ternopil",
+      "distance": 1000,
+      "duration": 14
+    },
+    {
+      "source": "Sumy",
+      "destination": "Kherson",
+      "distance": 945,
+      "duration": 13.5
+    },
+    {
+      "source": "Sumy",
+      "destination": "Khmelnytskyi",
+      "distance": 745,
+      "duration": 10.5
+    },
+    {
+      "source": "Sumy",
+      "destination": "Chernivtsi",
+      "distance": 1200,
+      "duration": 17
+    },
+     {
+      "source": "Ternopil",
+      "destination": "Kyiv",
+      "distance": 470,
+      "duration": 6.5
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Kharkiv",
+      "distance": 925,
+      "duration": 13
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Dnipro",
+      "distance": 725,
+      "duration": 10.5
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Odesa",
+      "distance": 800,
+      "duration": 11.5
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Lviv",
+      "distance": 135,
+      "duration": 2
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Zaporizhzhia",
+      "distance": 840,
+      "duration": 12
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Mykolaiv",
+      "distance": 870,
+      "duration": 12.5
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Vinnytsia",
+      "distance": 265,
+      "duration": 3.5
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Chernihiv",
+      "distance": 685,
+      "duration": 9.5
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Poltava",
+      "distance": 560,
+      "duration": 8
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Cherkasy",
+      "distance": 435,
+      "duration": 6
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Simferopol",
+      "distance": 1240,
+      "duration": 17.5
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Lutsk",
+      "distance": 330,
+      "duration": 4.5
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Donetsk",
+      "distance": 1025,
+      "duration": 14.5
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Zhytomyr",
+      "distance": 520,
+      "duration": 7
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Uzhhorod",
+      "distance": 250,
+      "duration": 3.5
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Ivano-Frankivsk",
+      "distance": 140,
+      "duration": 2
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Kropyvnytskyi",
+      "distance": 520,
+      "duration": 7
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Luhansk",
+      "distance": 1415,
+      "duration": 20
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Rivne",
+      "distance": 325,
+      "duration": 4.5
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Sumy",
+      "distance": 1000,
+      "duration": 14
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Kherson",
+      "distance": 1025,
+      "duration": 14.5
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Khmelnytskyi",
+      "distance": 300,
+      "duration": 4
+    },
+    {
+      "source": "Ternopil",
+      "destination": "Chernivtsi",
+      "distance": 180,
+      "duration": 2.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Kyiv",
+      "distance": 560,
+      "duration": 8
+    },
+    {
+      "source": "Kherson",
+      "destination": "Kharkiv",
+      "distance": 850,
+      "duration": 12
+    },
+    {
+      "source": "Kherson",
+      "destination": "Dnipro",
+      "distance": 420,
+      "duration": 6
+    },
+    {
+      "source": "Kherson",
+      "destination": "Odesa",
+      "distance": 200,
+      "duration": 3
+    },
+    {
+      "source": "Kherson",
+      "destination": "Lviv",
+      "distance": 1180,
+      "duration": 16.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Zaporizhzhia",
+      "distance": 400,
+      "duration": 5.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Mykolaiv",
+      "distance": 120,
+      "duration": 1.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Vinnytsia",
+      "distance": 520,
+      "duration": 7.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Chernihiv",
+      "distance": 860,
+      "duration": 12
+    },
+    {
+      "source": "Kherson",
+      "destination": "Poltava",
+      "distance": 635,
+      "duration": 9
+    },
+    {
+      "source": "Kherson",
+      "destination": "Cherkasy",
+      "distance": 590,
+      "duration": 8.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Simferopol",
+      "distance": 400,
+      "duration": 5.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Lutsk",
+      "distance": 1095,
+      "duration": 15.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Donetsk",
+      "distance": 1100,
+      "duration": 15.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Zhytomyr",
+      "distance": 640,
+      "duration": 9
+    },
+    {
+      "source": "Kherson",
+      "destination": "Uzhhorod",
+      "distance": 1365,
+      "duration": 19.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Ivano-Frankivsk",
+      "distance": 1300,
+      "duration": 18
+    },
+    {
+      "source": "Kherson",
+      "destination": "Kropyvnytskyi",
+      "distance": 720,
+      "duration": 10
+    },
+    {
+      "source": "Kherson",
+      "destination": "Luhansk",
+      "distance": 1210,
+      "duration": 17
+    },
+    {
+      "source": "Kherson",
+      "destination": "Rivne",
+      "distance": 945,
+      "duration": 13.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Sumy",
+      "distance": 945,
+      "duration": 13.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Ternopil",
+      "distance": 1025,
+      "duration": 14.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Khmelnytskyi",
+      "distance": 810,
+      "duration": 11.5
+    },
+    {
+      "source": "Kherson",
+      "destination": "Chernivtsi",
+      "distance": 945,
+      "duration": 13.5
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Kyiv",
+      "distance": 330,
+      "duration": 4.5
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Kharkiv",
+      "distance": 720,
+      "duration": 10
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Dnipro",
+      "distance": 435,
+      "duration": 6
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Odesa",
+      "distance": 660,
+      "duration": 9.5
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Lviv",
+      "distance": 280,
+      "duration": 4
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Zaporizhzhia",
+      "distance": 630,
+      "duration": 9
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Mykolaiv",
+      "distance": 550,
+      "duration": 8
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Vinnytsia",
+      "distance": 180,
+      "duration": 2.5
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Chernihiv",
+      "distance": 460,
+      "duration": 6.5
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Poltava",
+      "distance": 525,
+      "duration": 7.5
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Cherkasy",
+      "distance": 265,
+      "duration": 3.5
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Simferopol",
+      "distance": 1135,
+      "duration": 16
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Lutsk",
+      "distance": 410,
+      "duration": 6
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Donetsk",
+      "distance": 965,
+      "duration": 13.5
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Zhytomyr",
+      "distance": 265,
+      "duration": 3.5
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Uzhhorod",
+      "distance": 730,
+      "duration": 10.5
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Ivano-Frankivsk",
+      "distance": 195,
+      "duration": 3
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Kropyvnytskyi",
+      "distance": 195,
+      "duration": 3
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Luhansk",
+      "distance": 1035,
+      "duration": 14.5
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Rivne",
+      "distance": 425,
+      "duration": 6
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Sumy",
+      "distance": 745,
+      "duration": 10.5
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Ternopil",
+      "distance": 300,
+      "duration": 4
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Kherson",
+      "distance": 810,
+      "duration": 11.5
+    },
+    {
+      "source": "Khmelnytskyi",
+      "destination": "Chernivtsi",
+      "distance": 295,
+      "duration": 4
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Kyiv",
+      "distance": 515,
+      "duration": 7
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Kharkiv",
+      "distance": 945,
+      "duration": 13.5
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Dnipro",
+      "distance": 835,
+      "duration": 12
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Odesa",
+      "distance": 600,
+      "duration": 8.5
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Lviv",
+      "distance": 350,
+      "duration": 5
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Zaporizhzhia",
+      "distance": 950,
+      "duration": 13.5
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Mykolaiv",
+      "distance": 795,
+      "duration": 11.5
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Vinnytsia",
+      "distance": 435,
+      "duration": 6
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Chernihiv",
+      "distance": 720,
+      "duration": 10
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Poltava",
+      "distance": 815,
+      "duration": 11.5
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Cherkasy",
+      "distance": 665,
+      "duration": 9.5
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Simferopol",
+      "distance": 1280,
+      "duration": 18
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Lutsk",
+      "distance": 465,
+      "duration": 6.5
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Donetsk",
+      "distance": 1045,
+      "duration": 15
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Zhytomyr",
+      "distance": 565,
+      "duration": 8
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Uzhhorod",
+      "distance": 230,
+      "duration": 3.5
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Ivano-Frankivsk",
+      "distance": 150,
+      "duration": 2
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Kropyvnytskyi",
+      "distance": 690,
+      "duration": 10
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Luhansk",
+      "distance": 1395,
+      "duration": 20
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Rivne",
+      "distance": 220,
+      "duration": 3
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Sumy",
+      "distance": 1200,
+      "duration": 17
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Ternopil",
+      "distance": 180,
+      "duration": 2.5
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Kherson",
+      "distance": 945,
+      "duration": 13.5
+    },
+    {
+      "source": "Chernivtsi",
+      "destination": "Khmelnytskyi",
+      "distance": 295,
+      "duration": 4
     }
   ]
 }

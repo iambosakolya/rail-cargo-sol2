@@ -31,6 +31,13 @@ class Map:
     def get_duration(self):
         return self.duration
 
+    regional_centers = [
+        "Kyiv", "Vinnytsia", "Lutsk", "Dnipro", "Donetsk", "Zhytomyr", "Uzhhorod", "Zaporizhzhia",
+        "Ivano-Frankivsk", "Kropyvnytskyi", "Luhansk", "Lviv", "Mykolaiv", "Odesa", "Poltava",
+        "Rivne", "Sumy", "Ternopil", "Kharkiv", "Kherson", "Khmelnytskyi", "Cherkasy",
+        "Chernihiv", "Chernivtsi", "Simferopol"
+    ]
+
     def is_station(self):
         with open('data/cities.json') as f:
             data = json.load(f)
@@ -40,3 +47,5 @@ class Map:
                     (route['source'] == self.arr_st and route['destination'] == self.dep_st):
                 return True, route['distance'], route['duration']
         return False, None, None
+
+
