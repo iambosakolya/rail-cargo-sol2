@@ -1,5 +1,4 @@
 import sqlite3
-from database.database_setup import cursor, conn
 
 class ContractInfo:
     def __init__(self, contract_id):
@@ -13,41 +12,41 @@ class ContractInfo:
 
 class ContractList:
     def __init__(self, db_path='data.db'):
-        self.contracts = []  # Ініціалізуємо список contracts тут
+        self.contracts = []  # ініціалізуємо список contracts тут
         self.db_path = db_path
         self.load_contracts_from_db()
 
     def load_contracts_from_db(self):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT contract_id FROM Contracts")
+            cursor.execute("SELECT contract_id FROM Archive")
             rows = cursor.fetchall()
             for row in rows:
                 contract_id = row[0]
                 self.contracts.append(ContractInfo(contract_id))
 
     def add_contract(self, contract_info):
-        if isinstance(contract_info, ContractInfo):  # Перевіряємо, чи це об'єкт ContractInfo
+        if isinstance(contract_info, ContractInfo):  # перевіряємо, чи це об'єкт ContractInfo
             self.contracts.append(contract_info)
             self.save_contract_to_db(contract_info)
         else:
             raise ValueError("Expected a ContractInfo object")
 
     def save_contract_to_db(self, contract_info):
-        if isinstance(contract_info, ContractInfo):  # Перевіряємо, чи це об'єкт ContractInfo
+        if isinstance(contract_info, ContractInfo):  # перевіряємо, чи це об'єкт ContractInfo
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-                cursor.execute("INSERT INTO Contracts (contract_id) VALUES (?)",
+                cursor.execute("INSERT INTO Archive (contract_id) VALUES (?)",
                                (contract_info.get_contract_id(),))
                 conn.commit()
         else:
             raise ValueError("Expected a ContractInfo object")
 
     def delete_contract_from_db(self, contract_info):
-        if isinstance(contract_info, ContractInfo):  # Перевіряємо, чи це об'єкт ContractInfo
+        if isinstance(contract_info, ContractInfo):  # перевіряємо, чи це об'єкт ContractInfo
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-                cursor.execute("DELETE FROM Contracts WHERE contract_id = ?",
+                cursor.execute("DELETE FROM Archive WHERE contract_id = ?",
                                (contract_info.get_contract_id(),))
                 conn.commit()
         else:
@@ -65,6 +64,3 @@ class ContractList:
             self.delete_contract_from_db(contract_info)
         else:
             raise ValueError("Expected a ContractInfo object")
-
-    def get_contracts(self):
-        return self.contracts

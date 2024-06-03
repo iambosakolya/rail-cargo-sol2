@@ -1,6 +1,5 @@
 import sqlite3
 from datetime import datetime
-import customtkinter
 from CTkToolTip import *
 import customtkinter as ctk
 from customtkinter import *
@@ -8,7 +7,6 @@ from CTkMessagebox import CTkMessagebox
 
 from classes.Map import Map
 from classes.Calc import Calc
-from classes.Tariff import Tariff
 from classes.Register import Register
 from classes.Contract import Contract
 from classes.CargoType import CargoType
@@ -569,7 +567,6 @@ def create_contract():
             def create_contract(cursor, conn, client_id, payment_id,
                                 dispatcher_id, cargo_id, itinerary_id):
 
-                contract_list = ContractList()
                 current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 try:
                     cursor.execute(
@@ -679,7 +676,7 @@ def create_contract():
                 screen_height = dialog_window.winfo_screenheight()
 
                 dialog_width = 300
-                dialog_height = 200
+                dialog_height = 270
 
                 x_position = (screen_width - dialog_width) // 2
                 y_position = (screen_height - dialog_height) // 2
@@ -688,21 +685,21 @@ def create_contract():
 
                 pib_label = ctk.CTkLabel(dialog_window,
                                          text="Confirm your PIB one more time:")
-                pib_label.pack()
+                pib_label.pack(pady=10)
 
                 pib_entry = ctk.CTkEntry(dialog_window)
-                pib_entry.pack()
+                pib_entry.pack(pady=10)
 
                 client_phone_label = ctk.CTkLabel(dialog_window,
                                                   text="Phone number of the client:")
-                client_phone_label.pack()
+                client_phone_label.pack(pady=10)
 
                 client_phone_entry = ctk.CTkEntry(dialog_window)
-                client_phone_entry.pack()
+                client_phone_entry.pack(pady=10)
 
-                confirm_button = ctk.CTkButton(dialog_window, text="Confirm",
+                confirm_button = ctk.CTkButton(dialog_window, text="Confirm", **btn_style,
                                                command=save_dispatcher_id)
-                confirm_button.pack()
+                confirm_button.pack(pady=10)
                 dialog_window.mainloop()
 
             def print_button(contract_id):
@@ -710,19 +707,21 @@ def create_contract():
                                           command=lambda: print_contract(contract_id))
                 print_btn.place(relx=0, rely=0, anchor="w", x=220, y=230)
 
-            def finish():
-                contract_window.destroy()
 
             client_id = fetch_last_id(cursor, "Client", "client_id")
             payment_id = fetch_last_id(cursor, "Payment", "payment_id")
             cargo_id = fetch_last_id(cursor, "Cargo", "cargo_id")
             itinerary_id = fetch_last_id(cursor, "Itinerary", "itinerary_id")
 
+
             savec_btn = ctk.CTkButton(master=screen_frame, text="Save contract",
                                       **btn_style,
                                       command=lambda: enter_pib(cursor, conn,
                                                                 payment_id, cargo_id, itinerary_id))
             savec_btn.place(relx=0, rely=0, anchor="w", x=220, y=180)
+
+            def finish():
+                contract_window.destroy()
 
             finish_btn = ctk.CTkButton(master=screen_frame, text="Finish",
                                        **btn_style, command=finish)

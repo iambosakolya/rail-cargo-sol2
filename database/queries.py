@@ -256,6 +256,7 @@ def get_contracts_by_date(start_date, end_date):
     contracts = cursor.fetchall()
     conn.close()
     return contracts
+
 def find_contracts_date():
     root = ctk.CTkToplevel()
     root.title("Find contracts by date range")
@@ -451,7 +452,7 @@ def get_max_contracts():
     cursor.execute(query)
     result = cursor.fetchone()
 
-    if result:
+    if result and result[0] is not None:
         dispatcher_id = result[0]
         max_contracts = result[1]
         query = '''
@@ -459,14 +460,20 @@ def get_max_contracts():
         FROM Dispatcher
         WHERE dispatcher_id = ?;
         '''
-        cursor.execute(query,
-                       (dispatcher_id,))
-        d_pib = cursor.fetchone()[0]
+        cursor.execute(query, (dispatcher_id,))
+        d_pib_result = cursor.fetchone()
+
+        if d_pib_result:
+            d_pib = d_pib_result[0]
+        else:
+            d_pib = None
     else:
         d_pib = None
 
     conn.close()
     return d_pib
+
+
 def find_max_contracts(result_textbox):
     d_pib = get_max_contracts()
     result_textbox.delete("1.0", "end")
@@ -516,73 +523,66 @@ def find_max_payment(result_textbox):
 # Запит реалізувати у трьох варіантах: з використанням LEFT JOІN, предиката ІN і предиката EXІSTS;
 # хто з диспетчерів не укладав контракти на цьому тижні?
 
-# # LEFT JOIN
+# def get_dispatchers_without_contract():
+#     conn = sqlite3.connect('data.db')
+#     cursor = conn.cursor()
+#
+#     # запит з використанням LEFT JOIN
+#     query = '''
+#     SELECT d.dispatcher_id, d.d_pib
+#     FROM Dispatcher d
+#     LEFT JOIN Contract c ON d.dispatcher_id = c.dispatcher_id
+#     WHERE c.dispatcher_id IS NULL
+#     '''
+#
+#     cursor.execute(query)
+#     results = cursor.fetchall()
+#
+#     conn.close()
+#
+#     return results
+
 def get_dispatchers_without_contract():
     conn = sqlite3.connect('data.db')
     cursor = conn.cursor()
 
-    today = datetime.datetime.today()
-    start_of_week = today - timedelta(days=today.weekday())
-
+    # SQL-запит з використанням предиката IN
     query = '''
-    SELECT d.dispatcher_id, d.d_pib
-    FROM Dispatcher d
-    LEFT JOIN Contract co ON d.dispatcher_id = co.dispatcher_id
-    AND co.conclusion_date >= ?
-    WHERE co.contract_id IS NULL;
+    SELECT dispatcher_id, d_pib
+    FROM Dispatcher
+    WHERE dispatcher_id NOT IN (
+        SELECT dispatcher_id
+        FROM Contract
+    )
     '''
-    cursor.execute(query, (start_of_week,))
+
+    cursor.execute(query)
     results = cursor.fetchall()
 
     conn.close()
+
     return results
 
-# # предикат ІN
 # def get_dispatchers_without_contract():
 #     conn = sqlite3.connect('data.db')
 #     cursor = conn.cursor()
 #
-#     today = datetime.datetime.today()
-#     start_of_week = today - timedelta(days=today.weekday())
-#
+#     # SQL-запит з використанням предиката EXISTS
 #     query = '''
 #     SELECT dispatcher_id, d_pib
-#     FROM Dispatcher
-#     WHERE dispatcher_id NOT IN (
-#         SELECT dispatcher_id
-#         FROM Contract
-#         WHERE conclusion_date >= ?
-#     );
-#     '''
-#     cursor.execute(query, (start_of_week,))
-#     results = cursor.fetchall()
-#
-#     conn.close()
-#     return results
-
-# # предикат EXІSTS
-# def get_dispatchers_without_contract():
-#     conn = sqlite3.connect('data.db')
-#     cursor = conn.cursor()
-#
-#     today = datetime.datetime.today()
-#     print(today)
-#     start_of_week = today - timedelta(days=today.weekday())
-#
-#     query = '''
-#     SELECT d.dispatcher_id, d.d_pib
 #     FROM Dispatcher d
 #     WHERE NOT EXISTS (
 #         SELECT 1
-#         FROM Contract co
-#         WHERE co.dispatcher_id = d.dispatcher_id
-#         AND co.conclusion_date >= ?
-#     );
+#         FROM Contract c
+#         WHERE d.dispatcher_id = c.dispatcher_id
+#     )
 #     '''
-#     cursor.execute(query, (start_of_week,))
+#
+#     cursor.execute(query)
 #     results = cursor.fetchall()
 #
 #     conn.close()
+#
 #     return results
 
 def find_dispatchers(result_textbox):
@@ -590,7 +590,7 @@ def find_dispatchers(result_textbox):
     result_textbox.delete("1.0", "end")
     if results:
         for dispatcher_id, d_pib in results:
-            result_textbox.insert("end", f"\nDispatcher ID: {dispatcher_id}\nPIB: {d_pib}\n"
+            result_textbox.insert("end", f"\nDispatcher PIB: {d_pib}\n"
                                          f"---------------------------------\n")
     else:
         result_textbox.insert("1.0", "No data available")

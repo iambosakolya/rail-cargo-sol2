@@ -79,7 +79,8 @@ def print_contract(contract_id):
         company_name = "Rail Cargo Solutions"
         head_office = "Head office: Odesa, Ukraine"
 
-        rail_cargo_sol = RailCargoSol(city_location=head_office, company_name=company_name)
+        rail_cargo_sol = RailCargoSol(city_location=head_office,
+                                      company_name=company_name)
 
         client_info = (
             f"\nPIB: {client_data[1]}\nPhone number: {client_data[2]}"

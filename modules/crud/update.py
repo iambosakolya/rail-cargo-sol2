@@ -17,30 +17,37 @@ label_style = {
     "anchor": "w",
     "justify": "left",
     "font": ("Arial Rounded MT Bold", 15)}
+
 btn_style = {
     "fg_color": "#000000",
     "hover_color": "#4F2346",
     "text_color": "#ffffff",
     "font": ("Arial Rounded MT Bold", 13)}
+
 entry_style = {
     "fg_color": "#EEEEEE",
     "border_color": "#601E88",
     "border_width": 1,
     "text_color": "#000000"}
 
-def find_dispatcher():
-    pib_dialog = CTkInputDialog(text="Enter your full name (PIB):",
-                                title="Update info")
-    dispatcher_pib = pib_dialog.get_input()
+def find_dispatcher(dispatcher_id):
+    cursor.execute("SELECT d_pib, d_email, d_password, d_phone_number "
+                   "FROM Dispatcher "
+                   "WHERE dispatcher_id = ?", (dispatcher_id,))
+    dispatcher = cursor.fetchone()
 
-    if dispatcher_pib:
-        update_dispatcher(dispatcher_pib)
-def update_dispatcher(dispatcher_pib):
-    update_dispatcher = CTk()
-    update_dispatcher.title(f"Update dispatcher info")
+    if dispatcher:
+        update_dispatcher(dispatcher)
 
-    screen_width = update_dispatcher.winfo_screenwidth()
-    screen_height = update_dispatcher.winfo_screenheight()
+def update_dispatcher(dispatcher):
+    (existing_pib, existing_email, existing_password,
+     existing_phone_number) = dispatcher
+
+    update_dispatcher_window = CTk()
+    update_dispatcher_window.title("Update Dispatcher Info")
+
+    screen_width = update_dispatcher_window.winfo_screenwidth()
+    screen_height = update_dispatcher_window.winfo_screenheight()
 
     app_width = 500
     app_height = 400
@@ -48,148 +55,92 @@ def update_dispatcher(dispatcher_pib):
     x_position = (screen_width - app_width) // 2
     y_position = (screen_height - app_height) // 2
 
-    update_dispatcher.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
-    update_dispatcher.resizable(0, 0)
+    update_dispatcher_window.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
+    update_dispatcher_window.resizable(0, 0)
 
-    screen_frame = CTkFrame(master=update_dispatcher, width=850, height=750, fg_color="#897E9B")
+    screen_frame = CTkFrame(master=update_dispatcher_window, width=850, height=750, fg_color="#897E9B")
     screen_frame.pack_propagate(0)
     screen_frame.pack(expand=True, fill="both")
 
-    cursor.execute("SELECT d_pib, d_email, d_password, d_phone_number "
-                   "FROM Dispatcher "
-                   "WHERE d_pib = ?",
-                   (dispatcher_pib,))
-    dispatcher = cursor.fetchone()
+    CTkLabel(master=screen_frame, text="PIB:", **label_style).pack(anchor="w", pady=(18, 0), padx=(50, 0))
+    pib_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
+    pib_entry.insert(0, existing_pib)
+    pib_entry.pack(anchor="w", padx=(50, 0))
 
-    if dispatcher:
-        (existing_pib, existing_email,
-         existing_password, existing_phone_number) = dispatcher
+    CTkLabel(master=screen_frame, text="Phone number (+38):", **label_style).pack(anchor="w", pady=(18, 0), padx=(50, 0))
+    phone_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
+    phone_entry.insert(0, existing_phone_number)
+    phone_entry.pack(anchor="w", padx=(50, 0))
 
-        new_name = CTkLabel(master=screen_frame, text="PIB:", **label_style)
-        new_name.pack(anchor="w", pady=(18, 0), padx=(50, 0))
+    CTkLabel(master=screen_frame, text="Email:", **label_style).pack(anchor="w", pady=(18, 0), padx=(50, 0))
+    email_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
+    email_entry.insert(0, existing_email)
+    email_entry.pack(anchor="w", padx=(50, 0))
 
-        nname_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
-        nname_entry.insert(0, existing_pib)
-        nname_entry.pack(anchor="w", padx=(50, 0))
+    CTkLabel(master=screen_frame, text="Password:", **label_style).pack(anchor="w", pady=(15, 0), padx=(50, 0))
+    password_entry = CTkEntry(master=screen_frame, **entry_style, width=300, show="*")
+    password_entry.insert(0, existing_password)
+    password_entry.pack(anchor="w", padx=(50, 0))
 
-        new_phone = CTkLabel(master=screen_frame, text="Phone number(+38):", **label_style)
-        new_phone.pack(anchor="w", pady=(18, 0), padx=(50, 0))
+    def update_dispatcher_info():
+        new_pib = pib_entry.get()
+        new_email = email_entry.get()
+        new_password = password_entry.get()
+        new_phone_number = phone_entry.get()
 
-        nnew_phone = CTkEntry(master=screen_frame, width=300, **entry_style)
-        nnew_phone.insert(0, existing_phone_number)
-        nnew_phone.pack(anchor="w", padx=(50, 0))
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", new_email):
+            CTkMessagebox(message="Invalid email format!",
+                          icon="cancel",
+                          option_1="OK")
+            return
 
-        CTkLabel(master=screen_frame, text="Email:", **label_style).pack(anchor="w", pady=(18, 0), padx=(50, 0))
-        nnew_email = CTkEntry(master=screen_frame, width=300, **entry_style)
-        nnew_email.insert(0, existing_email)
-        nnew_email.pack(anchor="w", padx=(50, 0))
+        if len(new_password) < 8:
+            CTkMessagebox(message="Password should contain at least 8 characters!",
+                          icon="cancel",
+                          option_1="OK")
+            return
 
-        CTkLabel(master=screen_frame, text="Password:", **label_style).pack(anchor="w", pady=(15, 0), padx=(50, 0))
-        nnew_password = CTkEntry(master=screen_frame, **entry_style, width=300, show="*")
-        nnew_password.insert(0, existing_password)
-        nnew_password.pack(anchor="w", padx=(50, 0))
+        if len(new_phone_number) < 10 or not new_phone_number.isdigit():
+            CTkMessagebox(message="Phone number should contain at least 10 digits!",
+                          icon="cancel",
+                          option_1="OK")
+            return
 
-        def update_dispatcher_info():
-            new_pib = nname_entry.get()
-            new_email = nnew_email.get()
-            new_password = nnew_password.get()
-            new_phone_number = nnew_phone.get()
+        cursor.execute(
+            "UPDATE Dispatcher "
+            "SET d_pib = ?, d_email = ?, d_password = ?, d_phone_number = ? "
+            "WHERE d_email = ?",
+            (new_pib, new_email, new_password, new_phone_number, existing_email)
+        )
+        conn.commit()
 
-            if not re.match(r"[^@]+@[^@]+\.[^@]+", new_email):
-                CTkMessagebox(message="Invalid email format!",
-                              icon="cancel",
-                              option_1="OK")
-                return
+        CTkMessagebox(message="Information updated successfully!",
+                      icon="check",
+                      option_1="Thanks")
+        update_dispatcher_window.destroy()
 
-            if len(new_password) < 8:
-                CTkMessagebox(message="Password should contain at least 8 characters!",
-                              icon="cancel",
-                              option_1="OK")
-                return
+    update_button = CTkButton(master=screen_frame,
+                              text="Update Info", **btn_style,
+                              command=update_dispatcher_info)
 
-            if len(new_phone_number) < 10 or not new_phone_number.isdigit():
-                CTkMessagebox(message="Phone number should contain at least 10 digits!",
-                              icon="cancel",
-                              option_1="OK")
-                return
+    update_button.pack(anchor="w", pady=(20, 0), padx=(50, 0))
 
-            cursor.execute(
-                "UPDATE Dispatcher SET d_pib = ?, d_email = ?, d_password = ?, d_phone_number = ? "
-                "WHERE d_pib = ?",
-                (new_pib, new_email, new_password, new_phone_number, dispatcher_pib)
-            )
-            conn.commit()
+    update_dispatcher_window.mainloop()
 
-            CTkMessagebox(message="Information updated successfully!",
-                          icon="check",
-                          option_1="Thanks")
-            update_dispatcher.destroy()
+def find_client(user_id):
+    cursor.execute("SELECT c_pib, c_email, c_password, c_phone_number "
+                   "FROM Client "
+                   "WHERE client_id = ?", (user_id,))
+    client = cursor.fetchone()
 
-        update_button = CTkButton(master=screen_frame, text="Update Info", **btn_style,
-                                  command=update_dispatcher_info)
-        update_button.pack(anchor="w", pady=(20, 0), padx=(50, 0))
-    else:
-        CTkMessagebox(message="Dispatcher not found!",
-                      icon="cancel",
-                      option_1="OK")
-        update_dispatcher.destroy()
+    if client:
+        update_client(client)
 
-    update_dispatcher.mainloop()
+def update_client(client):
+    existing_pib, existing_email, existing_password, existing_phone_number = client
 
-    def fetch_contract_data(contract_id):
-        conn = sqlite3.connect('data.db')
-        cursor = conn.cursor()
-
-        cursor.execute('''
-            SELECT Contract.contract_id, Contract.conclusion_date, Client.c_email, Client.c_phone_number, Client.c_pib, 
-                   Dispatcher.d_pib, CargoType.cargo_name, CargoType.description, CargoType.dimensions, Cargo.quantity, 
-                   Cargo.weight, Itinerary.departure_station, Itinerary.arrival_station, Itinerary.route_length, 
-                   Itinerary.duration, Payment.payment_amount, Payment.payment_datetime
-            FROM Contract
-            JOIN Client ON Contract.client_id = Client.client_id
-            JOIN Dispatcher ON Contract.dispatcher_id = Dispatcher.dispatcher_id
-            JOIN Cargo ON Contract.cargo_id = Cargo.cargo_id
-            JOIN CargoType ON Cargo.cargo_type_id = CargoType.cargo_type_id
-            JOIN Itinerary ON Contract.itinerary_id = Itinerary.itinerary_id
-            JOIN Payment ON Contract.payment_id = Payment.payment_id
-            WHERE Contract.contract_id = ?
-        ''', (contract_id,))
-
-        data = cursor.fetchone()
-        conn.close()
-
-        if data:
-            return {
-                "contract_id": data[0],
-                "conclusion_date": data[1],
-                "client_email": data[2],
-                "client_phone": data[3],
-                "client_pib": data[4],
-                "dispatcher_pib": data[5],
-                "cargo_name": data[6],
-                "cargo_description": data[7],
-                "cargo_dimensions": data[8],
-                "cargo_quantity": data[9],
-                "cargo_weight": data[10],
-                "departure_station": data[11],
-                "arrival_station": data[12],
-                "route_length": data[13],
-                "duration": data[14],
-                "payment_amount": data[15],
-                "payment_datetime": data[16]
-            }
-        else:
-            return None
-
-def find_client():
-    pib_dialog = CTkInputDialog(text="Enter your full name (PIB):", title="Update info")
-    client_pib = pib_dialog.get_input()
-
-    if client_pib:
-        update_client(client_pib)
-def update_client(client_pib):
     update_client_window = CTk()
-    update_client_window.title(f"Update client info")
+    update_client_window.title("Update client info")
 
     screen_width = update_client_window.winfo_screenwidth()
     screen_height = update_client_window.winfo_screenheight()
@@ -207,76 +158,84 @@ def update_client(client_pib):
     screen_frame.pack_propagate(0)
     screen_frame.pack(expand=True, fill="both")
 
-    cursor.execute("SELECT c_pib, c_email, c_password, c_phone_number FROM Client WHERE c_pib = ?", (client_pib,))
-    client = cursor.fetchone()
+    CTkLabel(master=screen_frame, text="PIB:", **label_style).pack(anchor="w", pady=(18, 0), padx=(50, 0))
+    pib_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
+    pib_entry.insert(0, existing_pib)
+    pib_entry.pack(anchor="w", padx=(50, 0))
 
-    if client:
-        existing_pib, existing_email, existing_password, existing_phone_number = client
+    CTkLabel(master=screen_frame, text="Phone number (+38):", **label_style).pack(anchor="w", pady=(18, 0), padx=(50, 0))
+    phone_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
+    phone_entry.insert(0, existing_phone_number)
+    phone_entry.pack(anchor="w", padx=(50, 0))
 
-        CTkLabel(master=screen_frame, text="PIB:", **label_style).pack(anchor="w", pady=(18, 0), padx=(50, 0))
-        pib_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
-        pib_entry.insert(0, existing_pib)
-        pib_entry.pack(anchor="w", padx=(50, 0))
+    CTkLabel(master=screen_frame, text="Email:", **label_style).pack(anchor="w", pady=(18, 0), padx=(50, 0))
+    email_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
+    email_entry.insert(0, existing_email)
+    email_entry.pack(anchor="w", padx=(50, 0))
 
-        CTkLabel(master=screen_frame, text="Phone number (+38):", **label_style).pack(anchor="w", pady=(18, 0), padx=(50, 0))
-        phone_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
-        phone_entry.insert(0, existing_phone_number)
-        phone_entry.pack(anchor="w", padx=(50, 0))
+    CTkLabel(master=screen_frame, text="Password:", **label_style).pack(anchor="w", pady=(15, 0), padx=(50, 0))
+    password_entry = CTkEntry(master=screen_frame, **entry_style, width=300, show="*")
+    password_entry.insert(0, existing_password)
+    password_entry.pack(anchor="w", padx=(50, 0))
 
-        CTkLabel(master=screen_frame, text="Email:", **label_style).pack(anchor="w", pady=(18, 0), padx=(50, 0))
-        email_entry = CTkEntry(master=screen_frame, width=300, **entry_style)
-        email_entry.insert(0, existing_email)
-        email_entry.pack(anchor="w", padx=(50, 0))
+    def update_client_info():
+        new_pib = pib_entry.get()
+        new_email = email_entry.get()
+        new_password = password_entry.get()
+        new_phone_number = phone_entry.get()
 
-        CTkLabel(master=screen_frame, text="Password:", **label_style).pack(anchor="w", pady=(15, 0), padx=(50, 0))
-        password_entry = CTkEntry(master=screen_frame, **entry_style, width=300, show="*")
-        password_entry.insert(0, existing_password)
-        password_entry.pack(anchor="w", padx=(50, 0))
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", new_email):
+            CTkMessagebox(message="Invalid email format!",
+                          icon="cancel",
+                          option_1="OK")
+            return
 
-        def update_client_info():
-            new_pib = pib_entry.get()
-            new_email = email_entry.get()
-            new_password = password_entry.get()
-            new_phone_number = phone_entry.get()
+        if len(new_password) < 8:
+            CTkMessagebox(message="Password should contain at least 8 characters!",
+                          icon="cancel",
+                          option_1="OK")
+            return
 
-            if not re.match(r"[^@]+@[^@]+\.[^@]+", new_email):
-                CTkMessagebox(message="Invalid email format!", icon="cancel", option_1="OK")
-                return
+        if len(new_phone_number) < 10 or not new_phone_number.isdigit():
+            CTkMessagebox(message="Phone number should contain at least 10 digits!",
+                          icon="cancel",
+                          option_1="OK")
+            return
 
-            if len(new_password) < 8:
-                CTkMessagebox(message="Password should contain at least 8 characters!", icon="cancel", option_1="OK")
-                return
+        cursor.execute(
+            "UPDATE Client "
+            "SET c_pib = ?, c_email = ?, c_password = ?, c_phone_number = ?"
+            " WHERE c_email = ?",
+            (new_pib, new_email, new_password, new_phone_number, existing_email)
+        )
+        conn.commit()
 
-            if len(new_phone_number) < 10 or not new_phone_number.isdigit():
-                CTkMessagebox(message="Phone number should contain at least 10 digits!", icon="cancel", option_1="OK")
-                return
-
-            cursor.execute(
-                "UPDATE Client SET c_pib = ?, c_email = ?, c_password = ?, c_phone_number = ? WHERE c_pib = ?",
-                (new_pib, new_email, new_password, new_phone_number, client_pib)
-            )
-            conn.commit()
-
-            CTkMessagebox(message="Information updated successfully!", icon="check", option_1="Thanks")
-            update_client_window.destroy()
-
-        update_button = CTkButton(master=screen_frame, text="Update Info", **btn_style, command=update_client_info)
-        update_button.pack(anchor="w", pady=(20, 0), padx=(50, 0))
-    else:
-        CTkMessagebox(message="Client not found!", icon="cancel", option_1="OK")
+        CTkMessagebox(message="Information updated successfully!",
+                      icon="check",
+                      option_1="Thanks")
         update_client_window.destroy()
+
+    update_button = CTkButton(master=screen_frame, text="Update Info", **btn_style,
+                              command=update_client_info)
+
+    update_button.pack(anchor="w", pady=(20, 0), padx=(50, 0))
+
+    update_client_window.mainloop()
 
 def fetch_contract_data(contract_id):
     try:
         conn = sqlite3.connect('data.db')
         cursor = conn.cursor()
         cursor.execute('''
-                SELECT Contract.contract_id, Contract.conclusion_date, Client.c_email, Client.c_phone_number, Client.c_pib, 
-                       Dispatcher.d_pib, CargoType.cargo_name, CargoType.description, CargoType.dimensions, Cargo.quantity, 
-                       Cargo.weight, Itinerary.departure_station, Itinerary.arrival_station, Itinerary.route_length, 
-                       Itinerary.duration, Payment.payment_amount, Payment.payment_datetime, Cargo.cargo_type_id, Cargo.cargo_id
-                FROM Contract
-                JOIN Client ON Contract.client_id = Client.client_id
+                SELECT Contract.contract_id, Contract.conclusion_date,
+                 Client.c_email, Client.c_phone_number, Client.c_pib, 
+                 Dispatcher.d_pib, CargoType.cargo_name,
+                 CargoType.description, CargoType.dimensions, Cargo.quantity, 
+                 Cargo.weight, Itinerary.departure_station, Itinerary.arrival_station,
+                 Itinerary.route_length, Itinerary.duration, Payment.payment_amount,
+                 Payment.payment_datetime, Cargo.cargo_type_id, Cargo.cargo_id
+                 
+                FROM ContractJOIN Client ON Contract.client_id = Client.client_id
                 JOIN Dispatcher ON Contract.dispatcher_id = Dispatcher.dispatcher_id
                 JOIN Cargo ON Contract.cargo_id = Cargo.cargo_id
                 JOIN CargoType ON Cargo.cargo_type_id = CargoType.cargo_type_id
@@ -501,10 +460,14 @@ def modifying_contract():
 
             def cargo_type_check(cargo_obj):
                 if cargo_obj.isCargoType():
-                    CTkMessagebox(message="Cargo type is available", icon="check", option_1="Thanks")
+                    CTkMessagebox(message="Cargo type is available",
+                                  icon="check",
+                                  option_1="Thanks")
                     update_btn.configure(state="normal")
                 else:
-                    CTkMessagebox(title="Error", message="This cargo type is not available!", icon="cancel")
+                    CTkMessagebox(title="Error",
+                                  message="This cargo type is not available!",
+                                  icon="cancel")
                     update_btn.configure(state="disabled")
 
             check_btn = CTkButton(master=screen_frame, text="Check availability", **btn_style,
@@ -526,9 +489,11 @@ def modifying_contract():
             def fetch_stations():
                 conn = sqlite3.connect('data.db')
                 cursor = conn.cursor()
-                cursor.execute("SELECT DISTINCT departure_station FROM Itinerary")
+                cursor.execute("SELECT DISTINCT departure_station "
+                               "FROM Itinerary")
                 dep_stations = [row[0] for row in cursor.fetchall()]
-                cursor.execute("SELECT DISTINCT arrival_station FROM Itinerary")
+                cursor.execute("SELECT DISTINCT arrival_station "
+                               "FROM Itinerary")
                 arr_stations = [row[0] for row in cursor.fetchall()]
                 conn.close()
                 return dep_stations, arr_stations
@@ -543,10 +508,14 @@ def modifying_contract():
                     conn = sqlite3.connect('data.db')
                     cursor = conn.cursor()
 
-                    cursor.execute("UPDATE Itinerary SET departure_station = ? WHERE departure_station = ?",
+                    cursor.execute("UPDATE Itinerary "
+                                   "SET departure_station = ? "
+                                   "WHERE departure_station = ?",
                                    (new_dep_station, old_dep_station))
 
-                    cursor.execute("UPDATE Itinerary SET arrival_station = ? WHERE arrival_station = ?",
+                    cursor.execute("UPDATE Itinerary "
+                                   "SET arrival_station = ? "
+                                   "WHERE arrival_station = ?",
                                    (new_arr_station, old_arr_station))
 
                     map_obj = Map(new_dep_station, new_arr_station, 0, 0)
@@ -554,10 +523,13 @@ def modifying_contract():
 
                     if is_connection:
                         cursor.execute(
-                            "UPDATE Itinerary SET route_length = ?, duration = ? WHERE departure_station = ? AND arrival_station = ?",
+                            "UPDATE Itinerary SET route_length = ?, duration = ? "
+                            "WHERE departure_station = ? "
+                            "AND arrival_station = ?",
                             (distance, duration, new_dep_station, new_arr_station))
                         conn.commit()
-                        CTkMessagebox(message="Stations and route details updated successfully!", icon="info",
+                        CTkMessagebox(message="Stations and route details updated successfully!",
+                                      icon="info",
                                       option_1="Ok")
                     else:
                         conn.rollback()
@@ -567,7 +539,8 @@ def modifying_contract():
                     conn.close()
                     refresh_comboboxes()
                 except sqlite3.Error as e:
-                    CTkMessagebox(message=f"Error updating stations: {e}", icon="cancel")
+                    CTkMessagebox(message=f"Error updating stations: {e}",
+                                  icon="cancel")
 
             def refresh_comboboxes():
                 dep_stations, arr_stations = fetch_stations()
@@ -626,8 +599,10 @@ def modifying_contract():
             payment_label.place(relx=0, rely=0.1, anchor="w", x=30, y=10)
 
             list_label = CTkLabel(master=screen_frame,
-                                  text="Click button 'Accept payment' to see the price for the transportation\nand save the payment",
-                                  text_color="#CCCCCC", anchor="w", justify="left", font=("Arial Rounded MT Bold", 14))
+                                  text="Click button 'Accept payment' to see the price for the transportation"
+                                       "\nand save the payment",
+                                  text_color="#CCCCCC", anchor="w", justify="left",
+                                  font=("Arial Rounded MT Bold", 14))
             list_label.place(relx=0, rely=0.1, anchor="w", x=30, y=80)
 
             def update_payment(calculated_tariff, contract_id):

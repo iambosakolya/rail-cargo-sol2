@@ -5,11 +5,12 @@ from customtkinter import *
 
 from modules.crud.create import create_contract
 from modules.crud.delete import delete_contract
-from modules.crud.delete import delete_dispatcher
+from modules.crud.delete import confirm_delete_d
 from modules.crud.delete import delete_client
 from modules.crud.read import contracts_window
 from modules.crud.update import find_dispatcher
 from modules.crud.update import modifying_contract
+from modules.crud.archive import show_archive_dialog
 
 from database.database_setup import cursor, conn
 from database.queries import find_clients
@@ -44,7 +45,7 @@ entry_style = {
     "text_color": "#000000"}
 
 
-def dispatcher_window():
+def dispatcher_window(user, dispatcher_id):
     app = CTk()
     app.title("Dispatcher window")
 
@@ -142,37 +143,42 @@ def dispatcher_window():
 
     # left frame --> buttons
     info_btn = CTkButton(master=left_frame, text="Change my info",
-                         **btn_style, command=find_dispatcher)
-    info_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+                         **btn_style, command=lambda: find_dispatcher(user[0]))
+    info_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
 
     c_btn = CTkButton(master=left_frame, text="New contract",
                       **btn_style, command=lambda: create_contract())
-    c_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+    c_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
 
     list_btn = CTkButton(master=left_frame, text="All contracts",
                          **btn_style, command=contracts_window)
-    list_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+    list_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
 
     up_btn = CTkButton(master=left_frame, text="Delete contract",
                        **btn_style, command=delete_contract)
-    up_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+    up_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
 
     add_btn = CTkButton(master=left_frame, text="Update contract",
                         **btn_style, command=modifying_contract)
-    add_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+    add_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
 
     deld_btn = CTkButton(master=left_frame, text="Deactivate \ndispatcher account",
-                         **btn_style, command=delete_dispatcher)
-    deld_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+                         **btn_style, command=lambda: confirm_delete_d(user[0]))
+    deld_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
 
     delc_btn = CTkButton(master=left_frame, text="Deactivate \nclient account",
                          **btn_style, command=delete_client)
-    delc_btn.pack(anchor="w", pady=(50, 5), padx=(30, 0))
+    delc_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
+
+    arch_btn = CTkButton(master=left_frame, text="Contract archive",
+                         command=lambda: show_archive_dialog(cursor, conn),
+                         **btn_style)
+    arch_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
     app.mainloop()

@@ -79,26 +79,32 @@ cursor = conn.cursor()
 # ''')
 #
 # cursor.execute('''
-#     CREATE TABLE IF NOT EXISTS Contracts (
-#         contract_id TEXT PRIMARY KEY
+#     CREATE TABLE IF NOT EXISTS Archive (
+#         contract_id INTEGER PRIMARY KEY,
+#         conclusion_date TEXT,
+#         archive_date TEXT
 #     )
 # ''')
-#
 # conn.commit()
+
 
 # def clear_tables(cursor):
 #     try:
-#         cursor.execute("DELETE FROM Itinerary")
-#         cursor.execute("DELETE FROM Payment")
-#         cursor.execute("DELETE FROM CargoType")
-#         cursor.execute("DELETE FROM Contracts")
-#         cursor.execute("DELETE FROM Cargo")
-#         cursor.execute("DELETE FROM Contract")
+#         cursor.execute("DELETE FROM Archive")
+#         # cursor.execute("DELETE FROM Dispatcher")
+#         # cursor.execute("DELETE FROM Payment")
+#         # cursor.execute("DELETE FROM Client")
+#         # cursor.execute("DELETE FROM Itinerary")
+#         # cursor.execute("DELETE FROM Payment")
+#         # cursor.execute("DELETE FROM CargoType")
+#         # cursor.execute("DELETE FROM Contracts")
+#         # cursor.execute("DELETE FROM Cargo")
+#         # cursor.execute("DELETE FROM Contract")
 #         conn.commit()
 #         print("All tables cleared successfully.")
 #     except sqlite3.Error as e:
 #         print("An error occurred:", e)
-
+#
 # clear_tables(cursor)
 
 # cursor.execute('DROP TABLE IF EXISTS Contract')
@@ -108,4 +114,5 @@ cursor = conn.cursor()
 # cursor.execute('DROP TABLE IF EXISTS Itinerary')
 # cursor.execute('DROP TABLE IF EXISTS Dispatcher')
 # cursor.execute('DROP TABLE IF EXISTS Client')
+# cursor.execute('DROP TABLE IF EXISTS Archive')
 
