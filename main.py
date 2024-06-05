@@ -5,7 +5,6 @@ from modules.auth.register import register_main
 from modules.auth.login import login
 
 
-
 label_style = {
     "text_color": "#601E88",
     "anchor": "w",

@@ -5,6 +5,7 @@ from datetime import datetime
 import customtkinter
 import customtkinter as ctk
 from customtkinter import *
+from CTkTable import *
 from database.database_setup import cursor, conn
 
 label_style = {
@@ -25,6 +26,35 @@ entry_style = {
     "border_width": 1,
     "text_color": "#000000"}
 
+class CTkTable(ctk.CTkFrame):
+    def __init__(self, parent, **kwargs):
+        super().__init__(parent, **kwargs)
+        self.cells = []
+
+    def update_table_data(self, data):
+        # Clear previous cells
+        for row in self.cells:
+            for cell in row:
+                cell.destroy()
+        self.cells = []
+
+        # Create new cells
+        for r, row_data in enumerate(data):
+            cell_row = []
+            for c, cell_data in enumerate(row_data):
+                cell = ctk.CTkButton(self, text=str(cell_data), border_width=1, fg_color="#1B1C1C",
+                                     hover_color="#1B1C1C", text_color="white")
+                cell.grid(row=r, column=c, sticky="nsew")
+                cell_row.append(cell)
+            self.cells.append(cell_row)
+
+        # Configure grid weights
+        for i in range(len(data)):
+            self.grid_rowconfigure(i, weight=1)
+        for j in range(len(data[0])):
+            self.grid_columnconfigure(j, weight=1)
+
+
 conn = sqlite3.connect('data.db')
 cursor = conn.cursor()
 
@@ -33,73 +63,55 @@ tables = [
     'CargoType', 'Cargo', 'Contract', 'Archive']
 current_table_index = 0
 
-def display_tables(table_name, text_box):
+def display_tables(table_name, table_widget):
     cursor.execute(f"SELECT * FROM {table_name}")
     rows = cursor.fetchall()
     columns = [description[0] for description in cursor.description]
 
-    text_box.configure(state='normal')
-    text_box.delete(1.0, END)
-    text_box.insert(END, f"Table: {table_name}\n")
-    text_box.insert(END, " | ".join(columns) + "\n")
-    text_box.insert(END, "-" * 100 + "\n")
-    for row in rows:
-        text_box.insert(END, " | ".join(map(str, row)) + "\n")
-    text_box.configure(state='disabled')
+    data = [columns] + rows
+    table_widget.update_table_data(data)
 
-def next_table(text_box):
+def next_table(table_widget):
     global current_table_index
     current_table_index = (current_table_index + 1) % len(tables)
-    display_tables(tables[current_table_index], text_box)
+    display_tables(tables[current_table_index], table_widget)
 
-def previous_table(text_box):
+def previous_table(table_widget):
     global current_table_index
     current_table_index = (current_table_index - 1) % len(tables)
-    display_tables(tables[current_table_index], text_box)
-
+    display_tables(tables[current_table_index], table_widget)
 
 def contracts_window():
-    contracts_window = ctk.CTk()
-    contracts_window.title("Contracts")
+    app = ctk.CTk()
+    app.title("Database table viewer")
 
-    screen_width = contracts_window.winfo_screenwidth()
-    screen_height = contracts_window.winfo_screenheight()
+    screen_width = app.winfo_screenwidth()
+    screen_height = app.winfo_screenheight()
 
-    app_width = 500
+    app_width = 600
     app_height = 400
 
     x_position = (screen_width - app_width) // 2
     y_position = (screen_height - app_height) // 2
 
-    contracts_window.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
-    contracts_window.resizable(0, 0)
+    app.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
+    app.resizable(0, 0)
 
-    screen_frame = ctk.CTkFrame(master=contracts_window, width=850,
-                                height=750, fg_color="#897E9B")
-    screen_frame.pack_propagate(0)
-    screen_frame.pack(expand=True, fill="both")
+    table_widget = CTkTable(app)
+    table_widget.pack(expand=True, fill='both')
 
-    text_box = ctk.CTkTextbox(master=screen_frame, wrap="none")
-    text_box.pack(expand=True, fill="both")
+    btn_frame = ctk.CTkFrame(app)
+    btn_frame.pack(fill='x', pady=5)
 
-    button_frame = ctk.CTkFrame(master=screen_frame, fg_color="#FFFFFF")
-    button_frame.pack(pady=10)
+    prev_btn = ctk.CTkButton(btn_frame, text="Previous Table", command=lambda: previous_table(table_widget))
+    prev_btn.pack(side='left', padx=5)
 
-    prev_button = ctk.CTkButton(master=button_frame, text="Previous", height=40,
-                                command=lambda: previous_table(text_box),
-                                fg_color="#FFFFFF", hover_color="#897E9B",
-                                text_color="#000000", font=("Arial Rounded MT Bold", 13))
-    prev_button.pack(side="left", padx=10)
+    next_btn = ctk.CTkButton(btn_frame, text="Next Table", command=lambda: next_table(table_widget))
+    next_btn.pack(side='right', padx=5)
 
-    next_button = ctk.CTkButton(master=button_frame, text="Next", height=40,
-                                command=lambda: next_table(text_box),
-                                fg_color="#FFFFFF",
-                                hover_color="#897E9B", text_color="#000000",
-                                font=("Arial Rounded MT Bold", 13))
-    next_button.pack(side="left", padx=10)
+    display_tables(tables[current_table_index], table_widget)
 
-    display_tables(tables[current_table_index], text_box)
-    contracts_window.mainloop()
+    app.mainloop()
 
 
 def show_contracts(user_id, result_textbox):

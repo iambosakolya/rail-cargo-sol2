@@ -10,6 +10,8 @@ from classes.Calc import Calc
 from classes.CargoType import CargoType
 from database.database_setup import cursor, conn
 
+from modules.print import print_contract
+
 regional_centers = Map.regional_centers
 
 label_style = {
@@ -44,7 +46,7 @@ def update_dispatcher(dispatcher):
      existing_phone_number) = dispatcher
 
     update_dispatcher_window = CTk()
-    update_dispatcher_window.title("Update Dispatcher Info")
+    update_dispatcher_window.title("Update Dispatcher info")
 
     screen_width = update_dispatcher_window.winfo_screenwidth()
     screen_height = update_dispatcher_window.winfo_screenheight()
@@ -667,7 +669,7 @@ def modifying_contract():
 
                         textbox1.configure(state="normal")
                         textbox1.delete("1.0", "end")
-                        textbox1.insert("end", f"Calculated tariff: {calculated_tariff}$")
+                        textbox1.insert("end", f"Calculated tariff: {calculated_tariff}₴")
                         textbox1.configure(state="disabled")
 
                         display_data(cargo_data, route_data)
@@ -704,6 +706,14 @@ def modifying_contract():
 
             next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style, command=next_step)
             next_btn.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
+
+        elif window_number == 5:
+            def finish():
+                cont_window.destroy()
+
+            finish_btn = CTkButton(master=screen_frame, text="Finish",
+                                       **btn_style, command=finish)
+            finish_btn.place(relx=0, rely=0, anchor="w", x=220, y=280)
 
     show_current_step(contract_id)
     cont_window.mainloop()
