@@ -1,4 +1,5 @@
 import customtkinter
+from CTkToolTip import *
 import customtkinter as ctk
 from customtkinter import *
 from database.database_setup import cursor, conn
@@ -8,11 +9,12 @@ from modules.crud.update import modifying_contract
 from modules.crud.delete import confirm_delete_c
 from modules.crud.read import show_contracts
 
-from database.queries_client import get_user_contracts
+from database.queries_client import display_contracts_last_week
 from database.queries_client import get_user_data
 from database.queries_client import get_contracts_above_weight
 from database.queries_client import get_user_payments
 
+import globals
 
 label_style = {
     "text_color": "#000000",
@@ -79,25 +81,36 @@ def client_window(user):
     result_textbox.place(relx=0, rely=0, anchor="w", x=30, y=340)
 
     # query section 1
-    req_frame3 = ctk.CTkFrame(master=right_frame, fg_color="#D0C7DF",
+    req_frame1 = ctk.CTkFrame(master=right_frame, fg_color="#D0C7DF",
                               width=80, height=700)
-    req_frame3.place(relx=0, rely=0, anchor="w", x=330, y=320)
+    req_frame1.place(relx=0, rely=0, anchor="w", x=330, y=320)
 
-    fourth_btn = ctk.CTkButton(master=req_frame3, text="My contracts\nfor the last month", **btn_style2,
-                               command=lambda: get_user_contracts(user[0], result_textbox))
+    first_btn = ctk.CTkButton(master=req_frame1, text="My contracts\nfor the last week", **btn_style2,
+                               command=lambda: display_contracts_last_week(user_id=globals.logged_in_client_id,
+                                                                           result_textbox=result_textbox))
+    first_btn.pack(side="top", padx=20, pady=20)
+    tooltip_1 = CTkToolTip(first_btn, message="Список контрактів укладених клієнтом за останній тиждень")
+
+
+    second_btn = ctk.CTkButton(master=req_frame1, text="My current account info", **btn_style2,
+                               command=lambda: get_user_data(user_id=globals.logged_in_client_id,
+                                                             result_textbox=result_textbox))
+    second_btn.pack(side="top", padx=20, pady=20)
+    tooltip_1 = CTkToolTip(second_btn, message="Список даних клієнта")
+
+
+    third_btn = ctk.CTkButton(master=req_frame1, text="Contract with the\nmax weight", **btn_style2,
+                              command=lambda: get_contracts_above_weight(user_id=globals.logged_in_client_id,
+                                                                         result_textbox=result_textbox))
+    third_btn.pack(side="top", padx=0, pady=20)
+    tooltip_3 = CTkToolTip(third_btn, message="Які з контрактів клієнта мають вагу більше ніж 5т")
+
+
+    fourth_btn = ctk.CTkButton(master=req_frame1, text="My payments", **btn_style2,
+                                command=lambda: get_user_payments(user_id=globals.logged_in_client_id,
+                                                                  result_textbox=result_textbox), weight=5)
     fourth_btn.pack(side="top", padx=20, pady=20)
-
-    fifth_btn = ctk.CTkButton(master=req_frame3, text="My account info", **btn_style2,
-                              command=lambda: get_user_data(user[0], result_textbox))
-    fifth_btn.pack(side="top", padx=20, pady=20)
-
-    sixth_btn = ctk.CTkButton(master=req_frame3, text="Contract with the\nmax weight", **btn_style2,
-                              command=lambda: get_contracts_above_weight(user[0], result_textbox, weight=5))
-    sixth_btn.pack(side="top", padx=0, pady=20)
-
-    seventh_btn = ctk.CTkButton(master=req_frame3, text="My payments", **btn_style2,
-                                command=lambda: get_user_payments(user[0], result_textbox))
-    seventh_btn.pack(side="top", padx=20, pady=20)
+    tooltip_4 = CTkToolTip(fourth_btn, message="Знайти всі оплати клієнта і вивести їх")
 
     #left frame
     c_btn = CTkButton(master=left_frame, text="Change my info", **btn_style,
@@ -105,17 +118,13 @@ def client_window(user):
     c_btn.pack(anchor="w", pady=(80, 10), padx=(30, 0))
 
 
-    up_btn = CTkButton(master=left_frame, text="My contracts", **btn_style,
+    up_btn = CTkButton(master=left_frame, text="All my contracts", **btn_style,
                        command=lambda: show_contracts(user[0], result_textbox))
     up_btn.pack(anchor="w", pady=(80, 10), padx=(30, 0))
 
 
-    h_btn = CTkButton(master=left_frame, text="View history", **btn_style)
+    h_btn = CTkButton(master=left_frame, text="Print my contracts", **btn_style)
     h_btn.pack(anchor="w", pady=(80, 10), padx=(25, 0))
-
-
-    fourth_btn = CTkButton(master=left_frame, text="4", **btn_style)
-    fourth_btn.pack(anchor="w", pady=(80, 10), padx=(25, 0))
 
 
     add_btn = CTkButton(master=left_frame, text="Deactivate my account", **btn_style,

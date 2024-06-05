@@ -282,7 +282,7 @@ def delete_c_data(client_id):
     cursor.execute("DELETE FROM Client WHERE client_id = ?", (client_id,))
     conn.commit()
 
-# Функція для видалення клієнта через інтерфейс
+
 def delete_client():
     def on_confirm():
         selected_client = option_menu.get()
@@ -386,8 +386,8 @@ def confirm_delete_c(client_id):
     screen_width = confirm_window.winfo_screenwidth()
     screen_height = confirm_window.winfo_screenheight()
 
-    app_width = 350
-    app_height = 200
+    app_width = 370
+    app_height = 150
 
     x_position = (screen_width - app_width) // 2
     y_position = (screen_height - app_height) // 2
@@ -408,10 +408,10 @@ def confirm_delete_c(client_id):
     def on_cancel():
         confirm_window.destroy()
 
-    yes_button = ctk.CTkButton(button_frame, text="Yes", command=on_confirm)
+    yes_button = ctk.CTkButton(button_frame, text="Yes", **btn_style, command=on_confirm)
     yes_button.grid(row=0, column=0, padx=10)
 
-    no_button = ctk.CTkButton(button_frame, text="No", command=on_cancel)
+    no_button = ctk.CTkButton(button_frame, text="No", **btn_style, command=on_cancel)
     no_button.grid(row=0, column=1, padx=10)
 
 
