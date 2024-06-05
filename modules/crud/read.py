@@ -26,34 +26,32 @@ entry_style = {
     "border_width": 1,
     "text_color": "#000000"}
 
-class CTkTable(ctk.CTkFrame):
-    def __init__(self, parent, **kwargs):
+class CTkScrollableTable(ctk.CTkScrollableFrame):
+    def __init__(self, parent, cell_width=100, cell_height=30, **kwargs):
         super().__init__(parent, **kwargs)
         self.cells = []
+        self.cell_width = cell_width
+        self.cell_height = cell_height
 
     def update_table_data(self, data):
-        # Clear previous cells
         for row in self.cells:
             for cell in row:
                 cell.destroy()
         self.cells = []
 
-        # Create new cells
         for r, row_data in enumerate(data):
             cell_row = []
             for c, cell_data in enumerate(row_data):
                 cell = ctk.CTkButton(self, text=str(cell_data), border_width=1, fg_color="#1B1C1C",
-                                     hover_color="#1B1C1C", text_color="white")
+                                     hover_color="#1B1C1C", text_color="white", width=self.cell_width, height=self.cell_height)
                 cell.grid(row=r, column=c, sticky="nsew")
                 cell_row.append(cell)
             self.cells.append(cell_row)
 
-        # Configure grid weights
         for i in range(len(data)):
             self.grid_rowconfigure(i, weight=1)
         for j in range(len(data[0])):
             self.grid_columnconfigure(j, weight=1)
-
 
 conn = sqlite3.connect('data.db')
 cursor = conn.cursor()
@@ -88,25 +86,29 @@ def contracts_window():
     screen_width = app.winfo_screenwidth()
     screen_height = app.winfo_screenheight()
 
-    app_width = 600
-    app_height = 400
+    app_width = 750
+    app_height = 650
 
     x_position = (screen_width - app_width) // 2
     y_position = (screen_height - app_height) // 2
 
     app.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
-    app.resizable(0, 0)
+    app.resizable(True, True)
 
-    table_widget = CTkTable(app)
+    table_widget = CTkScrollableTable(app, width=app_width-20, height=app_height-100, corner_radius=0, fg_color="transparent")
     table_widget.pack(expand=True, fill='both')
 
     btn_frame = ctk.CTkFrame(app)
     btn_frame.pack(fill='x', pady=5)
 
-    prev_btn = ctk.CTkButton(btn_frame, text="Previous Table", command=lambda: previous_table(table_widget))
+    btn_style = {'fg_color': "#3A3B3C", 'hover_color': "#3A3B3C", 'text_color': "white"}
+
+    prev_btn = ctk.CTkButton(btn_frame, text="Previous table", **btn_style,
+                             command=lambda: previous_table(table_widget))
     prev_btn.pack(side='left', padx=5)
 
-    next_btn = ctk.CTkButton(btn_frame, text="Next Table", command=lambda: next_table(table_widget))
+    next_btn = ctk.CTkButton(btn_frame, text="Next table", **btn_style,
+                             command=lambda: next_table(table_widget))
     next_btn.pack(side='right', padx=5)
 
     display_tables(tables[current_table_index], table_widget)

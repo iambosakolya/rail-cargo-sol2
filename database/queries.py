@@ -17,7 +17,7 @@ label_style = {
 
 # 1 Вибір з декількох таблиць із сортуванням
 # список контрактів, які були створені заданим диспетчером
-def get_contracts_by_pib(dispatcher_pib):
+def get_contracts_by_dispatcher(dispatcher_id):
     conn = sqlite3.connect('data.db')
     cursor = conn.cursor()
 
@@ -37,23 +37,33 @@ def get_contracts_by_pib(dispatcher_pib):
     JOIN CargoType ON Cargo.cargo_type_id = CargoType.cargo_type_id
     JOIN Itinerary ON Contract.itinerary_id = Itinerary.itinerary_id
     JOIN Payment ON Contract.payment_id = Payment.payment_id
-    WHERE Dispatcher.d_pib = ?
+    WHERE Dispatcher.dispatcher_id = ?
     ORDER BY Contract.conclusion_date;
     '''
-    cursor.execute(query,
-                   (dispatcher_pib,))
+    cursor.execute(query, (dispatcher_id,))
     contracts = cursor.fetchall()
     conn.close()
     return contracts
-def find_contracts_pib():
+
+def get_dispatchers():
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+
+    query = 'SELECT dispatcher_id, d_pib, d_email FROM Dispatcher'
+    cursor.execute(query)
+    dispatchers = cursor.fetchall()
+    conn.close()
+    return dispatchers
+
+def find_contracts_d():
     root = ctk.CTkToplevel()
-    root.title("Find contracts by dispatcher PIB")
+    root.title("Find contracts by dispatcher")
 
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
 
-    app_width = 300
-    app_height = 150
+    app_width = 400
+    app_height = 200
 
     x_position = (screen_width - app_width) // 2
     y_position = (screen_height - app_height) // 2
@@ -61,74 +71,79 @@ def find_contracts_pib():
     root.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
     root.resizable(0, 0)
 
-    screen_frame = ctk.CTkFrame(master=root, width=300, height=150, fg_color="#897E9B")
+    screen_frame = ctk.CTkFrame(master=root, width=400, height=200, fg_color="#897E9B")
     screen_frame.pack_propagate(0)
     screen_frame.pack(expand=True, fill="both")
 
-    label = ctk.CTkLabel(screen_frame, text="Enter Dispatcher PIB:", **label_style)
+    label = ctk.CTkLabel(screen_frame, text="Select dispatcher:", **label_style)
     label.pack(pady=10)
 
-    entry = ctk.CTkEntry(screen_frame)
-    entry.pack(pady=10)
+    dispatchers = get_dispatchers()
+    dispatcher_dict = {f"{d[1]} ({d[2]})": d[0] for d in dispatchers}
+
+    dispatcher_menu = ctk.CTkOptionMenu(screen_frame, text_color="#000000",
+                                        button_color="#565B5E", fg_color="#D3D3D3",
+                                        values=list(dispatcher_dict.keys()))
+    dispatcher_menu.pack(pady=10)
 
     def on_confirm():
-        dispatcher_pib = entry.get()
-        if dispatcher_pib:
-            root.destroy()
-            contracts = get_contracts_by_pib(dispatcher_pib)
-            if not contracts:
-                CTkMessagebox(message="No contracts found for the given dispatcher PIB!"
-                                      "\nTry again!",
-                              icon="cancel",
-                              option_1="OK")
-                return
+        selected_dispatcher = dispatcher_menu.get()
+        dispatcher_id = dispatcher_dict[selected_dispatcher]
 
-            result_window = ctk.CTkToplevel()
-            result_window.title("Contracts by dispatcher")
+        root.destroy()
+        contracts = get_contracts_by_dispatcher(dispatcher_id)
+        if not contracts:
+            CTkMessagebox(message="No contracts found for the selected dispatcher!"
+                                  "\nTry again!",
+                          icon="cancel",
+                          option_1="OK")
+            return
 
-            screen_width = result_window.winfo_screenwidth()
-            screen_height = result_window.winfo_screenheight()
+        result_window = ctk.CTkToplevel()
+        result_window.title("Contracts by dispatcher")
 
-            app_width = 450
-            app_height = 350
+        screen_width = result_window.winfo_screenwidth()
+        screen_height = result_window.winfo_screenheight()
 
-            x_position = (screen_width - app_width) // 2
-            y_position = (screen_height - app_height) // 2
+        app_width = 450
+        app_height = 350
 
-            result_window.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
-            result_window.resizable(0, 0)
+        x_position = (screen_width - app_width) // 2
+        y_position = (screen_height - app_height) // 2
 
-            screen_frame = ctk.CTkFrame(master=result_window, width=450, height=250, fg_color="#FFFFFF")
-            screen_frame.pack_propagate(0)
-            screen_frame.pack(expand=True, fill="both", padx=10, pady=10)
+        result_window.geometry(f"{app_width}x{app_height}+{x_position}+{y_position}")
+        result_window.resizable(0, 0)
 
-            label = ctk.CTkLabel(master=screen_frame, text="A list of contracts that were created"
-                                                           "\n by the specified dispatcher", **label_style)
-            label.pack(pady=10)
+        screen_frame = ctk.CTkFrame(master=result_window, width=450, height=250, fg_color="#FFFFFF")
+        screen_frame.pack_propagate(0)
+        screen_frame.pack(expand=True, fill="both", padx=10, pady=10)
 
-            text_box = ctk.CTkTextbox(master=screen_frame, height=170, wrap="none")
-            text_box.pack(expand=True, fill="both", padx=10, pady=10)
+        label = ctk.CTkLabel(master=screen_frame, text="A list of contracts that were created"
+                                                       "\n by the specified dispatcher", **label_style)
+        label.pack(pady=10)
 
-            for contract in contracts:
-                text_box.insert("end",
-                                f"Contract ID: {contract[0]} \nConclusion date: {contract[1]}\n"
-                                f"\nClient PIB: {contract[2]} \nPhone: {contract[3]}\n"
-                                f"\nDispatcher PIB: {contract[4]} \nEmail: {contract[5]}\n"
-                                f"\nFrom: {contract[6]} to {contract[7]}, "
-                                f"\nRoute length: {contract[8]} \nDuration: {contract[9]}\n"
-                                f"\nPayment amount: {contract[10]} \nPayment time: {contract[11]}\n"
-                                f"\nCargo name: {contract[12]} \nDimensions: {contract[14]}\n"
-                                f"\nQuantity: {contract[15]} \nWeight: {contract[16]}\n"
-                                "---------------------------------\n")
+        text_box = ctk.CTkTextbox(master=screen_frame, height=170, wrap="none")
+        text_box.pack(expand=True, fill="both", padx=10, pady=10)
 
-            def on_close():
-                result_window.destroy()
+        for contract in contracts:
+            text_box.insert("end",
+                            f"Contract ID: {contract[0]} \nConclusion date: {contract[1]}\n"
+                            f"\nClient PIB: {contract[2]} \nPhone: {contract[3]}\n"
+                            f"\nDispatcher PIB: {contract[4]} \nEmail: {contract[5]}\n"
+                            f"\nFrom: {contract[6]} to {contract[7]}, "
+                            f"\nRoute length: {contract[8]} \nDuration: {contract[9]}\n"
+                            f"\nPayment amount: {contract[10]} \nPayment time: {contract[11]}\n"
+                            f"\nCargo name: {contract[12]} \nDimensions: {contract[14]}\n"
+                            f"\nQuantity: {contract[15]} \nWeight: {contract[16]}\n"
+                            "---------------------------------\n")
 
-            close_button = ctk.CTkButton(result_window, text="OK", command=on_close, fg_color="#FFFFFF",
-                                         hover_color="#897E9B", text_color="#000000",
-                                         font=("Arial Rounded MT Bold", 13))
-            close_button.pack(pady=10)
+        def on_close():
+            result_window.destroy()
 
+        close_button = ctk.CTkButton(result_window, text="OK", command=on_close, fg_color="#FFFFFF",
+                                     hover_color="#897E9B", text_color="#000000",
+                                     font=("Arial Rounded MT Bold", 13))
+        close_button.pack(pady=10)
 
     button = ctk.CTkButton(screen_frame, text="Submit", command=on_confirm, fg_color="#000000",
                            hover_color="#4F2346", text_color="#ffffff", font=("Arial Rounded MT Bold", 13))
@@ -277,7 +292,7 @@ def find_contracts_date():
     screen_frame.pack_propagate(0)
     screen_frame.pack(expand=True, fill="both")
 
-    # Function to get month values
+    # function to get month values
     def get_month_values():
         months = [
             "1 (January)", "2 (February)", "3 (March)", "4 (April)", "5 (May)", "6 (June)",
@@ -297,7 +312,8 @@ def find_contracts_date():
     )
     start_year_combobox.pack(pady=5)
 
-    label_start_month = ctk.CTkLabel(screen_frame, text="Month:", **label_style)
+    label_start_month = ctk.CTkLabel(screen_frame,
+                                     text="Month:", **label_style)
     label_start_month.pack(pady=5)
     start_month_combobox = ctk.CTkComboBox(screen_frame, values=get_month_values())
     start_month_combobox.pack(pady=5)
@@ -315,8 +331,7 @@ def find_contracts_date():
     label_end_year.pack(pady=5)
     end_year_combobox = ctk.CTkComboBox(
         screen_frame,
-        values=[str(year) for year in range(2024, datetime.date.today().year + 1)]
-    )
+        values=[str(year) for year in range(2024, datetime.date.today().year + 1)])
     end_year_combobox.pack(pady=5)
 
     label_end_month = ctk.CTkLabel(screen_frame, text="Month:", **label_style)
@@ -331,8 +346,14 @@ def find_contracts_date():
 
     def on_confirm():
         try:
-            s_year, s_month, s_day = int(start_year_combobox.get()), int(start_month_combobox.get().split()[0]), int(start_day_combobox.get())
-            e_year, e_month, e_day = int(end_year_combobox.get()), int(end_month_combobox.get().split()[0]), int(end_day_combobox.get())
+            s_year, s_month, s_day = (int(start_year_combobox.get()),
+                                      int(start_month_combobox.get().split()[0]),
+                                      int(start_day_combobox.get()))
+
+            e_year, e_month, e_day = (int(end_year_combobox.get()),
+                                      int(end_month_combobox.get().split()[0]),
+                                      int(end_day_combobox.get()))
+
             start_date = datetime.date(s_year, s_month, s_day)
             end_date = datetime.date(e_year, e_month, e_day)
 
@@ -340,7 +361,8 @@ def find_contracts_date():
                 root.destroy()
                 contracts = get_contracts_by_date(start_date, end_date)
                 if not contracts:
-                    CTkMessagebox(message="No contracts found for the given date range!\nTry again!",
+                    CTkMessagebox(message="No contracts found for the given date range!"
+                                          "\nTry again!",
                                   icon="cancel",
                                   option_1="OK")
                     return
@@ -409,6 +431,7 @@ def get_contracts_last_week():
     count = cursor.fetchone()[0]
     conn.close()
     return count
+
 def find_contracts_week(result_textbox):
     count = get_contracts_last_week()
     result_textbox.delete("1.0", "end")
@@ -421,19 +444,31 @@ def get_contracts_dispatcher():
     cursor = conn.cursor()
 
     query = '''
-    SELECT dispatcher_id, COUNT(*) AS contracts_count
-    FROM Contract
-    GROUP BY dispatcher_id;
+    SELECT Dispatcher.d_pib, COUNT(Contract.contract_id) AS contracts_count
+    FROM Dispatcher
+    LEFT JOIN Contract ON Dispatcher.dispatcher_id = Contract.dispatcher_id
+    GROUP BY Dispatcher.d_pib;
     '''
     cursor.execute(query)
     results = cursor.fetchall()
     conn.close()
     return results
+
+
 def find_contracts_dispatcher(result_textbox):
     results = get_contracts_dispatcher()
     result_textbox.delete("1.0", "end")
-    for dispatcher_id, count in results:
-        result_textbox.insert("end", f"Dispatcher {dispatcher_id}: {count} contracts\n")
+
+    if not results:
+        result_textbox.insert("end", "No dispatchers found.\n")
+    else:
+        for d_pib, count in results:
+            if count == 0:
+                result_textbox.insert("end", f"Dispatcher {d_pib} has no contracts.\n")
+            else:
+                result_textbox.insert("end", f"Dispatcher {d_pib}: {count} contracts.\n")
+            result_textbox.insert("end", "\n___________\n\n")
+
 
 # 6 Використання предиката ALL або ANY
 # Хто з диспетчерів уклав найбільшу кількість контрактів
@@ -442,45 +477,40 @@ def get_max_contracts():
     cursor = conn.cursor()
 
     query = '''
-    SELECT dispatcher_id, MAX(contract_count) AS max_contracts
-    FROM (
-        SELECT dispatcher_id, COUNT(*) AS contract_count
-        FROM Contract
-        GROUP BY dispatcher_id
-    )
+    SELECT Dispatcher.d_pib, COUNT(Contract.contract_id) AS contract_count
+    FROM Dispatcher
+    JOIN Contract ON Dispatcher.dispatcher_id = Contract.dispatcher_id
+    GROUP BY Dispatcher.d_pib
+    ORDER BY contract_count DESC
+    LIMIT 1
     '''
+
     cursor.execute(query)
     result = cursor.fetchone()
-
-    if result and result[0] is not None:
-        dispatcher_id = result[0]
-        max_contracts = result[1]
-        query = '''
-        SELECT d_pib
-        FROM Dispatcher
-        WHERE dispatcher_id = ?;
-        '''
-        cursor.execute(query, (dispatcher_id,))
-        d_pib_result = cursor.fetchone()
-
-        if d_pib_result:
-            d_pib = d_pib_result[0]
-        else:
-            d_pib = None
-    else:
-        d_pib = None
-
     conn.close()
-    return d_pib
+
+    if result:
+        dispatcher_name, max_contracts = result
+        return [(dispatcher_name,)], max_contracts
+    else:
+        return [], None
 
 
 def find_max_contracts(result_textbox):
-    d_pib = get_max_contracts()
+    results, max_contracts = get_max_contracts()
     result_textbox.delete("1.0", "end")
-    if d_pib:
-        result_textbox.insert("1.0", f"Dispatcher with max contracts: {d_pib}")
+
+    if not results:
+        result_textbox.insert("1.0", "No data available\n")
     else:
-        result_textbox.insert("1.0", "No data available")
+        if len(results) == 1:
+            result_textbox.insert("1.0",
+                                  f"Dispatcher with max contracts: {results[0][0]} ({max_contracts} contracts)\n")
+        else:
+            dispatcher_list = ", ".join([result[0] for result in results])
+            result_textbox.insert("1.0",
+                                  f"Dispatchers with max contracts ({max_contracts} contracts): {dispatcher_list}\n")
+
 
 # 7 Корельований підзапит
 # знайти клієнтів, які зробили найбільші оплати для кожного типу вантажу, відобразити відповідні дані.
@@ -509,6 +539,7 @@ def get_max_payment_clients():
 
     conn.close()
     return results
+
 def find_max_payment(result_textbox):
     results = get_max_payment_clients()
     result_textbox.delete("1.0", "end")
@@ -523,37 +554,16 @@ def find_max_payment(result_textbox):
 # Запит реалізувати у трьох варіантах: з використанням LEFT JOІN, предиката ІN і предиката EXІSTS;
 # хто з диспетчерів не укладав контракти на цьому тижні?
 
-# def get_dispatchers_without_contract():
-#     conn = sqlite3.connect('data.db')
-#     cursor = conn.cursor()
-#
-#     # запит з використанням LEFT JOIN
-#     query = '''
-#     SELECT d.dispatcher_id, d.d_pib
-#     FROM Dispatcher d
-#     LEFT JOIN Contract c ON d.dispatcher_id = c.dispatcher_id
-#     WHERE c.dispatcher_id IS NULL
-#     '''
-#
-#     cursor.execute(query)
-#     results = cursor.fetchall()
-#
-#     conn.close()
-#
-#     return results
-
 def get_dispatchers_without_contract():
     conn = sqlite3.connect('data.db')
     cursor = conn.cursor()
 
-    # SQL-запит з використанням предиката IN
+    # запит з використанням LEFT JOIN
     query = '''
-    SELECT dispatcher_id, d_pib
-    FROM Dispatcher
-    WHERE dispatcher_id NOT IN (
-        SELECT dispatcher_id
-        FROM Contract
-    )
+    SELECT d.dispatcher_id, d.d_pib
+    FROM Dispatcher d
+    LEFT JOIN Contract c ON d.dispatcher_id = c.dispatcher_id
+    WHERE c.dispatcher_id IS NULL
     '''
 
     cursor.execute(query)
@@ -562,6 +572,28 @@ def get_dispatchers_without_contract():
     conn.close()
 
     return results
+
+# def get_dispatchers_without_contract():
+#     conn = sqlite3.connect('data.db')
+#     cursor = conn.cursor()
+#
+#     # SQL-запит з використанням предиката IN
+#     query = '''
+#     SELECT dispatcher_id, d_pib
+#     FROM Dispatcher
+#     WHERE dispatcher_id NOT IN (
+#         SELECT dispatcher_id
+#         FROM Contract
+#         WHERE dispatcher_id IS NOT NULL
+#     )
+#     '''
+#
+#     cursor.execute(query)
+#     results = cursor.fetchall()
+#
+#     conn.close()
+#
+#     return results
 
 # def get_dispatchers_without_contract():
 #     conn = sqlite3.connect('data.db')
@@ -646,6 +678,7 @@ def get_dispatchers_comments():
 
     conn.close()
     return results
+
 def find_dispatchers_comments(result_textbox):
     results = get_dispatchers_comments()
     result_textbox.delete("1.0", "end")

@@ -6,30 +6,48 @@ from CTkMessagebox import CTkMessagebox
 
 def archive_contract(cursor, conn, contract_id):
     try:
-        # Check if the contract exists in the Contract table
+        # Почати транзакцію
+        cursor.execute("BEGIN TRANSACTION")
+
+        # Перевірка наявності контракту в таблиці Contract
         cursor.execute("SELECT * FROM Contract WHERE contract_id = ?", (contract_id,))
         contract = cursor.fetchone()
         if contract is None:
             CTkMessagebox(message="Contract not found!", icon="cancel", option_1="OK")
             return
 
-        # Check if the contract is already archived
+        # Перевірка, чи контракт вже архівований
         cursor.execute("SELECT * FROM Archive WHERE contract_id = ?", (contract_id,))
         if cursor.fetchone() is not None:
             CTkMessagebox(message="Contract already archived!", icon="cancel", option_1="OK")
             return
 
-        # Move data to the Archive table
-        conclusion_date = contract[1]
+        # Отримати дані контракту для видалення з інших таблиць
+        conclusion_date, client_id, dispatcher_id, cargo_id, payment_id, itinerary_id = contract[1:]
+
+        # Перенесення даних до таблиці Archive
         archive_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         cursor.execute("INSERT INTO Archive (contract_id, conclusion_date, archive_date) VALUES (?, ?, ?)",
                        (contract_id, conclusion_date, archive_date))
 
+        # Видалення даних з пов'язаних таблиць
+        cursor.execute("DELETE FROM Client WHERE client_id = ?", (client_id,))
+        cursor.execute("DELETE FROM Dispatcher WHERE dispatcher_id = ?", (dispatcher_id,))
+        cursor.execute("DELETE FROM Cargo WHERE cargo_id = ?", (cargo_id,))
+        cursor.execute("DELETE FROM Payment WHERE payment_id = ?", (payment_id,))
+        cursor.execute("DELETE FROM Itinerary WHERE itinerary_id = ?", (itinerary_id,))
+
+        # Видалення контракту з таблиці Contract
+        cursor.execute("DELETE FROM Contract WHERE contract_id = ?", (contract_id,))
+
+        # Фіксація транзакції
         conn.commit()
         CTkMessagebox(message="Contract archived successfully!", icon="check", option_1="Thanks")
     except sqlite3.Error as e:
+        conn.rollback()
         CTkMessagebox(message=f"Error: {str(e)}", icon="cancel", option_1="OK")
 
+# Функція для показу діалогу архівування
 def show_archive_dialog(cursor, conn):
     def on_confirm():
         contract_id = entry.get()

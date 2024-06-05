@@ -91,20 +91,22 @@ cursor = conn.cursor()
 # def clear_tables(cursor):
 #     try:
 #         cursor.execute("DELETE FROM Archive")
-#         cursor.execute("DELETE FROM Dispatcher")
-#         cursor.execute("DELETE FROM Payment")
-#         cursor.execute("DELETE FROM Client")
-#         cursor.execute("DELETE FROM Itinerary")
-#         cursor.execute("DELETE FROM Payment")
-#         cursor.execute("DELETE FROM CargoType")
-#         cursor.execute("DELETE FROM Cargo")
-#         cursor.execute("DELETE FROM Contract")
+#         # cursor.execute("DELETE FROM Dispatcher")
+#         # cursor.execute("DELETE FROM Payment")
+#         # cursor.execute("DELETE FROM Client")
+#         # cursor.execute("DELETE FROM Itinerary")
+#         # cursor.execute("DELETE FROM Payment")
+#         # cursor.execute("DELETE FROM CargoType")
+#         # cursor.execute("DELETE FROM Cargo")
+#         # cursor.execute("DELETE FROM Contract")
 #         conn.commit()
 #         print("All tables cleared successfully.")
 #     except sqlite3.Error as e:
 #         print("An error occurred:", e)
 #
+#
 # clear_tables(cursor)
+
 
 # cursor.execute('DROP TABLE IF EXISTS Contract')
 # cursor.execute('DROP TABLE IF EXISTS Cargo')

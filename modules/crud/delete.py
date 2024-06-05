@@ -208,7 +208,7 @@ def delete_dispatcher(dispatcher_id):
 
 def confirm_delete_d(dispatcher_id):
     confirm_window = ctk.CTkToplevel()
-    confirm_window.title("Confirm Delete")
+    confirm_window.title("Confirm delete")
 
     screen_width = confirm_window.winfo_screenwidth()
     screen_height = confirm_window.winfo_screenheight()
@@ -291,7 +291,7 @@ def delete_client():
         dialog1.destroy()
 
     dialog1 = ctk.CTk()
-    dialog1.title("Delete Client")
+    dialog1.title("Delete client")
 
     screen_width = dialog1.winfo_screenwidth()
     screen_height = dialog1.winfo_screenheight()
@@ -312,7 +312,6 @@ def delete_client():
     label_c = ctk.CTkLabel(screen_frame, text="Select client to delete:", **label_style)
     label_c.pack(pady=10)
 
-    # Отримання списку клієнтів з бази даних
     cursor.execute("SELECT client_id, c_pib, c_phone_number FROM Client")
     clients = cursor.fetchall()
     client_dict = {f"{client[1]} \n(Phone: {client[2]})": client[0] for client in clients}
