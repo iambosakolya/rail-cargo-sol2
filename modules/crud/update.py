@@ -222,6 +222,7 @@ def update_client(client):
 
     update_client_window.mainloop()
 
+
 def fetch_contract_data(contract_id):
     try:
         conn = sqlite3.connect('data.db')
@@ -234,8 +235,8 @@ def fetch_contract_data(contract_id):
                  Cargo.weight, Itinerary.departure_station, Itinerary.arrival_station,
                  Itinerary.route_length, Itinerary.duration, Payment.payment_amount,
                  Payment.payment_datetime, Cargo.cargo_type_id, Cargo.cargo_id
-                 
-                FROM ContractJOIN Client ON Contract.client_id = Client.client_id
+
+                FROM Contract JOIN Client ON Contract.client_id = Client.client_id
                 JOIN Dispatcher ON Contract.dispatcher_id = Dispatcher.dispatcher_id
                 JOIN Cargo ON Contract.cargo_id = Cargo.cargo_id
                 JOIN CargoType ON Cargo.cargo_type_id = CargoType.cargo_type_id
@@ -273,6 +274,7 @@ def fetch_contract_data(contract_id):
     except sqlite3.Error as e:
         CTkMessagebox(message=f"Error fetching contract data: {e}", icon="cancel")
         return None
+
 
 def modifying_contract():
     global screen_frame

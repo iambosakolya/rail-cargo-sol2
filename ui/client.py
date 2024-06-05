@@ -8,6 +8,11 @@ from modules.crud.update import modifying_contract
 from modules.crud.delete import confirm_delete_c
 from modules.crud.read import show_contracts
 
+from database.queries_client import get_user_contracts
+from database.queries_client import get_user_data
+from database.queries_client import get_contracts_above_weight
+from database.queries_client import get_user_payments
+
 
 label_style = {
     "text_color": "#000000",
@@ -75,29 +80,24 @@ def client_window(user):
 
     # query section 1
     req_frame3 = ctk.CTkFrame(master=right_frame, fg_color="#D0C7DF",
-                              width=80, height=550)
-    req_frame3.place(relx=0, rely=0, anchor="w", x=330, y=415)
+                              width=80, height=700)
+    req_frame3.place(relx=0, rely=0, anchor="w", x=330, y=320)
 
-    fourth_btn = ctk.CTkButton(master=req_frame3, text="1",
-                               **btn_style2)
-    fourth_btn.pack(side="top", padx=10, pady=20)
+    fourth_btn = ctk.CTkButton(master=req_frame3, text="My contracts\nfor the last month", **btn_style2,
+                               command=lambda: get_user_contracts(user[0], result_textbox))
+    fourth_btn.pack(side="top", padx=20, pady=20)
 
-    fifth_btn = ctk.CTkButton(master=req_frame3, text="2",
-                              **btn_style2)
-    fifth_btn.pack(side="top", padx=10, pady=20)
+    fifth_btn = ctk.CTkButton(master=req_frame3, text="My account info", **btn_style2,
+                              command=lambda: get_user_data(user[0], result_textbox))
+    fifth_btn.pack(side="top", padx=20, pady=20)
 
-    sixth_btn = ctk.CTkButton(master=req_frame3, text="3",
-                              **btn_style2)
-    sixth_btn.pack(side="top", padx=10, pady=20)
+    sixth_btn = ctk.CTkButton(master=req_frame3, text="Contract with the\nmax weight", **btn_style2,
+                              command=lambda: get_contracts_above_weight(user[0], result_textbox, weight=5))
+    sixth_btn.pack(side="top", padx=0, pady=20)
 
-    seventh_btn = ctk.CTkButton(master=req_frame3, text="4",
-                                width=150, **btn_style2)
-    seventh_btn.pack(side="top", padx=10, pady=20)
-
-    eighth_btn = ctk.CTkButton(master=req_frame3, text="5",
-                               **btn_style2)
-    eighth_btn.pack(side="top", padx=10, pady=20)
-
+    seventh_btn = ctk.CTkButton(master=req_frame3, text="My payments", **btn_style2,
+                                command=lambda: get_user_payments(user[0], result_textbox))
+    seventh_btn.pack(side="top", padx=20, pady=20)
 
     #left frame
     c_btn = CTkButton(master=left_frame, text="Change my info", **btn_style,
@@ -110,8 +110,17 @@ def client_window(user):
     up_btn.pack(anchor="w", pady=(80, 10), padx=(30, 0))
 
 
+    h_btn = CTkButton(master=left_frame, text="View history", **btn_style)
+    h_btn.pack(anchor="w", pady=(80, 10), padx=(25, 0))
+
+
+    fourth_btn = CTkButton(master=left_frame, text="4", **btn_style)
+    fourth_btn.pack(anchor="w", pady=(80, 10), padx=(25, 0))
+
+
     add_btn = CTkButton(master=left_frame, text="Deactivate my account", **btn_style,
                         command=lambda: confirm_delete_c(user[0]))
-    add_btn.pack(anchor="w", pady=(80, 10), padx=(25, 0))
+    add_btn.pack(anchor="w", pady=(80, 10), padx=(23, 0))
+
 
     app.mainloop()

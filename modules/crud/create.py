@@ -17,6 +17,8 @@ from database.database_setup import cursor, conn
 from modules.print import print_contract
 from modules.auth.register import register_client
 
+from globals import logged_in_dispatcher_id, logged_in_d_pib
+
 regional_centers = Map.regional_centers
 
 label_style = {
@@ -458,7 +460,7 @@ def create_contract():
                         textbox1.configure(state="normal")
                         textbox1.delete("1.0", "end")
                         textbox1.insert("end", f"Calculated tariff: "
-                                               f"{calculated_tariff}$")
+                                               f"{calculated_tariff}₴")
                         textbox1.configure(state="disabled")
 
                         display_data(cargo_data, route_data)
@@ -554,66 +556,63 @@ def create_contract():
                                  command=next_step).place(relx=0, rely=0.1, anchor="w", x=420, y=400)
 
         elif window_number == 5:
-            # contract
+
             def fetch_last_id(cursor, table, column):
-                cursor.execute(f"SELECT {column} "
-                               f"FROM {table} ORDER BY {column} DESC LIMIT 1")
+                cursor.execute(f"SELECT {column} FROM {table} ORDER BY {column} DESC LIMIT 1")
                 return cursor.fetchone()[0]
 
             def fetch_data(cursor, query, params=()):
                 cursor.execute(query, params)
                 return cursor.fetchone()
 
-            def create_contract(cursor, conn, client_id, payment_id,
-                                dispatcher_id, cargo_id, itinerary_id):
-
+            def create_contract(cursor, conn, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id):
                 current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 try:
                     cursor.execute(
-                        "INSERT INTO Contract (conclusion_date, client_id,"
-                        "payment_id, dispatcher_id, cargo_id, itinerary_id) "
+                        "INSERT INTO Contract (conclusion_date, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id) "
                         "VALUES (?, ?, ?, ?, ?, ?)",
                         (current_datetime, client_id, payment_id, dispatcher_id, cargo_id, itinerary_id))
                     conn.commit()
                     contract_id = cursor.lastrowid
 
                     cargo_data1 = fetch_data(cursor,
-                                             "SELECT quantity, weight, cargo_type_id "
-                                             "FROM Cargo WHERE cargo_id = ?",
+                                             "SELECT quantity, weight, cargo_type_id FROM Cargo WHERE cargo_id = ?",
                                              (cargo_id,))
+                    if not cargo_data1:
+                        raise ValueError("No cargo data found for cargo_id: {}".format(cargo_id))
                     quantity, weight, cargo_type_id = cargo_data1
 
                     cargo_data2 = fetch_data(cursor,
-                                             "SELECT cargo_name, description, dimensions "
-                                             "FROM CargoType WHERE cargo_type_id = ?",
+                                             "SELECT cargo_name, description, dimensions FROM CargoType WHERE cargo_type_id = ?",
                                              (cargo_type_id,))
+                    if not cargo_data2:
+                        raise ValueError("No cargo type data found for cargo_type_id: {}".format(cargo_type_id))
                     cargo_obj = CargoType(cargo_data2[0], cargo_data2[1], cargo_data2[2], quantity, weight)
 
                     map_data = fetch_data(cursor,
-                                          "SELECT departure_station, arrival_station, route_length, duration "
-                                          "FROM Itinerary WHERE itinerary_id = ?",
+                                          "SELECT departure_station, arrival_station, route_length, duration FROM Itinerary WHERE itinerary_id = ?",
                                           (itinerary_id,))
+                    if not map_data:
+                        raise ValueError("No itinerary data found for itinerary_id: {}".format(itinerary_id))
                     map_obj = Map(*map_data)
 
                     payment_data = fetch_data(cursor,
-                                              "SELECT payment_amount, payment_datetime "
-                                              "FROM Payment WHERE payment_id = ?",
+                                              "SELECT payment_amount, payment_datetime FROM Payment WHERE payment_id = ?",
                                               (payment_id,))
+                    if not payment_data:
+                        raise ValueError("No payment data found for payment_id: {}".format(payment_id))
                     calc_obj = Calc(payment_data[0], payment_data[1], cargo_data2[0], map_data[2], map_data[3], weight)
 
                     client_data = fetch_data(cursor,
-                                             "SELECT c_email, c_phone_number, c_pib "
-                                             "FROM Client WHERE client_id = ?",
+                                             "SELECT c_email, c_phone_number, c_pib FROM Client WHERE client_id = ?",
                                              (client_id,))
+                    if not client_data:
+                        raise ValueError("No client data found for client_id: {}".format(client_id))
                     c_email, c_phone_number, pib_c = client_data
 
-                    dispatcher_data = fetch_data(cursor, "SELECT d_pib "
-                                                         "FROM Dispatcher WHERE dispatcher_id = ?",
-                                                 (dispatcher_id,))
-                    pib_d = dispatcher_data[0]
+                    pib_d = logged_in_d_pib
 
-                    contract = Contract(contract_id, current_datetime, pib_c,
-                                        c_phone_number, c_email, pib_d, cargo_obj,
+                    contract = Contract(contract_id, current_datetime, pib_c, c_phone_number, c_email, pib_d, cargo_obj,
                                         map_obj, calc_obj)
                     contract_list = ContractList()
                     register = Register(contract, map_obj, calc_obj, contract_list)
@@ -621,53 +620,28 @@ def create_contract():
                     contract_info = ContractInfo(contract_id)
                     contract_list.add_contract(contract_info)
 
-                    CTkMessagebox(message="Contract saved successfully!",
-                                  icon="check",
-                                  option_1="Thanks")
+                    CTkMessagebox(message="Contract saved successfully!", icon="check", option_1="Thanks")
                     return contract_id
 
-                except sqlite3.Error as e:
-                    CTkMessagebox(message="Error: " + str(e),
-                                  icon="cancel",
-                                  option_1="OK")
+                except (sqlite3.Error, ValueError) as e:
+                    CTkMessagebox(message="Error: " + str(e), icon="cancel", option_1="OK")
                     return None
 
             def enter_pib(cursor, conn, payment_id, cargo_id, itinerary_id):
+                from globals import logged_in_d_pib, logged_in_dispatcher_id
+
                 def save_dispatcher_id():
                     try:
-                        dispatcher_pib = pib_entry.get()
-                        client_phone = client_phone_entry.get()
-                        dispatcher_data = fetch_data(cursor, "SELECT dispatcher_id "
-                                                             "FROM Dispatcher WHERE d_pib = ?",
-                                                     (dispatcher_pib,))
+                        client_selection = option_menu.get()
+                        client_id = client_dict[client_selection]
+                        contract_id = create_contract(cursor, conn, client_id, payment_id, logged_in_dispatcher_id,
+                                                      cargo_id, itinerary_id)
 
-                        if dispatcher_data:
-                            dispatcher_id = dispatcher_data[0]
-                            client_data = fetch_data(cursor, "SELECT client_id "
-                                                             "FROM Client WHERE c_phone_number = ?",
-                                                     (client_phone,))
-
-                            if client_data:
-                                client_id = client_data[0]
-                                contract_id = create_contract(cursor, conn, client_id,
-                                                              payment_id, dispatcher_id,
-                                                              cargo_id, itinerary_id)
-
-                                if contract_id:
-                                    print_button(contract_id)
-                                dialog_window.destroy()
-                            else:
-                                ctk.CTkMessagebox(message="Client with provided phone number not found!",
-                                                  icon="cancel",
-                                                  option_1="OK")
-                        else:
-                            ctk.CTkMessagebox(message="Dispatcher with provided PIB not found!",
-                                              icon="cancel",
-                                              option_1="OK")
+                        if contract_id:
+                            print_button(contract_id)
+                        dialog_window.destroy()
                     except sqlite3.Error as e:
-                        ctk.CTkMessagebox(message="Database error: " + str(e),
-                                          icon="cancel",
-                                          option_1="OK")
+                        CTkMessagebox(message="Database error: " + str(e), icon="cancel", option_1="OK")
 
                 dialog_window = ctk.CTk()
                 dialog_window.title("Attention")
@@ -676,49 +650,44 @@ def create_contract():
                 screen_height = dialog_window.winfo_screenheight()
 
                 dialog_width = 300
-                dialog_height = 270
+                dialog_height = 250
 
                 x_position = (screen_width - dialog_width) // 2
                 y_position = (screen_height - dialog_height) // 2
                 dialog_window.geometry(f"{dialog_width}x{dialog_height}+{x_position}+{y_position}")
                 dialog_window.resizable(0, 0)
 
-                pib_label = ctk.CTkLabel(dialog_window,
-                                         text="Confirm your PIB one more time:")
-                pib_label.pack(pady=10)
+                cursor.execute("SELECT client_id, c_pib, c_phone_number FROM Client")
+                clients = cursor.fetchall()
+                client_dict = {f"{client[1]} \n(Phone: {client[2]})": client[0] for client in clients}
 
-                pib_entry = ctk.CTkEntry(dialog_window)
-                pib_entry.pack(pady=10)
+                client_label = ctk.CTkLabel(dialog_window, text="Select Client:")
+                client_label.pack(pady=10)
 
-                client_phone_label = ctk.CTkLabel(dialog_window,
-                                                  text="Phone number of the client:")
-                client_phone_label.pack(pady=10)
+                option_menu = ctk.CTkOptionMenu(dialog_window, values=list(client_dict.keys()), text_color="#000000",
+                                                fg_color="#D3D3D3")
+                option_menu.pack(pady=10)
 
-                client_phone_entry = ctk.CTkEntry(dialog_window)
-                client_phone_entry.pack(pady=10)
+                dispatcher_label = ctk.CTkLabel(dialog_window, text=f"Logged in as: {logged_in_d_pib}")
+                dispatcher_label.pack(pady=10)
 
-                confirm_button = ctk.CTkButton(dialog_window, text="Confirm", **btn_style,
-                                               command=save_dispatcher_id)
+                confirm_button = ctk.CTkButton(dialog_window, text="Confirm", **btn_style ,command=save_dispatcher_id)
                 confirm_button.pack(pady=10)
                 dialog_window.mainloop()
-
-            def print_button(contract_id):
-                print_btn = ctk.CTkButton(master=screen_frame, text="Print contract", **btn_style,
-                                          command=lambda: print_contract(contract_id))
-                print_btn.place(relx=0, rely=0, anchor="w", x=220, y=230)
-
 
             client_id = fetch_last_id(cursor, "Client", "client_id")
             payment_id = fetch_last_id(cursor, "Payment", "payment_id")
             cargo_id = fetch_last_id(cursor, "Cargo", "cargo_id")
             itinerary_id = fetch_last_id(cursor, "Itinerary", "itinerary_id")
 
-
-            savec_btn = ctk.CTkButton(master=screen_frame, text="Save contract",
-                                      **btn_style,
-                                      command=lambda: enter_pib(cursor, conn,
-                                                                payment_id, cargo_id, itinerary_id))
+            savec_btn = ctk.CTkButton(master=screen_frame, text="Save contract", **btn_style,
+                                      command=lambda: enter_pib(cursor, conn, payment_id, cargo_id, itinerary_id))
             savec_btn.place(relx=0, rely=0, anchor="w", x=220, y=180)
+
+            def print_button(contract_id):
+                print_btn = ctk.CTkButton(master=screen_frame, text="Print contract", **btn_style,
+                                          command=lambda: print_contract(contract_id))
+                print_btn.place(relx=0, rely=0, anchor="w", x=220, y=230)
 
             def finish():
                 contract_window.destroy()
