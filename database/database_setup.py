@@ -84,7 +84,19 @@ cursor = conn.cursor()
 #         archive_date TEXT
 #     )
 # ''')
-# conn.commit()
+
+
+# cursor.execute('''
+#     CREATE TABLE IF NOT EXISTS Admin (
+#         admin_id INTEGER PRIMARY KEY,
+#         admin_pib TEXT NOT NULL,
+#         admin_email TEXT NOT NULL UNIQUE,
+#         admin_password TEXT NOT NULL
+#     )
+# ''')
+
+
+conn.commit()
 
 
 # def clear_tables(cursor):
