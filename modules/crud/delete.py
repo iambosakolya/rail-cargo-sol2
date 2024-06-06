@@ -8,25 +8,7 @@ from customtkinter import *
 from CTkMessagebox import CTkMessagebox
 
 from database.database_setup import cursor, conn
-
-
-label_style = {
-    "text_color": "#000000",
-    "anchor": "w",
-    "justify": "center",
-    "font": ("Arial Rounded MT Bold", 15)}
-
-btn_style = {
-    "fg_color": "#000000",
-    "hover_color": "#4F2346",
-    "text_color": "#ffffff",
-    "font": ("Arial Rounded MT Bold", 13)}
-
-entry_style = {
-    "fg_color": "#EEEEEE",
-    "border_color": "#601E88",
-    "border_width": 1,
-    "text_color": "#000000"}
+from ui.style import label_style, btn_style_user, entry_style
 
 
 def delete_data(contract_id):
@@ -235,11 +217,11 @@ def confirm_delete_d(dispatcher_id):
     def on_cancel():
         confirm_window.destroy()
 
-    yes_button = ctk.CTkButton(button_frame, text="Yes", **btn_style,
+    yes_button = ctk.CTkButton(button_frame, text="Yes", **btn_style_user,
                                command=on_confirm)
     yes_button.grid(row=0, column=0, padx=10)
 
-    no_button = ctk.CTkButton(button_frame, text="No",  **btn_style,
+    no_button = ctk.CTkButton(button_frame, text="No",  **btn_style_user,
                               command=on_cancel)
     no_button.grid(row=0, column=1, padx=10)
 
@@ -320,7 +302,7 @@ def delete_client():
                                     fg_color="#D3D3D3")
     option_menu.pack(pady=10)
 
-    confirm_c = ctk.CTkButton(screen_frame, text="Confirm", **btn_style, command=on_confirm)
+    confirm_c = ctk.CTkButton(screen_frame, text="Confirm", **btn_style_user, command=on_confirm)
     confirm_c.pack(pady=10)
 
     dialog1.mainloop()
@@ -408,10 +390,10 @@ def confirm_delete_c(client_id):
     def on_cancel():
         confirm_window.destroy()
 
-    yes_button = ctk.CTkButton(button_frame, text="Yes", **btn_style, command=on_confirm)
+    yes_button = ctk.CTkButton(button_frame, text="Yes", **btn_style_user, command=on_confirm)
     yes_button.grid(row=0, column=0, padx=10)
 
-    no_button = ctk.CTkButton(button_frame, text="No", **btn_style, command=on_cancel)
+    no_button = ctk.CTkButton(button_frame, text="No", **btn_style_user, command=on_cancel)
     no_button.grid(row=0, column=1, padx=10)
 
 

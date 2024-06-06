@@ -4,24 +4,7 @@ from customtkinter import *
 from modules.auth.register import register_main
 from modules.auth.login import login
 
-
-label_style = {
-    "text_color": "#601E88",
-    "anchor": "w",
-    "justify": "left",
-    "font": ("Arial Rounded MT Bold", 15)}
-
-btn_style = {
-    "fg_color": "#601E88",
-    "hover_color": "#E44982",
-    "text_color": "#ffffff",
-    "font": ("Arial Rounded MT Bold", 17)}
-
-entry_style = {
-    "fg_color": "#EEEEEE",
-    "border_color": "#601E88",
-    "border_width": 1,
-    "text_color": "#000000"}
+from ui.style import label_style, btn_style, entry_style
 
 app = CTk()
 app.title("Rail cargo solutions")
@@ -113,10 +96,15 @@ password_entry = CTkEntry(master=frame_right,
                           **entry_style, width=300, show="*")
 password_entry.pack(anchor="w", padx=(50, 0))
 
-register_button = CTkButton(master=frame_right, text="Register", **btn_style,
-                            width=300, command=lambda: register_main(name_entry, phone_entry,
-                                                                email_entry, password_entry,
-                                                                user_type_combo))
+verification_code_label = CTkLabel(master=frame_right, text="Verification Code:", font=("Arial Rounded MT Bold", 14))
+verification_code_label.pack(anchor="w", pady=(18, 0), padx=(50, 0))
+
+verification_code_entry = CTkEntry(master=frame_right, width=300)
+verification_code_entry.pack(anchor="w", padx=(50, 0))
+
+register_button = CTkButton(master=frame_right, text="Register", width=300,
+                            command=lambda: register_main(name_entry, phone_entry, email_entry,
+                                                                          password_entry, verification_code_entry))
 register_button.pack(anchor="w", pady=(40, 0), padx=(50, 0))
 
 login_button = CTkButton(master=frame_right, text="Log in", **btn_style,

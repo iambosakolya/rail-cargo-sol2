@@ -7,13 +7,7 @@ import customtkinter
 import customtkinter as ctk
 from customtkinter import *
 from CTkMessagebox import CTkMessagebox
-
-label_style = {
-    "text_color": "#000000",
-    "anchor": "w",
-    "justify": "left",
-    "font": ("Arial Rounded MT Bold", 15)
-}
+from ui.style import label_style
 
 # 1 Вибір з декількох таблиць із сортуванням
 # список контрактів, які були створені заданим диспетчером
@@ -168,6 +162,7 @@ def get_clients_letter(letter):
     clients = cursor.fetchall()
     conn.close()
     return clients
+
 def find_clients():
     root = ctk.CTkToplevel()
     root.title("Find clients by surname letter")
@@ -436,6 +431,7 @@ def find_contracts_week(result_textbox):
     count = get_contracts_last_week()
     result_textbox.delete("1.0", "end")
     result_textbox.insert("1.0", f"Number of contracts made last week: {count}")
+
 
 # 5 Агрегатна функція з угрупованням
 # Скільки контрактів було укладено кожним диспетчером

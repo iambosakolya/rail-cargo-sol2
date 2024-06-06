@@ -11,7 +11,7 @@ class Dispatcher:
     def set_d_password(self, d_password):
         self.d_password = d_password
 
-    def set_d_(self, d_email):
+    def set_d_email(self, d_email):
         self.d_email = d_email
 
     def set_d_phone_number(self, d_phone_number):

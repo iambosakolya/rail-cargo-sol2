@@ -54,25 +54,31 @@ def display_contracts_last_week(user_id, result_textbox):
                 "conclusion_date": contract[1],
                 "client_info": f"PIB: {contract[2]}",
                 "dispatcher_info": f"PIB: {contract[3]}",
-                "cargo_info": f"Type: {contract[4]}, Quantity: {contract[5]}, Weight: {contract[6]}",
-                "itinerary_info": f"Departure: {contract[7]}, Arrival: {contract[8]}, Route Length: {contract[9]}, Duration: {contract[10]}",
+                "cargo_info": f"Type: {contract[4]}, Quantity: {contract[5]}, "
+                              f" Weight: {contract[6]}",
+                "itinerary_info": f"Departure: {contract[7]}, Arrival: {contract[8]},"
+                                  f"Route Length: {contract[9]}, Duration: {contract[10]}",
                 "payment_info": f"Amount: {contract[11]}, Date/Time: {contract[12]}"
             }
             formatted_output = (
                 f"Contract ID: {contract_data['contract_id']}\n"
                 f"Conclusion Date: {contract_data['conclusion_date']}\n\n"
-                f"\tClient Information:\n{contract_data['client_info']}\n\n"
-                f"\tDispatcher Information:\n{contract_data['dispatcher_info']}\n\n"
-                f"\tCargo Information:\n{contract_data['cargo_info']}\n\n"
-                f"\tItinerary Information:\n{contract_data['itinerary_info']}\n\n"
-                f"\tPayment Information:\n{contract_data['payment_info']}\n"
+                f"\tClient Information: \n{contract_data['client_info']}\n\n"
+                f"\tDispatcher Information: \n{contract_data['dispatcher_info']}\n\n"
+                f"\tCargo Information: \n{contract_data['cargo_info']}\n\n"
+                f"\tItinerary Information: \n{contract_data['itinerary_info']}\n\n"
+                f"\tPayment Information: \n{contract_data['payment_info']}\n"
                 "\n---------------------------------\n"
             )
             result_textbox.insert('end', formatted_output)
     except ValueError as ve:
-        CTkMessagebox(message=str(ve), icon="cancel", option_1="OK")
+        CTkMessagebox(message=str(ve),
+                      icon="cancel",
+                      option_1="OK")
     except Exception as e:
-        CTkMessagebox(message=f"An error occurred: {e}", icon="cancel", option_1="OK")
+        CTkMessagebox(message=f"An error occurred: {e}",
+                      icon="cancel",
+                      option_1="OK")
 
 
 # 2
@@ -101,9 +107,13 @@ def get_user_data(user_id, result_textbox):
         else:
             result_textbox.insert('end', "No user data found.\n")
     except sqlite3.Error as e:
-        CTkMessagebox(message=f"SQLite error: {e}", icon="cancel", option_1="OK")
+        CTkMessagebox(message=f"SQLite error: {e}",
+                      icon="cancel",
+                      option_1="OK")
     except Exception as e:
-        CTkMessagebox(message=f"An error occurred: {e}", icon="cancel", option_1="OK")
+        CTkMessagebox(message=f"An error occurred: {e}",
+                      icon="cancel",
+                      option_1="OK")
 
 
 # 3
@@ -140,9 +150,13 @@ def get_contracts_above_weight(user_id, result_textbox, weight):
         else:
             result_textbox.insert('end', "No contracts found with weight greater than specified.\n")
     except sqlite3.Error as e:
-        CTkMessagebox(message=f"SQLite error: {e}", icon="cancel", option_1="OK")
+        CTkMessagebox(message=f"SQLite error: {e}",
+                      icon="cancel",
+                      option_1="OK")
     except Exception as e:
-        CTkMessagebox(message=f"An error occurred: {e}", icon="cancel", option_1="OK")
+        CTkMessagebox(message=f"An error occurred: {e}",
+                      icon="cancel",
+                      option_1="OK")
 
 
 # 4
@@ -174,6 +188,10 @@ def get_user_payments(user_id, result_textbox):
         else:
             result_textbox.insert('end', "No payments found.\n")
     except sqlite3.Error as e:
-        CTkMessagebox(message=f"SQLite error: {e}", icon="cancel", option_1="OK")
+        CTkMessagebox(message=f"SQLite error: {e}",
+                      icon="cancel",
+                      option_1="OK")
     except Exception as e:
-        CTkMessagebox(message=f"An error occurred: {e}", icon="cancel", option_1="OK")
+        CTkMessagebox(message=f"An error occurred: {e}",
+                      icon="cancel",
+                      option_1="OK")

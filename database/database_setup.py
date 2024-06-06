@@ -3,7 +3,6 @@ import sqlite3
 conn = sqlite3.connect('data.db')
 cursor = conn.cursor()
 
-# Creating tables
 # cursor.execute('''
 #     CREATE TABLE IF NOT EXISTS Client (
 #         client_id INTEGER PRIMARY KEY,

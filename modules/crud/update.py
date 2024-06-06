@@ -12,25 +12,10 @@ from database.database_setup import cursor, conn
 
 from modules.print import print_contract
 
+from ui.style import label_style, btn_style, entry_style, btn_style_user
+
 regional_centers = Map.regional_centers
 
-label_style = {
-    "text_color": "#000000",
-    "anchor": "w",
-    "justify": "left",
-    "font": ("Arial Rounded MT Bold", 15)}
-
-btn_style = {
-    "fg_color": "#000000",
-    "hover_color": "#4F2346",
-    "text_color": "#ffffff",
-    "font": ("Arial Rounded MT Bold", 13)}
-
-entry_style = {
-    "fg_color": "#EEEEEE",
-    "border_color": "#601E88",
-    "border_width": 1,
-    "text_color": "#000000"}
 
 def find_dispatcher(dispatcher_id):
     cursor.execute("SELECT d_pib, d_email, d_password, d_phone_number "
@@ -122,7 +107,7 @@ def update_dispatcher(dispatcher):
         update_dispatcher_window.destroy()
 
     update_button = CTkButton(master=screen_frame,
-                              text="Update Info", **btn_style,
+                              text="Update Info", **btn_style_user,
                               command=update_dispatcher_info)
 
     update_button.pack(anchor="w", pady=(20, 0), padx=(50, 0))
@@ -217,7 +202,7 @@ def update_client(client):
                       option_1="Thanks")
         update_client_window.destroy()
 
-    update_button = CTkButton(master=screen_frame, text="Update Info", **btn_style,
+    update_button = CTkButton(master=screen_frame, text="Update Info", **btn_style_user,
                               command=update_client_info)
 
     update_button.pack(anchor="w", pady=(20, 0), padx=(50, 0))
@@ -368,7 +353,7 @@ def modifying_contract():
                                   font=("Arial Rounded MT Bold", 16))
             info_label.place(relx=0, rely=0.1, anchor="w", x=60, y=15)
 
-            next_btn = CTkButton(master=screen_frame, text="Next", **btn_style,
+            next_btn = CTkButton(master=screen_frame, text="Next", **btn_style_user,
                                  command=next_step)
             next_btn.place(relx=0.9, rely=0.9, anchor="se")
 
@@ -428,7 +413,7 @@ def modifying_contract():
                 type_combobox.configure(values=existing_cargo_types)
 
             add_button = CTkButton(master=screen_frame, text="Add", width=40,
-                                   **btn_style, command=new_type)
+                                   **btn_style_user, command=new_type)
             add_button.place(relx=0, rely=0.1, anchor="w", x=350, y=45)
 
             desc_label = CTkLabel(master=screen_frame, text="Add description (if necessary):",
@@ -474,18 +459,18 @@ def modifying_contract():
                                   icon="cancel")
                     update_btn.configure(state="disabled")
 
-            check_btn = CTkButton(master=screen_frame, text="Check availability", **btn_style,
+            check_btn = CTkButton(master=screen_frame, text="Check availability", **btn_style_user,
                                   command=lambda: cargo_type_check(
                                       CargoType(type_combobox.get(), dim_entry.get(), weight_input.get(),
                                                 quantity_input.get(), desc_entry.get())))
             check_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=300)
 
-            update_btn = CTkButton(screen_frame, text="Update cargo", **btn_style,
+            update_btn = CTkButton(screen_frame, text="Update cargo", **btn_style_user,
                                    command=update_cargo)
             update_btn.place(relx=0, rely=0.1, anchor="w", x=200, y=300)
             update_btn.configure(state="disabled")
 
-            next_btn = CTkButton(master=screen_frame, text="Next", **btn_style,
+            next_btn = CTkButton(master=screen_frame, text="Next", **btn_style_user,
                                  command=next_step)
             next_btn.place(relx=0.9, rely=0.9, anchor="se")
 
@@ -586,11 +571,11 @@ def modifying_contract():
             new_arr_combobox = CTkComboBox(master=screen_frame, values=regional_centers, width=300)
             new_arr_combobox.place(relx=0, rely=0.1, anchor="w", x=30, y=260)
 
-            update_btn = CTkButton(master=screen_frame, text="Update stations", width=90, **btn_style,
+            update_btn = CTkButton(master=screen_frame, text="Update stations", width=90, **btn_style_user,
                                    command=update_station)
             update_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=300)
 
-            next_btn = CTkButton(master=screen_frame, text="Next", **btn_style, command=next_step)
+            next_btn = CTkButton(master=screen_frame, text="Next", **btn_style_user, command=next_step)
             next_btn.place(relx=0.9, rely=0.9, anchor="se")
 
             refresh_comboboxes()
@@ -696,7 +681,7 @@ def modifying_contract():
                 except sqlite3.Error as e:
                     CTkMessagebox(message="Error", icon="cancel", option_1="OK")
 
-            display_button = CTkButton(master=screen_frame, text="Accept payment", **btn_style, width=90, command=display)
+            display_button = CTkButton(master=screen_frame, text="Accept payment", **btn_style_user, width=90, command=display)
             display_button.place(relx=0, rely=0.1, anchor="w", x=30, y=350)
 
             textbox = CTkTextbox(master=screen_frame, width=500, height=80)
@@ -704,7 +689,7 @@ def modifying_contract():
             textbox1 = CTkTextbox(master=screen_frame, width=500, height=80)
             textbox1.place(relx=0, rely=0.1, anchor="w", x=30, y=255)
 
-            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style, command=next_step)
+            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style_user, command=next_step)
             next_btn.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
 
         elif window_number == 5:
@@ -712,7 +697,7 @@ def modifying_contract():
                 cont_window.destroy()
 
             finish_btn = CTkButton(master=screen_frame, text="Finish",
-                                       **btn_style, command=finish)
+                                       **btn_style_user, command=finish)
             finish_btn.place(relx=0, rely=0, anchor="w", x=220, y=280)
 
     show_current_step(contract_id)

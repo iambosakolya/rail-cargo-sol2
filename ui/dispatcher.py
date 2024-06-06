@@ -1,5 +1,3 @@
-import sqlite3
-import customtkinter
 from CTkToolTip import *
 import customtkinter as ctk
 from customtkinter import *
@@ -23,30 +21,7 @@ from database.queries import find_max_contracts
 from database.queries import find_max_payment
 from database.queries import find_dispatchers
 from database.queries import find_dispatchers_comments
-
-label_style = {
-    "text_color": "#000000",
-    "anchor": "w",
-    "justify": "left",
-    "font": ("Arial Rounded MT Bold", 15)}
-
-btn_style = {
-    "fg_color": "#000000",
-    "hover_color": "#4F2346",
-    "text_color": "#ffffff",
-    "font": ("Arial Rounded MT Bold", 13)}
-
-btn_style2 = {
-    "fg_color": "#897E9B",
-    "hover_color": "#ffffff",
-    "text_color": "#000000",
-    "font": ("Arial Rounded MT Bold", 13)}
-
-entry_style = {
-    "fg_color": "#EEEEEE",
-    "border_color": "#601E88",
-    "border_width": 1,
-    "text_color": "#000000"}
+from ui.style import btn_style_user, btn_style2
 
 
 def dispatcher_window(user, dispatcher_id):
@@ -85,7 +60,7 @@ def dispatcher_window(user, dispatcher_id):
              justify="left",
              font=("Hanson", 15)).place(relx=0, rely=0, anchor="w", x=315, y=190)
 
-    #query section 1
+    # query section 1
     req_frame1 = ctk.CTkFrame(master=right_frame, fg_color="#D0C7DF", width=450, height=95)
     req_frame1.place(relx=0, rely=0, anchor="w", x=30, y=50)
 
@@ -176,42 +151,38 @@ def dispatcher_window(user, dispatcher_id):
 
     # left frame --> buttons
     info_btn = CTkButton(master=left_frame, text="Change my info",
-                         **btn_style, command=lambda: find_dispatcher(user[0]))
+                         **btn_style_user, command=lambda: find_dispatcher(user[0]))
     info_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
 
     c_btn = CTkButton(master=left_frame, text="New contract",
-                      **btn_style, command=lambda: create_contract())
+                      **btn_style_user, command=lambda: create_contract())
     c_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
 
     list_btn = CTkButton(master=left_frame, text="All contracts",
-                         **btn_style, command=contracts_window)
+                         **btn_style_user, command=contracts_window)
     list_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
-
     up_btn = CTkButton(master=left_frame, text="Delete contract",
-                       **btn_style, command=delete_contract)
+                       **btn_style_user, command=delete_contract)
     up_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
-
     add_btn = CTkButton(master=left_frame, text="Update contract",
-                        **btn_style, command=modifying_contract)
+                        **btn_style_user, command=modifying_contract)
     add_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
-
     deld_btn = CTkButton(master=left_frame, text="Deactivate \ndispatcher account",
-                         **btn_style, command=lambda: confirm_delete_d(user[0]))
+                         **btn_style_user, command=lambda: confirm_delete_d(user[0]))
     deld_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
-
     delc_btn = CTkButton(master=left_frame, text="Deactivate \nclient account",
-                         **btn_style, command=delete_client)
+                         **btn_style_user, command=delete_client)
     delc_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
     arch_btn = CTkButton(master=left_frame, text="Contract archive",
                          command=lambda: show_archive_dialog(cursor, conn),
-                         **btn_style)
+                         **btn_style_user)
     arch_btn.pack(anchor="w", pady=(40, 5), padx=(30, 0))
 
     app.mainloop()

@@ -48,4 +48,3 @@ class Map:
                 return True, route['distance'], route['duration']
         return False, None, None
 
-

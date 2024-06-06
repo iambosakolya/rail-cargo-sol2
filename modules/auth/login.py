@@ -14,7 +14,8 @@ def login(email_entry, password_entry, phone_entry, user_type_combo):
     phone_number = phone_entry.get()
 
     if user_type == "Dispatcher":
-        cursor.execute("SELECT * FROM Dispatcher WHERE d_email=?", (email,))
+        cursor.execute("SELECT * FROM Dispatcher "
+                       "WHERE d_email=?", (email,))
         user = cursor.fetchone()
         if user and password == user[3]:
             dispatcher_id = user[0]
@@ -34,7 +35,8 @@ def login(email_entry, password_entry, phone_entry, user_type_combo):
                           icon="cancel")
 
     elif user_type == "Client":
-        cursor.execute("SELECT * FROM Client WHERE c_email=?", (email,))
+        cursor.execute("SELECT * FROM Client "
+                       "WHERE c_email=?", (email,))
         user = cursor.fetchone()
         if user and password == user[4]:
             client_id = user[0]

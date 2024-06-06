@@ -8,23 +8,6 @@ from customtkinter import *
 from CTkTable import *
 from database.database_setup import cursor, conn
 
-label_style = {
-    "text_color": "#000000",
-    "anchor": "w",
-    "justify": "left",
-    "font": ("Arial Rounded MT Bold", 15)}
-
-btn_style = {
-    "fg_color": "#000000",
-    "hover_color": "#4F2346",
-    "text_color": "#ffffff",
-    "font": ("Arial Rounded MT Bold", 13)}
-
-entry_style = {
-    "fg_color": "#EEEEEE",
-    "border_color": "#601E88",
-    "border_width": 1,
-    "text_color": "#000000"}
 
 class CTkScrollableTable(ctk.CTkScrollableFrame):
     def __init__(self, parent, cell_width=100, cell_height=30, **kwargs):

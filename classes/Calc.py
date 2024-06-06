@@ -44,5 +44,3 @@ class Calc:
 
     def get_weight(self):
         return self.weight
-
-

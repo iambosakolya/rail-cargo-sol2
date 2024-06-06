@@ -1,11 +1,8 @@
-import customtkinter
 from CTkToolTip import *
 import customtkinter as ctk
 from customtkinter import *
-from database.database_setup import cursor, conn
 
 from modules.crud.update import find_client
-from modules.crud.update import modifying_contract
 from modules.crud.delete import confirm_delete_c
 from modules.crud.read import show_contracts
 
@@ -15,30 +12,7 @@ from database.queries_client import get_contracts_above_weight
 from database.queries_client import get_user_payments
 
 import globals
-
-label_style = {
-    "text_color": "#000000",
-    "anchor": "w",
-    "justify": "left",
-    "font": ("Arial Rounded MT Bold", 15)}
-
-btn_style = {
-    "fg_color": "#000000",
-    "hover_color": "#4F2346",
-    "text_color": "#ffffff",
-    "font": ("Arial Rounded MT Bold", 13)}
-
-btn_style2 = {
-    "fg_color": "#897E9B",
-    "hover_color": "#ffffff",
-    "text_color": "#000000",
-    "font": ("Arial Rounded MT Bold", 13)}
-
-entry_style = {
-    "fg_color": "#EEEEEE",
-    "border_color": "#601E88",
-    "border_width": 1,
-    "text_color": "#000000"}
+from ui.style import btn_style_user, btn_style2
 
 
 def client_window(user):
@@ -63,7 +37,8 @@ def client_window(user):
 
     CTkLabel(master=right_frame, text="").pack(expand=True, side="right")
 
-    left_frame = CTkFrame(master=app, width=200, height=650, fg_color="#FFFFFF")
+    left_frame = CTkFrame(master=app, width=200,
+                          height=650, fg_color="#FFFFFF")
     left_frame.pack_propagate(0)
     left_frame.pack(expand=True, side="left")
 
@@ -113,21 +88,21 @@ def client_window(user):
     tooltip_4 = CTkToolTip(fourth_btn, message="Знайти всі оплати клієнта і вивести їх")
 
     #left frame
-    c_btn = CTkButton(master=left_frame, text="Change my info", **btn_style,
+    c_btn = CTkButton(master=left_frame, text="Change my info",  **btn_style_user,
                       command=lambda: find_client(user[0]))
     c_btn.pack(anchor="w", pady=(80, 10), padx=(30, 0))
 
 
-    up_btn = CTkButton(master=left_frame, text="All my contracts", **btn_style,
+    up_btn = CTkButton(master=left_frame, text="All my contracts",  **btn_style_user,
                        command=lambda: show_contracts(user[0], result_textbox))
     up_btn.pack(anchor="w", pady=(80, 10), padx=(30, 0))
 
 
-    h_btn = CTkButton(master=left_frame, text="Print my contracts", **btn_style)
+    h_btn = CTkButton(master=left_frame, text="Print my contracts",  **btn_style_user)
     h_btn.pack(anchor="w", pady=(80, 10), padx=(25, 0))
 
 
-    add_btn = CTkButton(master=left_frame, text="Deactivate my account", **btn_style,
+    add_btn = CTkButton(master=left_frame, text="Deactivate my account",  **btn_style_user,
                         command=lambda: confirm_delete_c(user[0]))
     add_btn.pack(anchor="w", pady=(80, 10), padx=(23, 0))
 

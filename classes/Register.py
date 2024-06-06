@@ -26,4 +26,3 @@ class Register:
 
     def delete_contract(self, contract_info):
         self.list_obj.delete_contract_from_db(contract_info)
-

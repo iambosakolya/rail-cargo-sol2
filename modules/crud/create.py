@@ -18,26 +18,9 @@ from modules.print import print_contract
 from modules.auth.register import register_client
 
 from globals import logged_in_dispatcher_id, logged_in_d_pib
+from ui.style import label_style, btn_style_user, entry_style
 
 regional_centers = Map.regional_centers
-
-label_style = {
-    "text_color": "#000000",
-    "anchor": "w",
-    "justify": "left",
-    "font": ("Arial Rounded MT Bold", 15)}
-
-btn_style = {
-    "fg_color": "#000000",
-    "hover_color": "#4F2346",
-    "text_color": "#ffffff",
-    "font": ("Arial Rounded MT Bold", 13)}
-
-entry_style = {
-    "fg_color": "#EEEEEE",
-    "border_color": "#601E88",
-    "border_width": 1,
-    "text_color": "#000000"}
 
 def create_contract():
     global screen_frame
@@ -154,7 +137,7 @@ def create_contract():
                 type_combobox.configure(values=existing_cargo_types)
 
             add_btn1 = CTkButton(master=screen_frame, text="Add", width=40,
-                                 **btn_style, command=new_type)
+                                 **btn_style_user, command=new_type)
             add_btn1.place(relx=0, rely=0.1, anchor="w", x=350, y=45)
 
             tooltip_add = CTkToolTip(add_btn1, message="Please enter cargo type with a capital letter and in plural!"
@@ -248,13 +231,13 @@ def create_contract():
                 insert_cargo(cargo_type_id, quantity, weight)
 
             # buttons
-            check_btn = CTkButton(master=screen_frame, text="Check availability", **btn_style,
+            check_btn = CTkButton(master=screen_frame, text="Check availability", **btn_style_user,
                                   command=lambda: cargo_type_check(CargoType(type_combobox.get(),
                                                                              dim_entry.get(), weight_input.get(),
                                                                              quantity_input.get(), desc_entry.get())))
             check_btn.place(relx=0, rely=0.1, anchor="w", x=30, y=300)
 
-            save = CTkButton(master=screen_frame, text="Save type", **btn_style, width=90, command=save_cargo)
+            save = CTkButton(master=screen_frame, text="Save type", **btn_style_user, width=90, command=save_cargo)
             save.place(relx=0, rely=0.1, anchor="w", x=200, y=300)
             save.configure(state="disabled")
 
@@ -294,7 +277,7 @@ def create_contract():
             quantity_input = CTkEntry(master=screen_frame, width=150, height=30, **entry_style)
             quantity_input.place(relx=0, rely=0.1, anchor="w", x=420, y=225)
 
-            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style, command=next_step)
+            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style_user, command=next_step)
             next_btn.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
 
         if window_number == 2:
@@ -379,10 +362,10 @@ def create_contract():
             result_text.place(relx=0, rely=0.1, anchor="w", x=370, y=170)
 
             # buttons
-            check_btn1 = CTkButton(master=screen_frame, text="Check availability", **btn_style,
+            check_btn1 = CTkButton(master=screen_frame, text="Check availability", **btn_style_user,
                                    command=find_connection).place(relx=0, rely=0.1, anchor="w", x=30, y=320)
 
-            save_btn = CTkButton(master=screen_frame, text="Save route", width=90, **btn_style,
+            save_btn = CTkButton(master=screen_frame, text="Save route", width=90, **btn_style_user,
                                  command=save_route, state="disabled")
             save_btn.place(relx=0, rely=0.1, anchor="w", x=200, y=320)
 
@@ -391,7 +374,7 @@ def create_contract():
                                 font=("Arial Rounded MT Bold", 14))
             reminder.place(relx=0, rely=0.1, anchor="w", x=200, y=350)
 
-            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style,
+            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style_user,
                                  command=next_step).place(relx=0, rely=0.1, anchor="w", x=420, y=400)
 
         elif window_number == 3:
@@ -491,7 +474,7 @@ def create_contract():
                     CTkMessagebox(message="Error", icon="cancel", option_1="OK")
 
             display_button = CTkButton(master=screen_frame, text="Accept payment",
-                                       **btn_style, width=90, command=display)
+                                       **btn_style_user, width=90, command=display)
             display_button.place(relx=0, rely=0.1, anchor="w", x=30, y=350)
 
             textbox = CTkTextbox(master=screen_frame, width=500, height=80)
@@ -500,7 +483,7 @@ def create_contract():
             textbox1.place(relx=0, rely=0.1, anchor="w", x=30, y=255)
 
             next_btn = CTkButton(master=screen_frame, text="Next step",
-                                 **btn_style, command=next_step)
+                                 **btn_style_user, command=next_step)
             next_btn.place(relx=0, rely=0.1, anchor="w", x=420, y=400)
 
         elif window_number == 4:
@@ -547,12 +530,12 @@ def create_contract():
 
             # buttons
             save_client = CTkButton(master=screen_frame, text="Register client",
-                                    **btn_style,
+                                    **btn_style_user,
                                     command=lambda: register_client(cursor, pib_entry,
                                                                     email_entry, password_entry, ph_entry))
             save_client.place(relx=0, rely=0.1, anchor="w", x=30, y=400)
 
-            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style,
+            next_btn = CTkButton(master=screen_frame, text="Next step", **btn_style_user,
                                  command=next_step).place(relx=0, rely=0.1, anchor="w", x=420, y=400)
 
         elif window_number == 5:
@@ -620,7 +603,9 @@ def create_contract():
                     contract_info = ContractInfo(contract_id)
                     contract_list.add_contract(contract_info)
 
-                    CTkMessagebox(message="Contract saved successfully!", icon="check", option_1="Thanks")
+                    CTkMessagebox(message="Contract saved successfully!",
+                                  icon="check",
+                                  option_1="Thanks")
                     return contract_id
 
                 except (sqlite3.Error, ValueError) as e:
@@ -671,7 +656,7 @@ def create_contract():
                 dispatcher_label = ctk.CTkLabel(dialog_window, text=f"Logged in as: {logged_in_d_pib}")
                 dispatcher_label.pack(pady=10)
 
-                confirm_button = ctk.CTkButton(dialog_window, text="Confirm", **btn_style ,command=save_dispatcher_id)
+                confirm_button = ctk.CTkButton(dialog_window, text="Confirm", **btn_style_user, command=save_dispatcher_id)
                 confirm_button.pack(pady=10)
                 dialog_window.mainloop()
 
@@ -680,12 +665,12 @@ def create_contract():
             cargo_id = fetch_last_id(cursor, "Cargo", "cargo_id")
             itinerary_id = fetch_last_id(cursor, "Itinerary", "itinerary_id")
 
-            savec_btn = ctk.CTkButton(master=screen_frame, text="Save contract", **btn_style,
+            savec_btn = ctk.CTkButton(master=screen_frame, text="Save contract", **btn_style_user,
                                       command=lambda: enter_pib(cursor, conn, payment_id, cargo_id, itinerary_id))
             savec_btn.place(relx=0, rely=0, anchor="w", x=220, y=180)
 
             def print_button(contract_id):
-                print_btn = ctk.CTkButton(master=screen_frame, text="Print contract", **btn_style,
+                print_btn = ctk.CTkButton(master=screen_frame, text="Print contract", **btn_style_user,
                                           command=lambda: print_contract(contract_id))
                 print_btn.place(relx=0, rely=0, anchor="w", x=220, y=230)
 
@@ -693,7 +678,7 @@ def create_contract():
                 contract_window.destroy()
 
             finish_btn = ctk.CTkButton(master=screen_frame, text="Finish",
-                                       **btn_style, command=finish)
+                                       **btn_style_user, command=finish)
             finish_btn.place(relx=0, rely=0, anchor="w", x=220, y=280)
 
     show_current_step()

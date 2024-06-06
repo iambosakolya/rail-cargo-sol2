@@ -4,57 +4,40 @@ from database.database_setup import cursor, conn
 from classes.Users import Dispatcher, Client
 
 
-def register_main(pib_entry, ph_entry, email_entry, password_entry, user_type_combo):
-    user_type = user_type_combo.get()
-    if user_type == "Dispatcher":
-        d_pib = pib_entry.get()
-        d_email = email_entry.get()
-        d_password = password_entry.get()
-        d_phone_number = ph_entry.get()
+def register_main(pib_entry, ph_entry, email_entry, password_entry, verification_code_entry):
+    d_pib = pib_entry.get()
+    d_email = email_entry.get()
+    d_password = password_entry.get()
+    d_phone_number = ph_entry.get()
+    verification_code = verification_code_entry.get()
 
-        if not re.match(r"[^@]+@[^@]+\.[^@]+", d_email):
-            CTkMessagebox(message="Invalid email format!",
-                          icon="cancel",
-                          option_1="OK")
-            return
 
-        if len(d_password) < 8:
-            CTkMessagebox(message="Password should contain at least 8 characters!",
-                          icon="cancel",
-                          option_1="OK")
-            return
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", d_email):
+        CTkMessagebox(message="Invalid email format!", icon="cancel", option_1="OK")
+        return
 
-        if len(d_phone_number) < 10 or not d_phone_number.isdigit():
-            CTkMessagebox(message="Phone number should contain at least 10 digits!",
-                          icon="cancel",
-                          option_1="OK")
-            return
+    if len(d_password) < 8:
+        CTkMessagebox(message="Password should contain at least 8 characters!", icon="cancel", option_1="OK")
+        return
 
-        cursor.execute("SELECT * FROM Dispatcher "
-                       "WHERE d_email = ? OR d_phone_number = ?",
-                       (d_email, d_phone_number))
-        existing_dispatcher = cursor.fetchone()
-        if existing_dispatcher:
-            CTkMessagebox(message="User with this email or phone number already exists!",
-                          icon="cancel",
-                          option_1="OK")
-        else:
-            dispatcher = Dispatcher(d_pib, d_email, d_password, d_phone_number)
-            cursor.execute("INSERT INTO Dispatcher (d_pib, d_email, d_password, d_phone_number)"
-                           "VALUES (?, ?, ?, ?)",
-                           (dispatcher.get_d_pib(),
-                            dispatcher.get_d_email(),
-                            dispatcher.get_d_password(),
-                            dispatcher.get_d_phone_number()))
+    if len(d_phone_number) < 10 or not d_phone_number.isdigit():
+        CTkMessagebox(message="Phone number should contain at least 10 digits!", icon="cancel", option_1="OK")
+        return
 
-            CTkMessagebox(message="Registration successful!",
-                          icon="check",
-                          option_1="Thanks")
+    if verification_code != "SPECIAL_CODE":
+        CTkMessagebox(message="Invalid verification code!", icon="cancel", option_1="OK")
+        return
 
-    elif user_type == "Client":
-        CTkMessagebox(message="Only dispatcher can register a client!",
-                      icon="cancel",
-                      option_1="OK")
+    cursor.execute("SELECT * FROM Dispatcher WHERE d_email = ? OR d_phone_number = ?", (d_email, d_phone_number))
+    existing_dispatcher = cursor.fetchone()
+    if existing_dispatcher:
+        CTkMessagebox(message="User with this email or phone number already exists!", icon="cancel", option_1="OK")
+    else:
+        dispatcher = Dispatcher(d_pib, d_email, d_password, d_phone_number)
+        cursor.execute("INSERT INTO Dispatcher (d_pib, d_email, d_password, d_phone_number) VALUES (?, ?, ?, ?)",
+                       (dispatcher.get_d_pib(), dispatcher.get_d_email(), dispatcher.get_d_password(),
+                        dispatcher.get_d_phone_number()))
+        CTkMessagebox(message="Registration successful!", icon="check", option_1="Thanks")
     conn.commit()
 
 
