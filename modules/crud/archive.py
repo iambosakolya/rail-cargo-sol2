@@ -34,11 +34,11 @@ def archive_contract(cursor, conn, contract_id):
                        "VALUES (?, ?, ?)",
                        (contract_id, conclusion_date, archive_date))
 
-        cursor.execute("DELETE FROM Client "
-                       "WHERE client_id = ?", (client_id,))
-
-        cursor.execute("DELETE FROM Dispatcher "
-                       "WHERE dispatcher_id = ?", (dispatcher_id,))
+        # cursor.execute("DELETE FROM Client "
+        #                "WHERE client_id = ?", (client_id,))
+        #
+        # cursor.execute("DELETE FROM Dispatcher "
+        #                "WHERE dispatcher_id = ?", (dispatcher_id,))
 
         cursor.execute("DELETE FROM Cargo "
                        "WHERE cargo_id = ?", (cargo_id,))

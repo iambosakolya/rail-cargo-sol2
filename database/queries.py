@@ -501,7 +501,7 @@ def find_max_contracts(result_textbox):
     else:
         if len(results) == 1:
             result_textbox.insert("1.0",
-                                  f"Dispatcher with max contracts: {results[0][0]} ({max_contracts} contracts)\n")
+                                  f"Dispatcher with max contracts: {results[0][0]}\n({max_contracts} contracts)\n")
         else:
             dispatcher_list = ", ".join([result[0] for result in results])
             result_textbox.insert("1.0",
@@ -541,7 +541,7 @@ def find_max_payment(result_textbox):
     result_textbox.delete("1.0", "end")
     if results:
         for client_id, c_pib, cargo_name, payment_amount in results:
-            result_textbox.insert("end", f"\nClient ID: {client_id}\nPIB: {c_pib}\nCargo: {cargo_name}\nPayment: {payment_amount}\n"
+            result_textbox.insert("end", f"\nClient PIB: {c_pib}\nCargo: {cargo_name}\nPayment: {payment_amount}\n"
                                          f"---------------------------------\n")
     else:
         result_textbox.insert("1.0", "No data available")

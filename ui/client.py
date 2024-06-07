@@ -11,6 +11,8 @@ from database.queries_client import get_user_data
 from database.queries_client import get_contracts_above_weight
 from database.queries_client import get_user_payments
 
+import modules.print as print_module
+
 import globals
 from ui.style import btn_style_user, btn_style2
 
@@ -76,14 +78,14 @@ def client_window(user):
 
     third_btn = ctk.CTkButton(master=req_frame1, text="Contract with the\nmax weight", **btn_style2,
                               command=lambda: get_contracts_above_weight(user_id=globals.logged_in_client_id,
-                                                                         result_textbox=result_textbox))
+                                                                         result_textbox=result_textbox, weight=5))
     third_btn.pack(side="top", padx=0, pady=20)
     tooltip_3 = CTkToolTip(third_btn, message="Які з контрактів клієнта мають вагу більше ніж 5т")
 
 
     fourth_btn = ctk.CTkButton(master=req_frame1, text="My payments", **btn_style2,
                                 command=lambda: get_user_payments(user_id=globals.logged_in_client_id,
-                                                                  result_textbox=result_textbox), weight=5)
+                                                                  result_textbox=result_textbox))
     fourth_btn.pack(side="top", padx=20, pady=20)
     tooltip_4 = CTkToolTip(fourth_btn, message="Знайти всі оплати клієнта і вивести їх")
 
@@ -97,8 +99,9 @@ def client_window(user):
                        command=lambda: show_contracts(user[0], result_textbox))
     up_btn.pack(anchor="w", pady=(80, 10), padx=(30, 0))
 
-
-    h_btn = CTkButton(master=left_frame, text="Print my contracts",  **btn_style_user)
+    h_btn = ctk.CTkButton(master=left_frame, text="Print my contracts",
+                          command=lambda: print_module.select_contract_print(globals.logged_in_client_id),
+                          **btn_style_user)
     h_btn.pack(anchor="w", pady=(80, 10), padx=(25, 0))
 
 

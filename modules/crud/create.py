@@ -559,35 +559,40 @@ def create_contract():
                     contract_id = cursor.lastrowid
 
                     cargo_data1 = fetch_data(cursor,
-                                             "SELECT quantity, weight, cargo_type_id FROM Cargo WHERE cargo_id = ?",
+                                             "SELECT quantity, weight, cargo_type_id "
+                                             "FROM Cargo WHERE cargo_id = ?",
                                              (cargo_id,))
                     if not cargo_data1:
                         raise ValueError("No cargo data found for cargo_id: {}".format(cargo_id))
                     quantity, weight, cargo_type_id = cargo_data1
 
                     cargo_data2 = fetch_data(cursor,
-                                             "SELECT cargo_name, description, dimensions FROM CargoType WHERE cargo_type_id = ?",
+                                             "SELECT cargo_name, description, dimensions "
+                                             "FROM CargoType WHERE cargo_type_id = ?",
                                              (cargo_type_id,))
                     if not cargo_data2:
                         raise ValueError("No cargo type data found for cargo_type_id: {}".format(cargo_type_id))
                     cargo_obj = CargoType(cargo_data2[0], cargo_data2[1], cargo_data2[2], quantity, weight)
 
                     map_data = fetch_data(cursor,
-                                          "SELECT departure_station, arrival_station, route_length, duration FROM Itinerary WHERE itinerary_id = ?",
+                                          "SELECT departure_station, arrival_station, route_length, duration "
+                                          "FROM Itinerary WHERE itinerary_id = ?",
                                           (itinerary_id,))
                     if not map_data:
                         raise ValueError("No itinerary data found for itinerary_id: {}".format(itinerary_id))
                     map_obj = Map(*map_data)
 
                     payment_data = fetch_data(cursor,
-                                              "SELECT payment_amount, payment_datetime FROM Payment WHERE payment_id = ?",
+                                              "SELECT payment_amount, payment_datetime "
+                                              "FROM Payment WHERE payment_id = ?",
                                               (payment_id,))
                     if not payment_data:
                         raise ValueError("No payment data found for payment_id: {}".format(payment_id))
                     calc_obj = Calc(payment_data[0], payment_data[1], cargo_data2[0], map_data[2], map_data[3], weight)
 
                     client_data = fetch_data(cursor,
-                                             "SELECT c_email, c_phone_number, c_pib FROM Client WHERE client_id = ?",
+                                             "SELECT c_email, c_phone_number, c_pib "
+                                             "FROM Client WHERE client_id = ?",
                                              (client_id,))
                     if not client_data:
                         raise ValueError("No client data found for client_id: {}".format(client_id))
@@ -600,8 +605,8 @@ def create_contract():
                     contract_list = ContractList()
                     register = Register(contract, map_obj, calc_obj, contract_list)
 
-                    contract_info = ContractInfo(contract_id)
-                    contract_list.add_contract(contract_info)
+                    # contract_info = ContractInfo(contract_id)
+                    # contract_list.add_contract(contract_info)
 
                     CTkMessagebox(message="Contract saved successfully!",
                                   icon="check",

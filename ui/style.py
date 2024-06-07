@@ -6,7 +6,7 @@ btn_style = {
     "font": ("Arial Rounded MT Bold", 17)}
 
 label_style = {
-    "text_color": "#601E88",
+    "text_color": "#000000",
     "anchor": "w",
     "justify": "left",
     "font": ("Arial Rounded MT Bold", 15)}

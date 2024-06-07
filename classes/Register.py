@@ -21,8 +21,8 @@ class Register:
     def load_contracts(self):
         self.list_obj.load_contracts_from_db()
 
-    def add_contract(self, contract_info):
-        self.list_obj.add_contract(contract_info)
+    # def add_contract(self, contract_info):
+    #     self.list_obj.add_contract(contract_info)
 
     def delete_contract(self, contract_info):
         self.list_obj.delete_contract_from_db(contract_info)
